@@ -38,4 +38,6 @@ public class User {
     
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private RefreshToken refreshToken;
+
+    public record getUserProfile(String username,String email,Owners.OwnersProfile owners){};
 }

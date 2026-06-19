@@ -120,9 +120,9 @@ public class AuthController {
                 return Response.ResponseHandler("Invalid refresh token.", HttpStatus.UNAUTHORIZED);
             }
         }catch(ExpiredJwtException e){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token has been expired.");
+           return  Response.ResponseHandler("Token has been expired.",HttpStatus.UNAUTHORIZED);
         }catch(JwtException e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Something went worng.");
+            return  Response.ResponseHandler("Something went worng.",HttpStatus.UNAUTHORIZED);
         }
     }
 
