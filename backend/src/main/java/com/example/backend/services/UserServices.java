@@ -26,7 +26,8 @@ public class UserServices {
                                                     .getUserProfile(
                                                         user.getUsername(), 
                                                         user.getEmail(),
-                                                        new Owners.OwnersProfile(user.getOwners().getPhoneNumber(),
+                                                        new Owners.OwnersProfile(user.getOwners().getId(),
+                                                                                user.getOwners().getPhoneNumber(),
                                                                                  user.getOwners().getAlternatePhoneNumber(),
                                                                                  user.getOwners().getAddress(),
                                                                                   user.getOwners().getRegistrationDate()))).findFirst();

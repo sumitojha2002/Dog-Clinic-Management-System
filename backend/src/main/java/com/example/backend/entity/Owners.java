@@ -45,7 +45,8 @@ public class Owners {
 
     public record OwnersDog(Dogs.DogInner dogs) {}
 
-    public record OwnersProfile(String phoneNumber,
+    public record OwnersProfile(Long id,
+                                String phoneNumber,
                                 String alternatePhoneNumber,
                                 String address,
                                 LocalDate registrationDate){}

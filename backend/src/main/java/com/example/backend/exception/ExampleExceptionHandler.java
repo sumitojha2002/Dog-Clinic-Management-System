@@ -26,15 +26,15 @@ public class ExampleExceptionHandler {
         return new ResponseEntity<>(e,HttpStatus.CONFLICT);
     }
 
-        @ExceptionHandler(value = {MethodArgumentNotValidException.class})
-        public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
-           System.out.println("VALIDATION FAILED: " + e.getMessage());
-                Map<String,Object> errors = new HashMap<>();
-                e.getBindingResult().getFieldErrors().forEach(error->errors.put(error.getField(),error.getDefaultMessage()));
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
+    public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+        System.out.println("VALIDATION FAILED: " + e.getMessage());
+            Map<String,Object> errors = new HashMap<>();
+            e.getBindingResult().getFieldErrors().forEach(error->errors.put(error.getField(),error.getDefaultMessage()));
 
-            Map<String,Object> body = new LinkedHashMap<>();
-            body.put("status", HttpStatus.BAD_REQUEST);
-            body.put("errors",errors);
-            return new ResponseEntity<>(body,HttpStatus.BAD_REQUEST);
-        }
+        Map<String,Object> body = new LinkedHashMap<>();
+        body.put("status", HttpStatus.BAD_REQUEST);
+        body.put("errors",errors);
+        return new ResponseEntity<>(body,HttpStatus.BAD_REQUEST);
+    }
 }

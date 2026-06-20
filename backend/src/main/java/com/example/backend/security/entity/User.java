@@ -40,4 +40,5 @@ public class User {
     private RefreshToken refreshToken;
 
     public record getUserProfile(String username,String email,Owners.OwnersProfile owners){};
+
 }
