@@ -42,4 +42,6 @@ public class Employee {
 
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL,orphanRemoval = true)
     private Veterinarians veterinarians;
+
+    public record EmpRece(String phoneNumber,LocalDate hireDate,EmpStatus receptionistStatus,Receptionist.Rece workScheduleStatus){}
 }

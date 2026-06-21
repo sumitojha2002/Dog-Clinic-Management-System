@@ -12,8 +12,12 @@ import org.springframework.stereotype.Service;
 
 import com.example.backend.entity.Dogs;
 import com.example.backend.entity.Owners;
+import com.example.backend.entity.Receptionist;
+import com.example.backend.entity.enums.ReceShiftStatus;
+import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.repository.DogsRepository;
 import com.example.backend.repository.OwnerRepository;
+import com.example.backend.repository.ReceptionistRepository;
 import com.example.backend.response.Response;
 import com.example.backend.security.repository.UserRepository;
 
@@ -26,6 +30,7 @@ public class AdminServices {
     private final UserRepository userRepo;
     private final OwnerRepository ownerRepo;
     private final DogsRepository dogsRepo;
+    private final ReceptionistRepository receptRepo;
 
     @Transactional
     public boolean deleteById(Long id){
@@ -39,7 +44,7 @@ public class AdminServices {
 
     public ResponseEntity<?> getAllOwners(){
         try{
-            List<User.getUserProfile> ownersProfile = userRepo.findByRoles(Roles.ROLE_OWNER)
+            List<User.getOwnerProfile> ownersProfile = userRepo.findByRoles(Roles.ROLE_OWNER)
         .stream()
         .map(user -> {
             Owners o = user.getOwners();
@@ -53,7 +58,7 @@ public class AdminServices {
                     : new Owners.OwnersProfile(
                             null, null, null, null, null); 
 
-            return new User.getUserProfile(
+            return new User.getOwnerProfile(
                     user.getUsername(),
                     user.getEmail(),
                     profile);
@@ -98,7 +103,7 @@ public class AdminServices {
 
     public ResponseEntity<?> getOwnerById(Long id){
         try{
-            Optional<User.getUserProfile> ownerById = userRepo.findByRoleOwnerAndId(Roles.ROLE_OWNER,id)
+            Optional<User.getOwnerProfile> ownerById = userRepo.findByRoleOwnerAndId(Roles.ROLE_OWNER,id)
                                                 .stream()
                                                 .map(owner->{
                                                     Owners foundOwner =  owner.getOwners();
@@ -109,7 +114,7 @@ public class AdminServices {
                                                                                     foundOwner.getAddress(),
                                                                                     foundOwner.getRegistrationDate()):
                                                                                    new  Owners.OwnersProfile(null,null,null,null,null);
-                                                    return new User.getUserProfile(owner.getUsername(), owner.getEmail(), ownersProfile); 
+                                                    return new User.getOwnerProfile(owner.getUsername(), owner.getEmail(), ownersProfile); 
                                                                                 }).findFirst();
         if(ownerById.isPresent()){
             return Response.ResponseHandler("Owner found Successfully.", HttpStatus.OK, ownerById);
@@ -123,6 +128,31 @@ public class AdminServices {
     }
 
 
+    // Receptionist
+
+    public ResponseEntity<?> changeReceShift(Long id,ReceShiftStatus shift){
+       try{
+            System.out.println("hello there");
+           Optional<Receptionist> rece = receptRepo.findReceFromUserId(id);
+           
+           if(!rece.isPresent()){
+               throw new UserNotFoundException("User not found.");
+            }
+            
+            Receptionist foundRece =  rece.get();
+            
+            foundRece.setShift(shift);
+            receptRepo.save(foundRece);
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
+        }catch(UserNotFoundException e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        
+    }
     // public ResponseEntity<?> getOwnersWithDogsRecord(){
         
     // }

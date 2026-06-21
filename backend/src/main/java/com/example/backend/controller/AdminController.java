@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.backend.entity.enums.ReceShiftStatus;
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.response.Response;
 import com.example.backend.security.dto.UserDTO;
@@ -71,6 +72,21 @@ public class AdminController {
     @PostMapping("/receptionist")
     public ResponseEntity<?> addReceptionist(@Valid @RequestBody UserDTO userDTO){
         return authService.addUser(userDTO, Roles.ROLE_RECEP);
+    }
+
+    @PostMapping("/receptionist/{id}/morning")
+    public ResponseEntity<?> changeTheShiftOfReceMorning(@PathVariable Long id){
+        return adminService.changeReceShift(id, ReceShiftStatus.MORNING);
+    }
+
+    @PostMapping("/receptionist/{id}/evening")
+    public ResponseEntity<?> changeTheShiftOfReceEvening(@PathVariable Long id){
+        return adminService.changeReceShift(id, ReceShiftStatus.EVENING);
+    }
+
+    @PostMapping("/receptionist/{id}/fullday")
+    public ResponseEntity<?> changeTheShiftOfReceFullday(@PathVariable Long id){
+        return adminService.changeReceShift(id, ReceShiftStatus.FULL_DAY);
     }
 
     @PostMapping("/veterinarian")

@@ -51,5 +51,7 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
     private Veterinarians veterinarians;
 
-    public record getUserProfile(String username,String email,Owners.OwnersProfile owners){};
+    public record getOwnerProfile(String username,String email,Owners.OwnersProfile owners){};
+    
+    public record getReceProfile(String username,String email,Employee.EmpRece emp){};
 }

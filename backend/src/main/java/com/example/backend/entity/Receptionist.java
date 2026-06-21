@@ -32,4 +32,6 @@ public class Receptionist {
 
     @Enumerated(EnumType.STRING)
     private ReceShiftStatus shift;
+
+    public record Rece(ReceShiftStatus shift){}
 }

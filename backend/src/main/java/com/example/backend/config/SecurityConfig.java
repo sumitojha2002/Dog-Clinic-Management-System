@@ -44,6 +44,7 @@ public class SecurityConfig {
                     .authorizeHttpRequests(auth-> auth.requestMatchers("/auth/**").permitAll()
                                                         .requestMatchers("/admin/**").hasRole("ADMIN")
                                                         .requestMatchers("/owner/**").hasRole("OWNER")
+                                                        .requestMatchers("/receptionist/**").hasRole("RECEP")
                                                         .anyRequest().authenticated())
                     .addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);
         return http.build();

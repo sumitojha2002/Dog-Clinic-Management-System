@@ -20,10 +20,10 @@ public class UserServices {
     private final UserRepository userRepository;
 
     public ResponseEntity<?> getUserProfile(User user){
-        Optional<User.getUserProfile> foundUser = userRepository.findById(user.getId())
+        Optional<User.getOwnerProfile> foundUser = userRepository.findById(user.getId())
                                                  .stream()
                                                  .map(u -> new User
-                                                    .getUserProfile(
+                                                    .getOwnerProfile(
                                                         user.getUsername(), 
                                                         user.getEmail(),
                                                         new Owners.OwnersProfile(user.getOwners().getId(),
