@@ -1,7 +1,6 @@
 package com.example.backend.services;
 
 import com.example.backend.security.entity.User;
-import com.example.backend.security.entity.User.getUserProfile;
 import com.example.backend.security.entity.enums.Roles;
 
 import java.util.List;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.example.backend.entity.Dogs;
 import com.example.backend.entity.Owners;
-import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.repository.DogsRepository;
 import com.example.backend.repository.OwnerRepository;
 import com.example.backend.response.Response;
@@ -126,6 +124,8 @@ public class AdminServices {
 
 
     // public ResponseEntity<?> getOwnersWithDogsRecord(){
-
+        
     // }
+
+    // make service to register vet and receptionist
 }

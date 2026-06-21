@@ -21,7 +21,6 @@ import com.example.backend.security.entity.User;
 import com.example.backend.services.OwnerService;
 import com.example.backend.services.UserServices;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RestController

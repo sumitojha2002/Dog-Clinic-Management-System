@@ -1,6 +1,9 @@
 package com.example.backend.security.entity;
 
+import com.example.backend.entity.Employee;
 import com.example.backend.entity.Owners;
+import com.example.backend.entity.Receptionist;
+import com.example.backend.entity.Veterinarians;
 import com.example.backend.security.entity.enums.Roles;
 
 import jakarta.persistence.CascadeType;
@@ -39,6 +42,14 @@ public class User {
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private RefreshToken refreshToken;
 
-    public record getUserProfile(String username,String email,Owners.OwnersProfile owners){};
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Employee employee;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private Receptionist receptionist;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private Veterinarians veterinarians;
+
+    public record getUserProfile(String username,String email,Owners.OwnersProfile owners){};
 }

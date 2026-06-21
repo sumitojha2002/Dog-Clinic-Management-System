@@ -9,16 +9,22 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.response.Response;
+import com.example.backend.security.dto.UserDTO;
 import com.example.backend.security.entity.User;
+import com.example.backend.security.entity.enums.Roles;
 import com.example.backend.security.repository.UserRepository;
+import com.example.backend.security.services.AuthService;
 import com.example.backend.services.AdminServices;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
     private final AdminServices adminService;
     private final UserRepository userRepo;
+    private final AuthService authService;
 
     @GetMapping("/owners")
     public ResponseEntity<?> findAllOwners(){
@@ -61,4 +68,13 @@ public class AdminController {
         }
     }
 
+    @PostMapping("/receptionist")
+    public ResponseEntity<?> addReceptionist(@Valid @RequestBody UserDTO userDTO){
+        return authService.addUser(userDTO, Roles.ROLE_RECEP);
+    }
+
+    @PostMapping("/veterinarian")
+    public ResponseEntity<?> addVeterianarian(@Valid @RequestBody UserDTO userDTO){
+        return authService.addUser(userDTO, Roles.ROLE_VET);
+    }
 }

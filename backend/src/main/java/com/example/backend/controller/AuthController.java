@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.example.backend.entity.dto.LoginDTO;
 import com.example.backend.exception.UserAlreadyExistException;
@@ -26,6 +25,7 @@ import com.example.backend.response.Response;
 import com.example.backend.security.dto.UserDTO;
 import com.example.backend.security.entity.RefreshToken;
 import com.example.backend.security.entity.User;
+import com.example.backend.security.entity.enums.Roles;
 import com.example.backend.security.repository.RefreshRepository;
 import com.example.backend.security.services.AuthService;
 import com.example.backend.security.services.CustomUserDetialsServices;
@@ -129,7 +129,7 @@ public class AuthController {
     @PostMapping("/register/petowner")
     public ResponseEntity<?> register(@Valid @RequestBody UserDTO userdto){
         
-        return authService.addPetOwner(userdto);
+        return authService.addUser(userdto,Roles.ROLE_OWNER);
     }
 
 
