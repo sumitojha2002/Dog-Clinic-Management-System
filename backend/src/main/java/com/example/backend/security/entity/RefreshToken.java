@@ -11,6 +11,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -26,6 +28,8 @@ public class RefreshToken {
     @Column(name="expiry_time",nullable = false)
     private Instant expiryTime;
     
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToOne
     @JoinColumn(name="user_id",referencedColumnName = "id")
     User user;

@@ -35,7 +35,7 @@ public class ReceptionistService {
                                     .stream()
                                     .map(u->{
                                         Employee emp = u.getEmployee();
-                                        Receptionist rece = u.getReceptionist();
+                                        Receptionist rece = emp.getReceptionist();
 
                                         Receptionist.Rece receDetails = rece != null ?
                                                        new  Receptionist.Rece(rece.getShift()) :

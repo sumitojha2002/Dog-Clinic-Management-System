@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.example.backend.entity.enums.EmpStatus;
 import com.example.backend.security.entity.User;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,6 +18,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -33,15 +36,28 @@ public class Employee {
     @Enumerated(EnumType.STRING)
     private EmpStatus status;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",referencedColumnName = "id")
     private User user;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "employee",cascade = CascadeType.ALL,orphanRemoval = true)
     private Receptionist receptionist;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL,orphanRemoval = true)
     private Veterinarians veterinarians;
 
     public record EmpRece(String phoneNumber,LocalDate hireDate,EmpStatus receptionistStatus,Receptionist.Rece workScheduleStatus){}
+
+    public record EmpVet(String phoneNumber,LocalDate hireDate,EmpStatus vetStatus,Veterinarians.vet vetInfo){}
+
+    // On records, you can't use @JsonInclude directly the usual way since they're records,
+    // but Jackson respects it if placed on the record itself:
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record Emp(String phoneNumer,LocalDate hireDate,EmpStatus status,Receptionist.Rece receptionists,Veterinarians.vet veterinarians){};
 }

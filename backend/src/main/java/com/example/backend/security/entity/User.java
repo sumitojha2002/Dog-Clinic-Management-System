@@ -2,8 +2,6 @@ package com.example.backend.security.entity;
 
 import com.example.backend.entity.Employee;
 import com.example.backend.entity.Owners;
-import com.example.backend.entity.Receptionist;
-import com.example.backend.entity.Veterinarians;
 import com.example.backend.security.entity.enums.Roles;
 
 import jakarta.persistence.CascadeType;
@@ -16,6 +14,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -36,22 +36,24 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Roles role;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
     private Owners owners;
     
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private RefreshToken refreshToken;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private Employee employee;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
-    private Receptionist receptionist;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
-    private Veterinarians veterinarians;
 
     public record getOwnerProfile(String username,String email,Owners.OwnersProfile owners){};
     
     public record getReceProfile(String username,String email,Employee.EmpRece emp){};
+
+    public record getEmpProfile(String username,String email,Employee.Emp emp){};
 }

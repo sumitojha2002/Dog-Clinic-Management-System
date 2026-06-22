@@ -13,6 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity 
@@ -32,8 +34,11 @@ public class Veterinarians {
 
     private Long yearsOfExperience;
 
-
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="emp_id",referencedColumnName = "id")
     private Employee employee;
+
+    public record vet(Long id,Long userId,String licenseNumber,List<String> specilaization,Long yearsOfExperience){}
 }

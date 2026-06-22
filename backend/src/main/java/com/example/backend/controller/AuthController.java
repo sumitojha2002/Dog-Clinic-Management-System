@@ -122,6 +122,7 @@ public class AuthController {
         }catch(ExpiredJwtException e){
            return  Response.ResponseHandler("Token has been expired.",HttpStatus.UNAUTHORIZED);
         }catch(JwtException e){
+            e.printStackTrace();
             return  Response.ResponseHandler("Something went worng.",HttpStatus.UNAUTHORIZED);
         }
     }

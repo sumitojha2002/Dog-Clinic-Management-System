@@ -69,6 +69,16 @@ public class AdminController {
         }
     }
 
+    // emp end points
+
+    @GetMapping("/employee")
+    public ResponseEntity<?> getAllEmps(){
+        return adminService.getAllEmpDetails();
+    }
+
+
+    // rec end-points
+
     @PostMapping("/receptionist")
     public ResponseEntity<?> addReceptionist(@Valid @RequestBody UserDTO userDTO){
         return authService.addUser(userDTO, Roles.ROLE_RECEP);
@@ -88,6 +98,8 @@ public class AdminController {
     public ResponseEntity<?> changeTheShiftOfReceFullday(@PathVariable Long id){
         return adminService.changeReceShift(id, ReceShiftStatus.FULL_DAY);
     }
+
+    // vet end points
 
     @PostMapping("/veterinarian")
     public ResponseEntity<?> addVeterianarian(@Valid @RequestBody UserDTO userDTO){

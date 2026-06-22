@@ -11,11 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.entity.Dogs;
+import com.example.backend.entity.Employee;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.Receptionist;
+import com.example.backend.entity.Veterinarians;
 import com.example.backend.entity.enums.ReceShiftStatus;
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.repository.DogsRepository;
+import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.repository.OwnerRepository;
 import com.example.backend.repository.ReceptionistRepository;
 import com.example.backend.response.Response;
@@ -23,14 +26,17 @@ import com.example.backend.security.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminServices {
     private final UserRepository userRepo;
     private final OwnerRepository ownerRepo;
     private final DogsRepository dogsRepo;
     private final ReceptionistRepository receptRepo;
+    private final EmployeeRepository empRepo;
 
     @Transactional
     public boolean deleteById(Long id){
@@ -127,6 +133,46 @@ public class AdminServices {
         }
     }
 
+    // Emplo
+    public ResponseEntity<?> getAllEmpDetails() {
+        try {
+            List<User.getEmpProfile> users = userRepo.findAllWithEmployeeDetails()
+                .stream()
+                .map(this::toEmpProfile)
+                .toList();
+
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, users);
+
+        } catch (Exception e) {
+            log.error("Failed to fetch employee details", e);
+            return Response.ResponseHandler(
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    private User.getEmpProfile toEmpProfile(User user) {
+        Employee emp = user.getEmployee();
+
+        Receptionist.Rece receInfo = Optional.ofNullable(emp)
+            .map(Employee::getReceptionist)
+            .map(r -> new Receptionist.Rece(r.getShift()))
+            .orElse(null);
+
+        Veterinarians.vet vetInfo = Optional.ofNullable(emp)
+            .map(Employee::getVeterinarians)
+            .map(v -> new Veterinarians.vet(
+                v.getId(), user.getId(), v.getLicenseNumber(),
+                v.getSpecialization(), v.getYearsOfExperience()))
+            .orElse(null);
+
+        Employee.Emp empInfo = Optional.ofNullable(emp)
+            .map(e -> new Employee.Emp(e.getPhoneNumber(), e.getHireDate(), e.getStatus(), receInfo, vetInfo))
+            .orElse(null);
+
+        return new User.getEmpProfile(user.getUsername(), user.getEmail(), empInfo);
+    }
 
     // Receptionist
 
