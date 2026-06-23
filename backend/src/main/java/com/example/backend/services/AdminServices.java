@@ -1,7 +1,6 @@
 package com.example.backend.services;
 
 import com.example.backend.security.entity.User;
-import com.example.backend.security.entity.enums.Roles;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +21,7 @@ import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.repository.OwnerRepository;
 import com.example.backend.repository.ReceptionistRepository;
 import com.example.backend.response.Response;
+import com.example.backend.security.repository.RefreshRepository;
 import com.example.backend.security.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -37,18 +37,35 @@ public class AdminServices {
     private final DogsRepository dogsRepo;
     private final ReceptionistRepository receptRepo;
     private final EmployeeRepository empRepo;
+    private final RefreshRepository refreshRepo;
+
 
     @Transactional
-    public boolean deleteById(Long id){
-        try{
-            userRepo.deleteById(id);
-            return true;
-        }catch(Exception e){
-            throw e;
+    public ResponseEntity<?> deleteOwnerById(Long id) {
+        try {
+            Owners owner = ownerRepo.findByOwnerId(id)
+                    .orElseThrow(() -> new UserNotFoundException("User does not exist"));
+
+            Long userId = owner.getUser().getId();
+
+            dogsRepo.deleteByOwnerId(owner.getId());
+            refreshRepo.deleteByUserId(userId);
+
+            ownerRepo.delete(owner); 
+            
+            userRepo.deleteById(userId);
+
+            return Response.ResponseHandler("Owner of id has been successfully deleted.", HttpStatus.OK);
+
+        } catch (UserNotFoundException e) {
+            return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    // owners
+
     
     public ResponseEntity<?> getAllOwners(){
         try{
@@ -56,21 +73,26 @@ public class AdminServices {
                                                 .stream()
                                                 .map(this::getAllOwnersProfile)
                                                 .toList();
+            if(ownersProfiles.isEmpty()){
+                return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+            }
             return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,ownersProfiles);
         }catch(Exception e){
             e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
         }
-
     }
 
      public ResponseEntity<?> getOwnerById(Long id){
         try{
-            Optional<Owners.OwnersProfile> ownerProfile = ownerRepo.findById(id)
+            Optional<Owners.OwnersProfile> ownerProfile = ownerRepo.findByOwnerId(id)
                 .stream()
                 .map(this::getAllOwnersProfile)
                 .findFirst();
-            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, ownerProfile);
+            if(ownerProfile.isPresent()){
+                return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, ownerProfile);
+            }
+                return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND, ownerProfile);                            
         }catch(Exception e){
             e.printStackTrace();
             return Response.ResponseHandler("Server Error.", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -91,6 +113,29 @@ public class AdminServices {
             owner.getAlternatePhoneNumber() ,
             owner.getAddress(), 
             owner.getRegistrationDate());
+    }
+
+    // dogs
+
+    public ResponseEntity<?> deleteByDogsId(Long id){
+        try{
+            Optional<Dogs> dog = dogsRepo.findById(id);
+            
+            if(dog.isPresent()){
+                dogsRepo.deleteById(id);    
+                return Response.ResponseHandler("Dog has been successfully deleted from the db.", HttpStatus.OK);
+            }
+            throw new UserNotFoundException("User not found exception.");
+        }catch(UserNotFoundException e){
+            return Response.ResponseHandler(
+                HttpStatus.NOT_FOUND.getReasonPhrase(), 
+                HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), 
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public ResponseEntity<?> getAllDogsRecord(String name,String breed){
@@ -117,9 +162,53 @@ public class AdminServices {
         }
     }
 
+    public ResponseEntity<?> getDogsInfoById(Long id){
+        try{
 
+            Optional<Dogs.DogInfo> profile = dogsRepo.findDogsFullDetails(id)
+            .stream()
+            .map(this::getDogAndOwnerInfo)
+            .findFirst();
+        
+        if(profile.isPresent()){
+            return Response.ResponseHandler(HttpStatus.FOUND.getReasonPhrase(), HttpStatus.FOUND,profile);
+        }
+        return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
    
-
+    public Dogs.DogInfo getDogAndOwnerInfo(Dogs dogs){
+        Owners owner = dogs.getOwners();
+        
+        User.userInfo userInfo = Optional.ofNullable(owner)
+            .map(Owners::getUser)
+            .map(u-> new User.userInfo(u.getUsername(), u.getEmail()))
+            .orElse(null);
+        
+        Owners.OwnersProfile ownersProfile = new Owners.OwnersProfile(userInfo, 
+            owner.getId(),
+            owner.getPhoneNumber() , 
+            owner.getAlternatePhoneNumber(), 
+            owner.getAddress(), 
+            owner.getRegistrationDate());
+        
+        return new Dogs.DogInfo(
+            dogs.getId(), 
+            dogs.getName(), 
+            dogs.getBreed(),
+            dogs.getGender(), 
+            dogs.getColor(),
+            dogs.getWeight(),
+            dogs.getDateOfBirth(),
+            dogs.getVaccinationStatus(),
+            dogs.getRegisteredDate(),
+            dogs.getLastVisitDate(),
+            dogs.getStatus(),
+            ownersProfile);
+    }
     // Emplo
 
     public ResponseEntity<?> getAllEmpDetails(){

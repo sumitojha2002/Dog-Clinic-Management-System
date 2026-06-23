@@ -30,7 +30,7 @@ public class Owners {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id",referencedColumnName = "id")
     private User user;
 
@@ -46,15 +46,16 @@ public class Owners {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "owners",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Dogs> dogs;
 
     public record OwnersDog(Dogs.DogInner dogs) {}
 
     public record OwnersProfile(User.userInfo user,
-                                Long id,
+                                Long ownerId,
                                 String phoneNumber,
                                 String alternatePhoneNumber,
                                 String address,
                                 LocalDate registrationDate){}
+
 }

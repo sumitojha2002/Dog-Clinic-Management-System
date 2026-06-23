@@ -31,7 +31,6 @@ import com.example.backend.security.repository.UserRepository;
 import com.example.backend.security.services.AuthService;
 import com.example.backend.security.services.CustomUserDetialsServices;
 import com.example.backend.security.services.JwtService;
-import com.example.backend.services.UserServices;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

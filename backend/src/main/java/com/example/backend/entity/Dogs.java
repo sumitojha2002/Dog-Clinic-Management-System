@@ -54,4 +54,18 @@ public class Dogs {
     private PetStatus status;
 
     public record DogInner(Long id,String name,String breed,String gender,String color){}
+
+    public record DogInfo(
+        Long id,
+        String name,
+        String breed,
+        String gender,
+        String color,
+        Double weight,
+        LocalDate dateOfBirth,
+        VactionationStatus vaccinationStatus,
+        LocalDate registeredDate,
+        LocalDate lastVisitDate,
+        PetStatus status,
+        Owners.OwnersProfile ownersProfile){}
 }

@@ -44,12 +44,12 @@ public class Employee {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToOne(mappedBy = "employee",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
     private Receptionist receptionist;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToOne(mappedBy = "employee",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
     private Veterinarians veterinarians;
 
     public record EmpRece(User.userInfo userInfo,String phoneNumber,LocalDate hireDate,EmpStatus receptionistStatus,Receptionist.Rece workScheduleStatus){}
