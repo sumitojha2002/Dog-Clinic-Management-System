@@ -47,11 +47,12 @@ public class Owners {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Dogs> Dogs;
+    private List<Dogs> dogs;
 
     public record OwnersDog(Dogs.DogInner dogs) {}
 
-    public record OwnersProfile(Long id,
+    public record OwnersProfile(User.userInfo user,
+                                Long id,
                                 String phoneNumber,
                                 String alternatePhoneNumber,
                                 String address,

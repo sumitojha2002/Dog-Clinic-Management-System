@@ -19,6 +19,7 @@ import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.repository.DogsRepository;
 import com.example.backend.repository.OwnerRepository;
 import com.example.backend.response.Response;
+import com.example.backend.security.entity.User;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -62,10 +63,6 @@ public class OwnerService {
             e.printStackTrace();
             return Response.ResponseHandler("Dog not found. May not be users dogs id.", HttpStatus.NOT_FOUND);
         }
-    }
-
-    public Owners findOwnerById(long id){
-        return ownerRepo.findByUserId(id).orElseThrow(()->new UserNotFoundException("Owner not found"));
     }
 
     public List<Dogs.DogInner> getAllDogs(Owners owner){
@@ -116,4 +113,27 @@ public class OwnerService {
             return Response.ResponseHandler("Failed to register your pet", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    // Owner Profile
+    public ResponseEntity<?> getOwnerProfile(User user){
+        try{
+            Owners.OwnersProfile owner =  ownerRepo.findByUserId(user.getId())
+                .stream()
+                .map(u ->new Owners.OwnersProfile(new User.userInfo(user.getUsername(), user.getEmail()),
+                u.getId(),
+                u.getPhoneNumber(),
+                u.getAlternatePhoneNumber(),
+                u.getAddress(),
+                u.getRegistrationDate())
+        )
+        .findFirst().get();
+    
+        return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,owner);
+    }catch(Exception e){
+        e.printStackTrace();
+        return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    }
+
 }

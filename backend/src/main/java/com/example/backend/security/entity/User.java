@@ -12,6 +12,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,24 +37,13 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Roles role;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
-    private Owners owners;
     
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
-    private RefreshToken refreshToken;
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Employee employee;
 
     public record getOwnerProfile(String username,String email,Owners.OwnersProfile owners){};
     
     public record getReceProfile(String username,String email,Employee.EmpRece emp){};
 
     public record getEmpProfile(String username,String email,Employee.Emp emp){};
+
+    public record userInfo(String username,String email){};
 }

@@ -17,29 +17,4 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserServices {
-    private final UserRepository userRepository;
-
-    public ResponseEntity<?> getUserProfile(User user){
-        Optional<User.getOwnerProfile> foundUser = userRepository.findById(user.getId())
-                                                 .stream()
-                                                 .map(u -> new User
-                                                    .getOwnerProfile(
-                                                        user.getUsername(), 
-                                                        user.getEmail(),
-                                                        new Owners.OwnersProfile(user.getOwners().getId(),
-                                                                                user.getOwners().getPhoneNumber(),
-                                                                                 user.getOwners().getAlternatePhoneNumber(),
-                                                                                 user.getOwners().getAddress(),
-                                                                                  user.getOwners().getRegistrationDate()))).findFirst();
-        if(foundUser.isPresent()){
-            return Response.ResponseHandler("User Profile.", HttpStatus.FOUND, foundUser);
-        }else{
-            throw new UserNotFoundException("We could not find the user.");
-        }
-
-    }
-    public Optional<User> findUser(String username){
-        return userRepository.findByUsernameOrEmail(username);
-    }
-
 }

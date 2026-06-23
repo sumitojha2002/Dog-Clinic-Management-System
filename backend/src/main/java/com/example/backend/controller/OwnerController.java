@@ -16,10 +16,11 @@ import com.example.backend.entity.Dogs;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.dto.OwnerPetDTO;
 import com.example.backend.entity.dto.OwnerProfileDTO;
-import com.example.backend.exception.UserNotFoundException;
+import com.example.backend.repository.OwnerRepository;
 import com.example.backend.security.entity.User;
+import com.example.backend.security.repository.UserRepository;
 import com.example.backend.services.OwnerService;
-import com.example.backend.services.UserServices;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,35 +29,35 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/owner")
 public class OwnerController {
     private final OwnerService ownerService;
-    private final UserServices userServices;
-    
+    private final UserRepository userRepository;
+    private final OwnerRepository ownerRepo;
     @PostMapping("/profile")
     public ResponseEntity<?> updateUserProfile(@AuthenticationPrincipal UserDetails userDetails,@RequestBody OwnerProfileDTO ownerProfileDTO){
-        User user = userServices.findUser(userDetails.getUsername()).orElseThrow(()-> new UserNotFoundException("User not found exception."));
-        Owners owner = ownerService.findOwnerById(user.getId());
+        User user = userRepository.findByUsernameOrEmail(userDetails.getUsername()).get();
+
+        Owners owner = ownerRepo.findByUserId(user.getId()).get();
+
         return ownerService.updateOwnersProfile(ownerProfileDTO, owner);
     }
 
     @GetMapping("/profile")
     public ResponseEntity<?> fetchOwnerProfile(@AuthenticationPrincipal UserDetails userDetails){
-        User user = userServices.findUser(userDetails.getUsername()).orElseThrow(()-> new UserNotFoundException("User not found exception."));
-        return userServices.getUserProfile(user);
+        User user = userRepository.findByUsernameOrEmail(userDetails.getUsername()).get();
+        
+        return ownerService.getOwnerProfile(user);
     }
 
     @GetMapping("/dogs")
     public List<Dogs.DogInner> findAllDogs(@AuthenticationPrincipal UserDetails userDetails){
-        User user = userServices.findUser(userDetails.getUsername()).orElseThrow(()-> new UserNotFoundException("could not find the user."));
-        Owners owners = ownerService.findOwnerById(user.getId());
+        User user = userRepository.findByUsernameOrEmail(userDetails.getUsername()).get();
+        Owners owners = ownerRepo.findByUserId(user.getId()).get();
         return ownerService.getAllDogs(owners);
     }
 
     @GetMapping("/dogs/{id}")
     public ResponseEntity<?> findDogById(@PathVariable Long id,@AuthenticationPrincipal UserDetails userDetails){
-        String username = userDetails.getUsername();
-        User user = userServices.findUser(username)
-                                .orElseThrow(()-> 
-                                new UserNotFoundException("User not found"));
-        Owners owner = ownerService.findOwnerById(user.getId());
+        User user = userRepository.findByUsernameOrEmail(userDetails.getUsername()).get();
+        Owners owner = ownerRepo.findByUserId(user.getId()).get();
         return ownerService.findPetsByID(id, owner);
     }
 
@@ -65,11 +66,8 @@ public class OwnerController {
     public ResponseEntity<?> addDog(@RequestBody OwnerPetDTO ownerPetDTO
                                     ,@AuthenticationPrincipal UserDetails userDetails){
         
-            User user = userServices.findUser(userDetails
-                                .getUsername())
-                                .orElseThrow(()-> 
-                                new UserNotFoundException("User not found"));
-            Owners owners = ownerService.findOwnerById(user.getId());
+            User user = userRepository.findByUsernameOrEmail(userDetails.getUsername()).get();
+            Owners owners = ownerRepo.findByUserId(user.getId()).get();
 
            return ownerService.addPet(ownerPetDTO,owners);
     }

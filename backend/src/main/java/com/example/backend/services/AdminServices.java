@@ -48,38 +48,49 @@ public class AdminServices {
         }
     }
 
+    // owners
+    
     public ResponseEntity<?> getAllOwners(){
         try{
-            List<User.getOwnerProfile> ownersProfile = userRepo.findByRoles(Roles.ROLE_OWNER)
-        .stream()
-        .map(user -> {
-            Owners o = user.getOwners();
-            Owners.OwnersProfile profile = (o != null)
-                    ? new Owners.OwnersProfile(
-                            o.getId(),
-                            o.getPhoneNumber(),
-                            o.getAlternatePhoneNumber(),
-                            o.getAddress(),
-                            o.getRegistrationDate())
-                    : new Owners.OwnersProfile(
-                            null, null, null, null, null); 
-
-            return new User.getOwnerProfile(
-                    user.getUsername(),
-                    user.getEmail(),
-                    profile);
-        })
-        .toList();
-        
-            if(ownersProfile.isEmpty()){
-                return Response.ResponseHandler("There are no owners.", HttpStatus.NOT_FOUND);
-            }else{
-                return Response.ResponseHandler("All owners fetched successfully.", HttpStatus.OK, ownersProfile);
-            }
+            List<Owners.OwnersProfile> ownersProfiles =ownerRepo.findAllUser()
+                                                .stream()
+                                                .map(this::getAllOwnersProfile)
+                                                .toList();
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,ownersProfiles);
         }catch(Exception e){
-            e.printStackTrace();    
-            return Response.ResponseHandler("Somthing went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
         }
+
+    }
+
+     public ResponseEntity<?> getOwnerById(Long id){
+        try{
+            Optional<Owners.OwnersProfile> ownerProfile = ownerRepo.findById(id)
+                .stream()
+                .map(this::getAllOwnersProfile)
+                .findFirst();
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, ownerProfile);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler("Server Error.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public Owners.OwnersProfile getAllOwnersProfile(Owners owner){
+        
+        User.userInfo userProfile = Optional.ofNullable(owner)
+            .map(Owners::getUser)
+            .map(u -> new User.userInfo(u.getUsername(), u.getEmail()))
+            .orElse(null);
+
+        return new Owners.OwnersProfile(
+            userProfile, 
+            owner.getId(), 
+            owner.getPhoneNumber(),
+            owner.getAlternatePhoneNumber() ,
+            owner.getAddress(), 
+            owner.getRegistrationDate());
     }
 
     public ResponseEntity<?> getAllDogsRecord(String name,String breed){
@@ -107,72 +118,49 @@ public class AdminServices {
     }
 
 
-    public ResponseEntity<?> getOwnerById(Long id){
-        try{
-            Optional<User.getOwnerProfile> ownerById = userRepo.findByRoleOwnerAndId(Roles.ROLE_OWNER,id)
-                                                .stream()
-                                                .map(owner->{
-                                                    Owners foundOwner =  owner.getOwners();
-                                                    Owners.OwnersProfile ownersProfile = foundOwner != null ? new
-                                                                Owners.OwnersProfile(foundOwner.getId(),
-                                                                                    foundOwner.getPhoneNumber(),
-                                                                                    foundOwner.getAlternatePhoneNumber(),
-                                                                                    foundOwner.getAddress(),
-                                                                                    foundOwner.getRegistrationDate()):
-                                                                                   new  Owners.OwnersProfile(null,null,null,null,null);
-                                                    return new User.getOwnerProfile(owner.getUsername(), owner.getEmail(), ownersProfile); 
-                                                                                }).findFirst();
-        if(ownerById.isPresent()){
-            return Response.ResponseHandler("Owner found Successfully.", HttpStatus.OK, ownerById);
-        }else{
-             return Response.ResponseHandler("Owner not found.",HttpStatus.NOT_FOUND);
-        }
-        }catch(Exception e){
-            e.printStackTrace();
-            return Response.ResponseHandler("Server Error.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+   
 
     // Emplo
-    public ResponseEntity<?> getAllEmpDetails() {
-        try {
-            List<User.getEmpProfile> users = userRepo.findAllWithEmployeeDetails()
+
+    public ResponseEntity<?> getAllEmpDetails(){
+        try{
+            List<Employee.Emp> emps = empRepo.findAllEmployees()
                 .stream()
                 .map(this::toEmpProfile)
                 .toList();
-
-            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, users);
-
-        } catch (Exception e) {
-            log.error("Failed to fetch employee details", e);
-            return Response.ResponseHandler(
-                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,emps);
+        }catch(Exception e){
+            log.error("Failed to fetch employee details.", e);
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    private User.getEmpProfile toEmpProfile(User user) {
-        Employee emp = user.getEmployee();
+    public Employee.Emp toEmpProfile(Employee employee){
 
-        Receptionist.Rece receInfo = Optional.ofNullable(emp)
+        Receptionist.Rece rece = Optional.ofNullable(employee)
             .map(Employee::getReceptionist)
-            .map(r -> new Receptionist.Rece(r.getShift()))
+            .map(r->new Receptionist.Rece(r.getShift()))
             .orElse(null);
-
-        Veterinarians.vet vetInfo = Optional.ofNullable(emp)
+        
+        Veterinarians.vet vet = Optional.ofNullable(employee)
             .map(Employee::getVeterinarians)
-            .map(v -> new Veterinarians.vet(
-                v.getId(), user.getId(), v.getLicenseNumber(),
-                v.getSpecialization(), v.getYearsOfExperience()))
+            .map(v->new Veterinarians.vet(v.getId(), v.getLicenseNumber(), v.getSpecialization(), v.getYearsOfExperience()))
+            .orElse(null);
+        
+        User.userInfo user = Optional.ofNullable(employee)
+            .map(Employee::getUser)
+            .map(u-> new User.userInfo(u.getUsername(), u.getEmail()))
             .orElse(null);
 
-        Employee.Emp empInfo = Optional.ofNullable(emp)
-            .map(e -> new Employee.Emp(e.getPhoneNumber(), e.getHireDate(), e.getStatus(), receInfo, vetInfo))
-            .orElse(null);
-
-        return new User.getEmpProfile(user.getUsername(), user.getEmail(), empInfo);
+        return new Employee.Emp(employee.getPhoneNumber(),
+             employee.getHireDate(), 
+             employee.getStatus(), 
+             user, 
+             rece, 
+             vet);
     }
+
 
     // Receptionist
 

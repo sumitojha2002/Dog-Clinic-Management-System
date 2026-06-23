@@ -27,6 +27,7 @@ import com.example.backend.security.entity.RefreshToken;
 import com.example.backend.security.entity.User;
 import com.example.backend.security.entity.enums.Roles;
 import com.example.backend.security.repository.RefreshRepository;
+import com.example.backend.security.repository.UserRepository;
 import com.example.backend.security.services.AuthService;
 import com.example.backend.security.services.CustomUserDetialsServices;
 import com.example.backend.security.services.JwtService;
@@ -43,12 +44,11 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/auth")
 public class AuthController {
     private final AuthService authService;
-    private final UserServices userService;
     private final JwtService jwtService;
     private final AuthenticationManager authManger;
     private final RefreshRepository refreshRepo;
     private final CustomUserDetialsServices cusUserDelSer;
-
+    private final UserRepository userRepo;
     @PostMapping("/login")
     @Transactional
     public ResponseEntity<Object> login(@RequestBody LoginDTO logindto){
@@ -57,8 +57,8 @@ public class AuthController {
             Authentication auth = authManger.authenticate(new UsernamePasswordAuthenticationToken(logindto.getUsername(), logindto.getPassword()));
             UserDetails userDetails = (UserDetails) auth.getPrincipal();
             System.out.println(userDetails);
-            User user = userService.findUser(userDetails.getUsername()).orElseThrow(()->new UserNotFoundException("User not found"));
-            
+            User user = userRepo.findByUsernameOrEmail(userDetails.getUsername()).get();
+
             System.out.println(userDetails);
             Instant now = Instant.now();
             
@@ -67,7 +67,6 @@ public class AuthController {
             refreshTokendb.setRefreshToken(refreshToken);
             refreshTokendb.setExpiryTime(now.plus(7, ChronoUnit.DAYS));
             refreshTokendb.setUser(user);
-
             ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                                                    .httpOnly(true)
                                                    .path("/auth")

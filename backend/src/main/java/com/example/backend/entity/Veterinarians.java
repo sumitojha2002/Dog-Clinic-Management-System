@@ -23,6 +23,8 @@ public class Veterinarians {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id",referencedColumnName = "id")
     private User user;   
@@ -40,5 +42,5 @@ public class Veterinarians {
     @JoinColumn(name="emp_id",referencedColumnName = "id")
     private Employee employee;
 
-    public record vet(Long id,Long userId,String licenseNumber,List<String> specilaization,Long yearsOfExperience){}
+    public record vet(Long userId,String licenseNumber,List<String> specilaization,Long yearsOfExperience){}
 }

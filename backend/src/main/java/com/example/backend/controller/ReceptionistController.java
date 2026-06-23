@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.entity.dto.ReceDTO;
+import com.example.backend.security.entity.User;
+import com.example.backend.security.repository.UserRepository;
 import com.example.backend.services.ReceptionistService;
-import com.example.backend.services.UserServices;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,17 +22,16 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/receptionist")
 public class ReceptionistController {
     private final ReceptionistService receService;
-    private final UserServices userServices;
-
+    private final UserRepository userRepo;
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(@AuthenticationPrincipal UserDetails userDetails){
-        String username = userDetails.getUsername();
-        return receService.getReceProfile(username);
+        User user = userRepo.findByUsernameOrEmail(userDetails.getUsername()).get();
+        return receService.getReceProfile(user.getId());
     }
 
     @PostMapping("/profile")
     public ResponseEntity<?> setUpProfile(@Valid @RequestBody ReceDTO receDTO,@AuthenticationPrincipal UserDetails userDetails){
-        String username = userDetails.getUsername();
-        return receService.changeProfile(receDTO,username);
+        User user = userRepo.findByUsernameOrEmail(userDetails.getUsername()).get();
+        return receService.changeProfile(receDTO,user.getId());
     }
 }
