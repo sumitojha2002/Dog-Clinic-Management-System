@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.entity.Dogs;
 import com.example.backend.entity.Owners;
+import com.example.backend.entity.dto.AppointmentDTO;
 import com.example.backend.entity.dto.OwnerPetDTO;
 import com.example.backend.entity.dto.OwnerProfileDTO;
 import com.example.backend.repository.OwnerRepository;
@@ -21,7 +22,7 @@ import com.example.backend.security.entity.User;
 import com.example.backend.security.repository.UserRepository;
 import com.example.backend.services.OwnerService;
 
-
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,6 +32,8 @@ public class OwnerController {
     private final OwnerService ownerService;
     private final UserRepository userRepository;
     private final OwnerRepository ownerRepo;
+
+    // add data in the profile
     @PostMapping("/profile")
     public ResponseEntity<?> updateUserProfile(@AuthenticationPrincipal UserDetails userDetails,@RequestBody OwnerProfileDTO ownerProfileDTO){
         User user = userRepository.findByUsernameOrEmail(userDetails.getUsername()).get();
@@ -62,14 +65,22 @@ public class OwnerController {
     }
 
 
-    @PostMapping
+    @PostMapping("/dogs")
     public ResponseEntity<?> addDog(@RequestBody OwnerPetDTO ownerPetDTO
                                     ,@AuthenticationPrincipal UserDetails userDetails){
-        
             User user = userRepository.findByUsernameOrEmail(userDetails.getUsername()).get();
             Owners owners = ownerRepo.findByUserId(user.getId()).get();
-
            return ownerService.addPet(ownerPetDTO,owners);
     }
+
+
+    // Appointment
+    @PostMapping("/dogs/{id}/appointment")
+    public ResponseEntity<?> appointmentForDog(
+        @PathVariable Long id,
+        @Valid @RequestBody AppointmentDTO appDto,
+        @AuthenticationPrincipal UserDetails userDetails){
+            return ownerService.setAppoinmentForThePet(id, appDto, userDetails);
+        }
 }
 

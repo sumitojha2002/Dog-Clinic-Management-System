@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -41,6 +42,9 @@ public class Veterinarians {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="emp_id",referencedColumnName = "id")
     private Employee employee;
+
+    @OneToMany(mappedBy = "veterinarians",fetch = FetchType.LAZY)
+    private List<Appointments> appointment;
 
     public record vet(Long userId,String licenseNumber,List<String> specilaization,Long yearsOfExperience){}
 }

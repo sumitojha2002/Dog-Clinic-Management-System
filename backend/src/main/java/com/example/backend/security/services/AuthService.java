@@ -15,9 +15,7 @@ import com.example.backend.entity.Owners;
 import com.example.backend.entity.Receptionist;
 import com.example.backend.entity.Veterinarians;
 import com.example.backend.entity.enums.EmpStatus;
-import com.example.backend.entity.enums.ReceShiftStatus;
 import com.example.backend.exception.UserAlreadyExistException;
-import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.repository.OwnerRepository;
 import com.example.backend.repository.ReceptionistRepository;
@@ -27,7 +25,6 @@ import com.example.backend.security.dto.UserDTO;
 import com.example.backend.security.entity.User;
 import com.example.backend.security.entity.enums.Roles;
 import com.example.backend.security.repository.UserRepository;
-import com.example.backend.services.AdminServices;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +35,6 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final OwnerRepository ownerRepo;
-    private final AdminServices adminServices;
     private final ReceptionistRepository receptRepo;
     private final VeterinarianRepository vetRepo;
     private final EmployeeRepository empRepo;

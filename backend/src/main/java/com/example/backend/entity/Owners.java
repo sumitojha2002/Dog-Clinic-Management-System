@@ -49,6 +49,11 @@ public class Owners {
     @OneToMany(mappedBy = "owners",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Dogs> dogs;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "owners",fetch = FetchType.LAZY)
+    private List<Appointments> appointments;
+
     public record OwnersDog(Dogs.DogInner dogs) {}
 
     public record OwnersProfile(User.userInfo user,

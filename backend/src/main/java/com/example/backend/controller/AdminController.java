@@ -28,6 +28,7 @@ public class AdminController {
 
 
     // owners
+
     @GetMapping("/owners")
     public ResponseEntity<?> findAllOwners(){
         return adminService.getAllOwners();
@@ -58,11 +59,17 @@ public class AdminController {
     public ResponseEntity<?> findDogsInfo(@PathVariable Long id){
         return adminService.getDogsInfoById(id);
     }
+
     // emp end points
 
     @GetMapping("/employee")
     public ResponseEntity<?> getAllEmps(){
         return adminService.getAllEmpDetails();
+    }
+
+    @DeleteMapping("/employee/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id){
+        return adminService.deleteEmpByEmpId(id);
     }
 
 

@@ -8,18 +8,24 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.example.backend.entity.Appointments;
 import com.example.backend.entity.Dogs;
 import com.example.backend.entity.Owners;
+import com.example.backend.entity.dto.AppointmentDTO;
 import com.example.backend.entity.dto.OwnerPetDTO;
 import com.example.backend.entity.dto.OwnerProfileDTO;
+import com.example.backend.entity.enums.AppointmentStatus;
 import com.example.backend.entity.enums.VactionationStatus;
 import com.example.backend.exception.UserNotFoundException;
+import com.example.backend.repository.AppointmentRepository;
 import com.example.backend.repository.DogsRepository;
 import com.example.backend.repository.OwnerRepository;
 import com.example.backend.response.Response;
 import com.example.backend.security.entity.User;
+import com.example.backend.security.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +35,8 @@ import lombok.RequiredArgsConstructor;
 public class OwnerService {
     private final OwnerRepository ownerRepo;
     private final DogsRepository dogsRepo;
+    private final UserRepository userRepo;
+    private final AppointmentRepository appRepo;
 
     @Transactional
     public ResponseEntity<?> updateOwnersProfile(OwnerProfileDTO ownersProfiledto, Owners owners){
@@ -136,4 +144,43 @@ public class OwnerService {
     }
     }
 
+    // Set Appoitment
+    @Transactional
+    public ResponseEntity<?> setAppoinmentForThePet(Long id, AppointmentDTO appDTO,UserDetails userDetails){
+        try{
+            Dogs dog = dogsRepo
+                .findById(id)
+                .orElseThrow(()-> new UserNotFoundException("Dog with this id not found.")); 
+
+            User user = userRepo
+                .findById(id)
+                .orElseThrow(()-> new UserNotFoundException("user not found."));
+
+            Owners owner = ownerRepo
+                .findByUserId(user.getId())
+                .orElseThrow(()-> new UserNotFoundException("user not found."));
+            
+            if(dog.getOwners().getId() == owner.getId()){
+                
+                Appointments appointments = new Appointments();
+
+                appointments.setAppointmentDate(appDTO.getAppointmentDate());
+                appointments.setAppointmentTime(appDTO.getAppointmentTime());
+                appointments.setDogs(dog);
+                appointments.setReason(appDTO.getReason());
+                appointments.setStatus(AppointmentStatus.PENDING);
+                appointments.setOwners(owner);
+
+                appRepo.save(appointments);
+
+                return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
+            }
+            return Response.ResponseHandler(HttpStatus.CONFLICT.getReasonPhrase(),HttpStatus.CONFLICT);
+        }catch(UserNotFoundException e){
+            return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

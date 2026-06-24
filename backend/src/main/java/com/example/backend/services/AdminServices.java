@@ -16,6 +16,7 @@ import com.example.backend.entity.Receptionist;
 import com.example.backend.entity.Veterinarians;
 import com.example.backend.entity.enums.ReceShiftStatus;
 import com.example.backend.exception.UserNotFoundException;
+import com.example.backend.helper.ProfileHelper;
 import com.example.backend.repository.DogsRepository;
 import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.repository.OwnerRepository;
@@ -39,6 +40,7 @@ public class AdminServices {
     private final EmployeeRepository empRepo;
     private final RefreshRepository refreshRepo;
 
+    // owners
 
     @Transactional
     public ResponseEntity<?> deleteOwnerById(Long id) {
@@ -65,13 +67,11 @@ public class AdminServices {
         }
     }
 
-
-    
     public ResponseEntity<?> getAllOwners(){
         try{
-            List<Owners.OwnersProfile> ownersProfiles =ownerRepo.findAllUser()
+            List<Owners.OwnersProfile> ownersProfiles = ownerRepo.findAllUser()
                                                 .stream()
-                                                .map(this::getAllOwnersProfile)
+                                                .map(ProfileHelper::getAllOwnersProfile)
                                                 .toList();
             if(ownersProfiles.isEmpty()){
                 return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
@@ -87,7 +87,7 @@ public class AdminServices {
         try{
             Optional<Owners.OwnersProfile> ownerProfile = ownerRepo.findByOwnerId(id)
                 .stream()
-                .map(this::getAllOwnersProfile)
+                .map(ProfileHelper::getAllOwnersProfile)
                 .findFirst();
             if(ownerProfile.isPresent()){
                 return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, ownerProfile);
@@ -99,21 +99,7 @@ public class AdminServices {
         }
     }
 
-    public Owners.OwnersProfile getAllOwnersProfile(Owners owner){
-        
-        User.userInfo userProfile = Optional.ofNullable(owner)
-            .map(Owners::getUser)
-            .map(u -> new User.userInfo(u.getUsername(), u.getEmail()))
-            .orElse(null);
 
-        return new Owners.OwnersProfile(
-            userProfile, 
-            owner.getId(), 
-            owner.getPhoneNumber(),
-            owner.getAlternatePhoneNumber() ,
-            owner.getAddress(), 
-            owner.getRegistrationDate());
-    }
 
     // dogs
 
@@ -209,7 +195,8 @@ public class AdminServices {
             dogs.getStatus(),
             ownersProfile);
     }
-    // Emplo
+
+    // Emp
 
     public ResponseEntity<?> getAllEmpDetails(){
         try{
@@ -250,12 +237,28 @@ public class AdminServices {
              vet);
     }
 
+    @Transactional
+    public ResponseEntity<?> deleteEmpByEmpId(Long id){
+        try{
+            Employee emp = empRepo.findById(id).orElseThrow(()-> new UserNotFoundException(""));
+            User user = userRepo.findById(emp.getUser().getId()).get();
+            refreshRepo.deleteByUserId(user.getId());
+            empRepo.delete(emp);
+            userRepo.deleteById(user.getId());
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
+        }catch(UserNotFoundException e){
+            return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     // Receptionist
 
     public ResponseEntity<?> changeReceShift(Long id,ReceShiftStatus shift){
        try{
-            System.out.println("hello there");
            Optional<Receptionist> rece = receptRepo.findReceFromUserId(id);
            
            if(!rece.isPresent()){
@@ -276,9 +279,4 @@ public class AdminServices {
         }
         
     }
-    // public ResponseEntity<?> getOwnersWithDogsRecord(){
-        
-    // }
-
-    // make service to register vet and receptionist
 }

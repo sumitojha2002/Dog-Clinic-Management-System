@@ -1,5 +1,6 @@
 package com.example.backend.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -8,25 +9,29 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.entity.Employee;
+import com.example.backend.entity.Owners;
 import com.example.backend.entity.Receptionist;
 import com.example.backend.entity.dto.ReceDTO;
+import com.example.backend.entity.enums.AppointmentStatus;
 import com.example.backend.entity.enums.EmpStatus;
 import com.example.backend.exception.UserNotFoundException;
+import com.example.backend.helper.ProfileHelper;
+import com.example.backend.repository.AppointmentRepository;
 import com.example.backend.repository.EmployeeRepository;
+import com.example.backend.repository.OwnerRepository;
 import com.example.backend.response.Response;
 import com.example.backend.security.entity.User;
-import com.example.backend.security.repository.UserRepository;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ReceptionistService {
-    private final UserServices userServices;
-    private final UserRepository userRepo;
-    private final EmployeeRepository empRepo;
 
+    private final EmployeeRepository empRepo;
+    private final OwnerRepository ownerRepo;
+    private final AppointmentRepository appRepo;
+    // Receptionist
 
     public ResponseEntity<?> getReceProfile(Long id){
         try{
@@ -78,6 +83,84 @@ public class ReceptionistService {
         }catch(Exception e){
             e.printStackTrace();
             return Response.ResponseHandler("Internal Server Error.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // get owner profile
+    public ResponseEntity<?> getOwnersProfiles(){
+        try{
+            List<Owners.OwnersProfile> owners = ownerRepo.findAllUser()
+                                                    .stream()
+                                                    .map(ProfileHelper::getAllOwnersProfile).toList();
+            if(owners.isEmpty()){
+                throw new UserNotFoundException("User not found exception.");
+            }
+            return Response.ResponseHandler(HttpStatus.FOUND.getReasonPhrase(), HttpStatus.FOUND, owners);
+        }catch(UserNotFoundException e)
+        {
+            return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+        public ResponseEntity<?> getOwnersProfilesbyId(Long id){
+        try{
+            List<Owners.OwnersProfile> owners = ownerRepo.findByUserId(id)
+                                                    .stream()
+                                                    .map(ProfileHelper::getAllOwnersProfile).toList();
+            if(owners.isEmpty()){
+                throw new UserNotFoundException("User not found exception.");
+            }
+            return Response.ResponseHandler(HttpStatus.FOUND.getReasonPhrase(), HttpStatus.FOUND, owners);
+        }catch(UserNotFoundException e)
+        {
+            return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // dogs
+    // public ResponseEntity<?> getAllDogsInfo(String name,String breed){
+    //     String safeString = (name != null && !name.isEmpty()) ? name : null;
+    //     String safeBreed  = (breed != null && !breed.isEmpty()) ? breed: null;
+
+
+    // }
+
+    // Appointments
+    @Transactional
+    public ResponseEntity<?> changeAppCheckIn(Long id){
+        try{
+            int updateApp = appRepo.updateAppStatus(id, AppointmentStatus.CHECKED_IN.toString());
+            if(updateApp <=0){
+                throw new UserNotFoundException("User not found.");
+            }
+            return Response.ResponseHandler("Checked in successful.", HttpStatus.OK);
+        }catch(UserNotFoundException e){
+            return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<?> changeAppConfirm(Long id){
+        try{
+            int updateApp = appRepo.updateAppStatus(id, AppointmentStatus.CONFIRMED.toString());
+            if(updateApp <=0){
+                throw new UserNotFoundException("User not found.");
+            }
+            return Response.ResponseHandler("Checked in successful.", HttpStatus.OK);
+        }catch(UserNotFoundException e){
+            return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

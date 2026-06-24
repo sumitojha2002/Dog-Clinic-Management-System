@@ -28,12 +28,13 @@ public class ExampleExceptionHandler {
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
-        System.out.println("VALIDATION FAILED: " + e.getMessage());
+        
             Map<String,Object> errors = new HashMap<>();
+            e.getBindingResult().getGlobalErrors().forEach(error->errors.put("global error",error.getDefaultMessage()));
+            
             e.getBindingResult().getFieldErrors().forEach(error->errors.put(error.getField(),error.getDefaultMessage()));
-
         Map<String,Object> body = new LinkedHashMap<>();
-        body.put("status", HttpStatus.BAD_REQUEST);
+        body.put("status", HttpStatus.BAD_REQUEST.toString());
         body.put("errors",errors);
         return new ResponseEntity<>(body,HttpStatus.BAD_REQUEST);
     }
