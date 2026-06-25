@@ -57,6 +57,7 @@ public class Appointments {
         Long id,
         Dogs.DogInner dogs,
         String reason,
+        AppointmentStatus appointmentStatus,
         Veterinarians.fetProfile vets,
         Owners.OwnersProfile ownersProfile,
         LocalDate appointmentDate,

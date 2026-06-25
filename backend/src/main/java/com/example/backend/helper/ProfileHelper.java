@@ -70,6 +70,7 @@ public class ProfileHelper {
             appointments.getId(),
             dogInfo,
             appointments.getReason(),
+            appointments.getStatus(),
             vets,
             owners,
             appointments.getAppointmentDate(),

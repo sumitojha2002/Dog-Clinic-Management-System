@@ -25,5 +25,7 @@ public class AppointmentDTO {
      @NotNull(message ="Time is required")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
      private LocalTime appointmentTime;
-  
+
+     @NotNull(message = "Veterinarian is required.")
+     private Long vetId;
 }

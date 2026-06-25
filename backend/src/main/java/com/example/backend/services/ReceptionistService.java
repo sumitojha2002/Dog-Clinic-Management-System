@@ -1,5 +1,6 @@
 package com.example.backend.services;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -133,9 +134,9 @@ public class ReceptionistService {
     // }
 
     // Appointments
-    public ResponseEntity<?> getAppointments(){
+    public ResponseEntity<?> getAppointments(String status,LocalDate date){
         try{
-            List<Appointments.Appointment> appo = appRepo.findAllthAppointments()
+            List<Appointments.Appointment> appo = appRepo.findAllthAppointments(status,date)
                 .stream()
                 .map(ProfileHelper::getAllAppoimentProfile)
                 .toList();
@@ -150,19 +151,21 @@ public class ReceptionistService {
         }
     }
     @Transactional
-    public ResponseEntity<?> changeAppCheckIn(Long id){
+    public ResponseEntity<?> changeAppConfirm(Long id){
         try{
-            Optional<Appointments> appointment = appRepo.findById(id);
+            Optional<Appointments> appointment = appRepo.findByAppID(id);
 
+        
             if(appointment.isPresent()){
                 if(appointment.get().getStatus().equals(AppointmentStatus.PENDING)){
-                    appRepo.updateAppStatus(id, AppointmentStatus.CHECKED_IN.toString());
-                }else if(appointment.get().getStatus().equals(AppointmentStatus.CHECKED_IN)){
-                    return Response.ResponseHandler("Already checked in.", HttpStatus.CONFLICT);
+                    appointment.get().setStatus(AppointmentStatus.CONFIRMED);
+                    appRepo.save(appointment.get());
+                }else if(appointment.get().getStatus().equals(AppointmentStatus.CONFIRMED)){
+                    return Response.ResponseHandler("Already confirmed in.", HttpStatus.CONFLICT);
                 }
             }
             
-            return Response.ResponseHandler("Checked in successful.", HttpStatus.OK);
+            return Response.ResponseHandler("Status changed to confirmed successfully.", HttpStatus.OK);
         }catch(UserNotFoundException e){
             return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
         }catch(Exception e){
@@ -172,20 +175,21 @@ public class ReceptionistService {
     }
 
     @Transactional
-    public ResponseEntity<?> changeAppConfirm(Long id){
+    public ResponseEntity<?> changeAppCheckIn(Long id){
         try{
-            Optional<Appointments> appointment = appRepo.findById(id);
+            Optional<Appointments> appointment = appRepo.findByAppID(id);
 
             if(appointment.isPresent()){
-                if(appointment.get().getStatus().equals(AppointmentStatus.CHECKED_IN)){
-                    appRepo.updateAppStatus(id, AppointmentStatus.CONFIRMED.toString());
+                if(appointment.get().getStatus().equals(AppointmentStatus.CONFIRMED)){
+                    appointment.get().setStatus(AppointmentStatus.CHECKED_IN);
+                    appRepo.save(appointment.get());
                 }else if(appointment.get().getStatus().equals(AppointmentStatus.CONFIRMED)){
                     return Response.ResponseHandler("Already confirmed.", HttpStatus.CONFLICT);
                 }else{
-                    return Response.ResponseHandler("Cannot change pending to confirmed.", HttpStatus.CONFLICT);
+                    return Response.ResponseHandler("Cannot change pending to checked in.", HttpStatus.CONFLICT);
                 }
             }
-            return Response.ResponseHandler("Checked in successful.", HttpStatus.OK);
+            return Response.ResponseHandler("Status changed to checked in successfully.", HttpStatus.OK);
         }catch(UserNotFoundException e){
             return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
         }catch(Exception e){

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.example.backend.entity.Appointments;
 import com.example.backend.entity.Dogs;
 import com.example.backend.entity.Owners;
+import com.example.backend.entity.Veterinarians;
 import com.example.backend.entity.dto.AppointmentDTO;
 import com.example.backend.entity.dto.OwnerPetDTO;
 import com.example.backend.entity.dto.OwnerProfileDTO;
@@ -23,6 +24,7 @@ import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.repository.AppointmentRepository;
 import com.example.backend.repository.DogsRepository;
 import com.example.backend.repository.OwnerRepository;
+import com.example.backend.repository.VeterinarianRepository;
 import com.example.backend.response.Response;
 import com.example.backend.security.entity.User;
 import com.example.backend.security.repository.UserRepository;
@@ -33,10 +35,12 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class OwnerService {
+
     private final OwnerRepository ownerRepo;
     private final DogsRepository dogsRepo;
     private final UserRepository userRepo;
     private final AppointmentRepository appRepo;
+    private final VeterinarianRepository vetRepo;
 
     @Transactional
     public ResponseEntity<?> updateOwnersProfile(OwnerProfileDTO ownersProfiledto, Owners owners){
@@ -149,7 +153,9 @@ public class OwnerService {
                 .findById(id)
                 .orElseThrow(()-> new UserNotFoundException("Dog with this id not found.")); 
 
-            LocalDate now = LocalDate.now();
+            Veterinarians vet = vetRepo
+                .findById(appDTO.getVetId())
+                .orElseThrow(()-> new UserNotFoundException("Veterinarian not found."));
 
             String username = userDetails.getUsername();
 
@@ -182,13 +188,13 @@ public class OwnerService {
             appointments.setReason(appDTO.getReason());
             appointments.setStatus(AppointmentStatus.PENDING);
             appointments.setOwners(owner);
-            
+            appointments.setVeterinarians(vet);
             appRepo.save(appointments);
             
             return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
              
         }catch(UserNotFoundException e){
-            return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+            return Response.ResponseHandler(e.getMessage(), HttpStatus.NOT_FOUND);
         }catch(Exception e){
             e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
