@@ -56,7 +56,6 @@ public class OwnerService {
 
     public ResponseEntity<?> findPetsByID(Long id,Owners owner){
         try{
-
             List<Dogs.DogInner> listOfDogs = getAllDogs(owner);
             Optional<Dogs.DogInner> foundDog =  listOfDogs.stream().filter(dog-> dog.id().equals(id)).findFirst();
             
@@ -103,7 +102,6 @@ public class OwnerService {
             
             Dogs dogs = new Dogs();
             
-            
             owners.getDogs().add(dogs);
             dogs.setName(ownerPetdto.getName());
             dogs.setBreed(ownerPetdto.getBreed());
@@ -121,7 +119,6 @@ public class OwnerService {
             return Response.ResponseHandler("Failed to register your pet", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     // Owner Profile
     public ResponseEntity<?> getOwnerProfile(User user){
@@ -152,30 +149,44 @@ public class OwnerService {
                 .findById(id)
                 .orElseThrow(()-> new UserNotFoundException("Dog with this id not found.")); 
 
+            LocalDate now = LocalDate.now();
+
+            String username = userDetails.getUsername();
+
             User user = userRepo
-                .findById(id)
+                .findByUsernameOrEmail(username)
                 .orElseThrow(()-> new UserNotFoundException("user not found."));
 
             Owners owner = ownerRepo
                 .findByUserId(user.getId())
                 .orElseThrow(()-> new UserNotFoundException("user not found."));
             
-            if(dog.getOwners().getId() == owner.getId()){
                 
-                Appointments appointments = new Appointments();
-
-                appointments.setAppointmentDate(appDTO.getAppointmentDate());
-                appointments.setAppointmentTime(appDTO.getAppointmentTime());
-                appointments.setDogs(dog);
-                appointments.setReason(appDTO.getReason());
-                appointments.setStatus(AppointmentStatus.PENDING);
-                appointments.setOwners(owner);
-
-                appRepo.save(appointments);
-
-                return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
+            if(!dog.getOwners().getId().equals(owner.getId())){
+                return Response.ResponseHandler(HttpStatus.FORBIDDEN.getReasonPhrase(), HttpStatus.FORBIDDEN);
             }
-            return Response.ResponseHandler(HttpStatus.CONFLICT.getReasonPhrase(),HttpStatus.CONFLICT);
+            
+            boolean hasConflict = appRepo.findByDogId(id)
+                .stream()
+                .anyMatch(app -> app.getAppointmentDate().equals(appDTO.getAppointmentDate()));
+
+            if(hasConflict){
+                return Response.ResponseHandler(HttpStatus.CONFLICT.getReasonPhrase(),HttpStatus.CONFLICT);
+            }
+            
+            Appointments appointments = new Appointments();
+            
+            appointments.setAppointmentDate(appDTO.getAppointmentDate());
+            appointments.setAppointmentTime(appDTO.getAppointmentTime());
+            appointments.setDogs(dog);
+            appointments.setReason(appDTO.getReason());
+            appointments.setStatus(AppointmentStatus.PENDING);
+            appointments.setOwners(owner);
+            
+            appRepo.save(appointments);
+            
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
+             
         }catch(UserNotFoundException e){
             return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
         }catch(Exception e){

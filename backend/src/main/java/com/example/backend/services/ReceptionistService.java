@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.example.backend.entity.Appointments;
 import com.example.backend.entity.Employee;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.Receptionist;
@@ -132,13 +133,35 @@ public class ReceptionistService {
     // }
 
     // Appointments
+    public ResponseEntity<?> getAppointments(){
+        try{
+            List<Appointments.Appointment> appo = appRepo.findAllthAppointments()
+                .stream()
+                .map(ProfileHelper::getAllAppoimentProfile)
+                .toList();
+
+            if(appo.isEmpty()){
+                return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+            }
+            return Response.ResponseHandler(HttpStatus.FOUND.getReasonPhrase(), HttpStatus.FOUND, appo);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     @Transactional
     public ResponseEntity<?> changeAppCheckIn(Long id){
         try{
-            int updateApp = appRepo.updateAppStatus(id, AppointmentStatus.CHECKED_IN.toString());
-            if(updateApp <=0){
-                throw new UserNotFoundException("User not found.");
+            Optional<Appointments> appointment = appRepo.findById(id);
+
+            if(appointment.isPresent()){
+                if(appointment.get().getStatus().equals(AppointmentStatus.PENDING)){
+                    appRepo.updateAppStatus(id, AppointmentStatus.CHECKED_IN.toString());
+                }else if(appointment.get().getStatus().equals(AppointmentStatus.CHECKED_IN)){
+                    return Response.ResponseHandler("Already checked in.", HttpStatus.CONFLICT);
+                }
             }
+            
             return Response.ResponseHandler("Checked in successful.", HttpStatus.OK);
         }catch(UserNotFoundException e){
             return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
@@ -151,9 +174,16 @@ public class ReceptionistService {
     @Transactional
     public ResponseEntity<?> changeAppConfirm(Long id){
         try{
-            int updateApp = appRepo.updateAppStatus(id, AppointmentStatus.CONFIRMED.toString());
-            if(updateApp <=0){
-                throw new UserNotFoundException("User not found.");
+            Optional<Appointments> appointment = appRepo.findById(id);
+
+            if(appointment.isPresent()){
+                if(appointment.get().getStatus().equals(AppointmentStatus.CHECKED_IN)){
+                    appRepo.updateAppStatus(id, AppointmentStatus.CONFIRMED.toString());
+                }else if(appointment.get().getStatus().equals(AppointmentStatus.CONFIRMED)){
+                    return Response.ResponseHandler("Already confirmed.", HttpStatus.CONFLICT);
+                }else{
+                    return Response.ResponseHandler("Cannot change pending to confirmed.", HttpStatus.CONFLICT);
+                }
             }
             return Response.ResponseHandler("Checked in successful.", HttpStatus.OK);
         }catch(UserNotFoundException e){

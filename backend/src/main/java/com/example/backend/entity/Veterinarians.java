@@ -46,5 +46,6 @@ public class Veterinarians {
     @OneToMany(mappedBy = "veterinarians",fetch = FetchType.LAZY)
     private List<Appointments> appointment;
 
-    public record vet(Long userId,String licenseNumber,List<String> specilaization,Long yearsOfExperience){}
+    public record fetProfile(User.userInfo user,Long vetId, String licenseNumber,List<String> specialization, Long yearsOfExperience){}
+    public record vet(Long vetId,String licenseNumber,List<String> specialization,Long yearsOfExperience){}
 }

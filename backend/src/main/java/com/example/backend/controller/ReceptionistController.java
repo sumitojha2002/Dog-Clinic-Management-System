@@ -56,6 +56,11 @@ public class ReceptionistController {
 
 
     // appointments
+    @GetMapping("/appointments")
+    public ResponseEntity<?> getAppointments(){
+        return receService.getAppointments();
+    }
+
     @PatchMapping("/appointments/{id}/check-in")
     public ResponseEntity<?> changeAppCheckIn(@PathVariable Long id){
         return receService.changeAppCheckIn(id);

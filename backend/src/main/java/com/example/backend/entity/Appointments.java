@@ -52,4 +52,14 @@ public class Appointments {
 
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
+
+    public record Appointment(
+        Long id,
+        Dogs.DogInner dogs,
+        String reason,
+        Veterinarians.fetProfile vets,
+        Owners.OwnersProfile ownersProfile,
+        LocalDate appointmentDate,
+        LocalTime appLocalTime
+    ) {}
 }
