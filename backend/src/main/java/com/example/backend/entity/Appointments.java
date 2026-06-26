@@ -58,7 +58,7 @@ public class Appointments {
         Dogs.DogInner dogs,
         String reason,
         AppointmentStatus appointmentStatus,
-        Veterinarians.fetProfile vets,
+        Veterinarians.vetProfile vets,
         Owners.OwnersProfile ownersProfile,
         LocalDate appointmentDate,
         LocalTime appLocalTime

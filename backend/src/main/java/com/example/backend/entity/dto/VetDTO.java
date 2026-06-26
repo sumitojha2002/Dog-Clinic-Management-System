@@ -1,5 +1,8 @@
 package com.example.backend.entity.dto;
 
+import java.util.Set;
+
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +23,8 @@ public class VetDTO {
     private String licenseNumber;
 
     @Min(value = 0, message="Must be greater then 0 yrs")
-    @Min(value = 50, message="Cannot be more then 50 yrs")
+    @Max(value = 50, message="Cannot be more then 50 yrs")
     private Long yearsOfExperince;
 
+    private Set<String> specialization;
 }

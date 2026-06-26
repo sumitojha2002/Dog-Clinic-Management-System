@@ -1,10 +1,15 @@
 package com.example.backend.entity;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.example.backend.security.entity.User;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -33,7 +38,10 @@ public class Veterinarians {
     @Column(unique = true)
     private String licenseNumber;
 
-    private List<String> specialization;
+    @ElementCollection
+    @CollectionTable(name="specialization", joinColumns = @JoinColumn(name="vet_id"))
+    @Column(name = "specialization")
+    private Set<String> specialization =  new HashSet<>();
 
     private Long yearsOfExperience;
 
@@ -46,6 +54,6 @@ public class Veterinarians {
     @OneToMany(mappedBy = "veterinarians",fetch = FetchType.LAZY)
     private List<Appointments> appointment;
 
-    public record fetProfile(User.userInfo user,Long vetId, String licenseNumber,List<String> specialization, Long yearsOfExperience){}
-    public record vet(Long vetId,String licenseNumber,List<String> specialization,Long yearsOfExperience){}
+    public record vetProfile(User.userInfo user,Long vetId, String licenseNumber,Set<String> specialization, Long yearsOfExperience){}
+    public record vet(Long vetId,String licenseNumber,Set<String> specialization,Long yearsOfExperience){}
 }

@@ -55,9 +55,9 @@ public class ProfileHelper {
                     owner.getRegistrationDate()))
                     .orElse(null);
         
-        Veterinarians.fetProfile vets = Optional.ofNullable(appointments)
+        Veterinarians.vetProfile vets = Optional.ofNullable(appointments)
             .map(Appointments::getVeterinarians)
-            .map(vet-> new Veterinarians.fetProfile(new User.userInfo(
+            .map(vet-> new Veterinarians.vetProfile(new User.userInfo(
                 vet.getUser().getUsername(), 
                 vet.getUser().getEmail()), 
                 vet.getId(), 
@@ -76,6 +76,24 @@ public class ProfileHelper {
             appointments.getAppointmentDate(),
             appointments.getAppointmentTime()
         );
+    }
+
+    public static Veterinarians.vetProfile getVetProfile (Veterinarians veterinarians){
+        
+        if(veterinarians == null){
+            return null;
+        }
+
+        User.userInfo userInfo = Optional.ofNullable(veterinarians)
+            .map(Veterinarians::getUser)
+            .map(user-> new User.userInfo(user.getUsername(), user.getEmail()))
+            .orElse(null);
+
+        return new Veterinarians.vetProfile(userInfo,
+            veterinarians.getId(),
+            veterinarians.getLicenseNumber(), 
+            veterinarians.getSpecialization(),
+            veterinarians.getYearsOfExperience());
     }
 
     // public static Dogs.DogInfo getDogsInfo()
