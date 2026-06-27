@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.example.backend.entity.Appointments;
+import com.example.backend.entity.enums.AppointmentStatus;
 
 public interface AppointmentRepository extends JpaRepository<Appointments,Long>{
 
@@ -24,6 +25,7 @@ public interface AppointmentRepository extends JpaRepository<Appointments,Long>{
            SELECT a 
            FROM Appointments a
            LEFT JOIN FETCH a.veterinarians v
+           LEFT JOIN FETCH v.specialization
            LEFT JOIN FETCH v.user
            LEFT JOIN FETCH a.dogs
            LEFT JOIN FETCH a.owners o
@@ -32,8 +34,22 @@ public interface AppointmentRepository extends JpaRepository<Appointments,Long>{
            OR LOWER(a.status) LIKE LOWER(CONCAT(:status,'%')))
            AND (:date IS NULL OR a.appointmentDate = :date)
            """)
+
     List<Appointments> findAllthAppointments(@Param("status") String status,@Param("date") LocalDate date);
 
+        @Query("""
+           SELECT a 
+           FROM Appointments a
+           LEFT JOIN FETCH a.veterinarians v
+           LEFT JOIN FETCH v.specialization
+           LEFT JOIN FETCH v.user
+           LEFT JOIN FETCH a.dogs
+           LEFT JOIN FETCH a.owners o
+           LEFT JOIN FETCH o.user
+           WHERE (a.veterinarians.id = :id) AND 
+                (a.status != :status)
+           """)
+    List<Appointments> findAllthAppointmentsOfVetId(@Param("id") Long id,@Param("status") AppointmentStatus status);
 
 
     @Query("""
@@ -46,4 +62,5 @@ public interface AppointmentRepository extends JpaRepository<Appointments,Long>{
         WHERE a.id = :id 
         """)
         Optional<Appointments> findByAppID(@Param("id") Long id);
+
 }

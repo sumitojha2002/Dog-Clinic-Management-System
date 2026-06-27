@@ -76,6 +76,7 @@ public class OwnerService {
         }
     }
 
+    // rework needed
     public List<Dogs.DogInner> getAllDogs(Owners owner){
         return dogsRepo.findAllDogs(owner.getId())
                                     .stream()

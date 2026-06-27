@@ -30,4 +30,11 @@ public class VeterinarianController {
     public ResponseEntity<?> getVetProfile(@AuthenticationPrincipal UserDetails userDetails){
         return vetServices.getVetProfile(userDetails);
     }
+
+    @GetMapping("/appointments")
+    public ResponseEntity<?> findAllthAppointmentsOfVetId(@AuthenticationPrincipal UserDetails userDetails){
+        return vetServices.getTheAppoinementAccToVetId(userDetails);
+    }
+
+    
 }
