@@ -22,7 +22,6 @@ import com.example.backend.entity.enums.AppointmentStatus;
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.helper.ProfileHelper;
 import com.example.backend.repository.AppointmentRepository;
-import com.example.backend.repository.DogsRepository;
 import com.example.backend.repository.MedicalRecordRepository;
 import com.example.backend.repository.VeterinarianRepository;
 import com.example.backend.response.Response;

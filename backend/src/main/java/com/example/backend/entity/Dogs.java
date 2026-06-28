@@ -1,6 +1,7 @@
 package com.example.backend.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.backend.entity.enums.PetStatus;
@@ -56,7 +57,7 @@ public class Dogs {
     private PetStatus status;
 
     @OneToMany(mappedBy = "dogs",fetch = FetchType.LAZY)
-    private List<Appointments> appointment;
+    private List<Appointments> appointment =  new ArrayList<>();
 
 
     public record DogInner(Long id,String name,String breed,String gender,String color){}
@@ -74,4 +75,12 @@ public class Dogs {
         LocalDate lastVisitDate,
         PetStatus status,
         Owners.OwnersProfile ownersProfile){}
+
+    public record DogMedicalRecord(
+        Long dogId,
+        String name,
+        String breed,
+        String gender,
+        String color,
+        Double weight){}
 }

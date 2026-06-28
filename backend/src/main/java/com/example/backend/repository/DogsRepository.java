@@ -24,6 +24,8 @@ public interface DogsRepository extends  JpaRepository<Dogs,Long> {
             """)
     public List<Dogs> findDogsFullDetails(@Param("id") Long id);
 
+
+
     @Modifying
     @Query("""
             DELETE FROM Dogs d

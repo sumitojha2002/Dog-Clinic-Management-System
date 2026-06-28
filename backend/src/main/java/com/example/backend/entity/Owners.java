@@ -1,6 +1,7 @@
 package com.example.backend.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.backend.security.entity.User;
@@ -47,7 +48,7 @@ public class Owners {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "owners",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Dogs> dogs;
+    private List<Dogs> dogs = new ArrayList<>();
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

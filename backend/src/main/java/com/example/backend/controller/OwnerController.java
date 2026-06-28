@@ -82,5 +82,11 @@ public class OwnerController {
         @AuthenticationPrincipal UserDetails userDetails){
             return ownerService.setAppoinmentForThePet(id, appDto, userDetails);
         }
+    
+    @GetMapping("/dogs/{id}/medical_records")
+    public ResponseEntity<?> getMedicalRecord(@PathVariable Long id,@AuthenticationPrincipal UserDetails userDetails)
+    {
+        return ownerService.medicalRecord(id, userDetails);
+    }
 }
 

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.example.backend.entity.Appointments;
 import com.example.backend.entity.Dogs;
+import com.example.backend.entity.MedicalRecord;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.Veterinarians;
 import com.example.backend.security.entity.User;
@@ -94,6 +95,33 @@ public class ProfileHelper {
             veterinarians.getLicenseNumber(), 
             veterinarians.getSpecialization(),
             veterinarians.getYearsOfExperience());
+    }
+
+    public static MedicalRecord.medicalRecord getMedicalRecord(MedicalRecord medicalRecord){
+        
+        if(medicalRecord == null){
+            return null;
+        }
+
+        Dogs.DogMedicalRecord dogMedicalRecord = Optional.ofNullable(medicalRecord)
+            .map(MedicalRecord::getDogs)
+            .map(dogs-> new Dogs.DogMedicalRecord(
+                dogs.getId(), 
+                dogs.getName(), 
+                dogs.getBreed(), 
+                dogs.getGender(), 
+                dogs.getColor(), 
+                dogs.getWeight()))
+            .orElse(null);
+
+        return new MedicalRecord.medicalRecord(
+            medicalRecord.getId(),
+            medicalRecord.getDiagnosis(),
+            medicalRecord.getTreatment(),
+            medicalRecord.getSymptoms(),
+            medicalRecord.getNotes(),
+            dogMedicalRecord);
+
     }
 
     // public static Dogs.DogInfo getDogsInfo()

@@ -9,10 +9,12 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.entity.Appointments;
 import com.example.backend.entity.Dogs;
+import com.example.backend.entity.MedicalRecord;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.Veterinarians;
 import com.example.backend.entity.dto.AppointmentDTO;
@@ -21,8 +23,10 @@ import com.example.backend.entity.dto.OwnerProfileDTO;
 import com.example.backend.entity.enums.AppointmentStatus;
 import com.example.backend.entity.enums.VactionationStatus;
 import com.example.backend.exception.UserNotFoundException;
+import com.example.backend.helper.ProfileHelper;
 import com.example.backend.repository.AppointmentRepository;
 import com.example.backend.repository.DogsRepository;
+import com.example.backend.repository.MedicalRecordRepository;
 import com.example.backend.repository.OwnerRepository;
 import com.example.backend.repository.VeterinarianRepository;
 import com.example.backend.response.Response;
@@ -41,6 +45,7 @@ public class OwnerService {
     private final UserRepository userRepo;
     private final AppointmentRepository appRepo;
     private final VeterinarianRepository vetRepo;
+    private final MedicalRecordRepository medicalRecordRepo;
 
     @Transactional
     public ResponseEntity<?> updateOwnersProfile(OwnerProfileDTO ownersProfiledto, Owners owners){
@@ -200,5 +205,39 @@ public class OwnerService {
             e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // get medical record
+    public ResponseEntity<?> medicalRecord(Long id,UserDetails userDetails){
+        try{
+            User user = userRepo
+            .findByUsernameOrEmail(userDetails
+                .getUsername())
+                .orElseThrow(()-> new UsernameNotFoundException("User not found exception."));
+                
+                Owners owners = ownerRepo.findByUserId(user.getId())
+                .orElseThrow(()-> new UserNotFoundException("Owners not found."));
+                
+                List<Dogs> dogs = owners.getDogs();
+                
+                boolean dogBelongsToOwner = dogs.stream()
+                .anyMatch(d-> d.getId() == id);
+                
+                if(!dogBelongsToOwner){
+                    return Response.ResponseHandler("The dog does not belog to the owner", HttpStatus.CONFLICT);
+                }    
+                
+                List<MedicalRecord.medicalRecord> dog = medicalRecordRepo.findMedicalRecordById(id)
+                .stream()
+                .map(ProfileHelper::getMedicalRecord)
+                .toList();
+                return Response.ResponseHandler("All medical record of the dog", HttpStatus.OK,dog);
+            }catch(UserNotFoundException e){
+                e.printStackTrace();
+                return Response.ResponseHandler(e.getMessage(), HttpStatus.NOT_FOUND);
+            }catch(Exception e){
+                e.printStackTrace();
+                return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
     }
 }

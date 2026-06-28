@@ -38,4 +38,11 @@ public class MedicalRecord {
     private String notes;
 
     private LocalDate visitDate;
+
+    public record medicalRecord(long id,
+        String diagnosis,
+        String treatment,
+        String syntoms,
+        String notes,
+        Dogs.DogMedicalRecord dogsMedicalRecord){}
 }
