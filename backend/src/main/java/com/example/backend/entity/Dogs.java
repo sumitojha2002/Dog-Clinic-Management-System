@@ -2,11 +2,16 @@ package com.example.backend.entity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.example.backend.entity.enums.PetStatus;
 import com.example.backend.entity.enums.VactionationStatus;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -41,8 +46,16 @@ public class Dogs {
 
     private Double weight;
 
-    private String allergies;
-    private String chronicConditions;
+    @ElementCollection
+    @CollectionTable(name="allergies",joinColumns = @JoinColumn(name="dog_id"))
+    @Column(name="allergies")
+    private Set<String> allergies = new HashSet<>();
+
+    @ElementCollection
+    @CollectionTable(name="chronicConditions",joinColumns = @JoinColumn(name="dog_id"))
+    @Column(name="chronicConditions")
+    private Set<String> chronicConditions = new HashSet<>();
+
     private String specialNotes;
 
     private LocalDate dateOfBirth;

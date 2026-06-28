@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.backend.entity.dto.DogsVetDTO;
 import com.example.backend.entity.dto.MedicalRecordDTO;
 import com.example.backend.entity.dto.VetDTO;
 import com.example.backend.services.VetServices;
@@ -51,4 +52,10 @@ public class VeterinarianController {
         @AuthenticationPrincipal UserDetails userDetails){
         return vetServices.createMedicalRecord(id, medicalRecordDTO,userDetails);
     }
+
+    @PostMapping("dog/{id}/profile")
+    public ResponseEntity<?> setUpDogsProfile(@AuthenticationPrincipal UserDetails userDetails
+        ,@Valid @RequestBody DogsVetDTO dogsVetDTO,@PathVariable Long id){
+            return vetServices.setUpDogsProfile(dogsVetDTO, id, userDetails);
+        }
 }

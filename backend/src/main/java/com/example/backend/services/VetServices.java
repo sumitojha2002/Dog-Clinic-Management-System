@@ -16,12 +16,14 @@ import com.example.backend.entity.Appointments;
 import com.example.backend.entity.Dogs;
 import com.example.backend.entity.MedicalRecord;
 import com.example.backend.entity.Veterinarians;
+import com.example.backend.entity.dto.DogsVetDTO;
 import com.example.backend.entity.dto.MedicalRecordDTO;
 import com.example.backend.entity.dto.VetDTO;
 import com.example.backend.entity.enums.AppointmentStatus;
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.helper.ProfileHelper;
 import com.example.backend.repository.AppointmentRepository;
+import com.example.backend.repository.DogsRepository;
 import com.example.backend.repository.MedicalRecordRepository;
 import com.example.backend.repository.VeterinarianRepository;
 import com.example.backend.response.Response;
@@ -37,6 +39,7 @@ public class VetServices {
     private final VeterinarianRepository vetRepo;
     private final UserRepository userRepo;
     private final AppointmentRepository appRepo;
+    private final DogsRepository dogRepo;
     private final MedicalRecordRepository medicalRecordRepo;
     // vet
     @Transactional
@@ -56,7 +59,7 @@ public class VetServices {
                 String item = str.next();
                 System.out.println(item);
             }
-            System.out.println(vetDTO.getSpecialization());
+           
             vet.getSpecialization().addAll(vetDTO.getSpecialization());
             vet.setYearsOfExperience(vetDTO.getYearsOfExperince());
             
@@ -163,6 +166,8 @@ public class VetServices {
         }
     }
 
+
+    // medical record
     @Transactional
     public ResponseEntity<?> createMedicalRecord(Long id,MedicalRecordDTO medicalRecordDTO,UserDetails userDetails){
         try{
@@ -210,5 +215,39 @@ public class VetServices {
             e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // dog fill in the dog profile.
+    public ResponseEntity<?> setUpDogsProfile(DogsVetDTO dogsVetDTO,Long dogId,UserDetails userDetails){
+        try{
+            User user = userRepo.findByUsernameOrEmail(userDetails
+                .getUsername())
+                .orElseThrow(()->new UserNotFoundException("User not found."));
+            
+            Veterinarians vet = vetRepo.findByUserId(user.getId())
+                .orElseThrow(()-> new UserNotFoundException("Veterinarian not found."));
+
+            Appointments appointment =appRepo.findByDogAndVetId(dogId, vet.getId()).getFirst();
+
+            if(appointment == null){
+                return Response.ResponseHandler("Dog profile cannot be set by the vet. As vet has not been appointed.", HttpStatus.CONFLICT);
+            }
+            
+            Dogs dog = appointment.getDogs();
+
+            dog.getAllergies().addAll(dogsVetDTO.getAllergies());
+            dog.getChronicConditions().addAll(dogsVetDTO.getChronicConditions());
+            dog.setWeight(dogsVetDTO.getWeight());
+            dog.setSpecialNotes(dogsVetDTO.getSpecialNotes());
+            dogRepo.save(dog);
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(),HttpStatus.OK);
+        }catch(UserNotFoundException e){
+            e.printStackTrace();
+            return Response.ResponseHandler(e.getMessage(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 }

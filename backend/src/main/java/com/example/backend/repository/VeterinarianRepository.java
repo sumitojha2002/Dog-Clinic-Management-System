@@ -13,6 +13,7 @@ public interface VeterinarianRepository extends JpaRepository<Veterinarians,Long
     @Query("""
             SELECT v FROM
             Veterinarians v
+            LEFT JOIN FETCH v.user
             WHERE v.user.id = :id
             """)
     Optional<Veterinarians> findByUserId(@Param("id") Long id);

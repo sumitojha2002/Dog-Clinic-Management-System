@@ -22,12 +22,30 @@ public interface AppointmentRepository extends JpaRepository<Appointments,Long>{
     List<Appointments> findByDogId(@Param("id") Long id);
 
     @Query("""
+            SELECT a
+            FROM Appointments a
+           LEFT JOIN FETCH a.veterinarians v
+           LEFT JOIN FETCH v.specialization
+           LEFT JOIN FETCH v.user
+           LEFT JOIN FETCH a.dogs d
+           LEFT JOIN FETCH d.allergies
+           LEFT JOIN FETCH d.chronicConditions
+           LEFT JOIN FETCH a.owners o
+           LEFT JOIN FETCH o.user
+            WHERE a.dogs.id = :dogId AND 
+            a.veterinarians.id = :vetId
+            """)
+    List<Appointments> findByDogAndVetId(@Param("dogId") Long dogId,@Param("vetId") Long vetId);
+
+    @Query("""
            SELECT a 
            FROM Appointments a
            LEFT JOIN FETCH a.veterinarians v
            LEFT JOIN FETCH v.specialization
            LEFT JOIN FETCH v.user
            LEFT JOIN FETCH a.dogs
+           LEFT JOIN FETCH d.allergies
+           LEFT JOIN FETCH d.chronicConditions
            LEFT JOIN FETCH a.owners o
            LEFT JOIN FETCH o.user
            WHERE (:status IS NULL 
@@ -44,6 +62,8 @@ public interface AppointmentRepository extends JpaRepository<Appointments,Long>{
            LEFT JOIN FETCH v.specialization
            LEFT JOIN FETCH v.user
            LEFT JOIN FETCH a.dogs
+           LEFT JOIN FETCH d.allergies
+           LEFT JOIN FETCH d.chronicConditions
            LEFT JOIN FETCH a.owners o
            LEFT JOIN FETCH o.user
            WHERE (a.veterinarians.id = :id) AND 
