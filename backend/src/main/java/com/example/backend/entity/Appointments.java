@@ -5,6 +5,7 @@ import java.time.LocalTime;
 
 import com.example.backend.entity.enums.AppointmentStatus;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -51,6 +52,7 @@ public class Appointments {
     private LocalTime appointmentTime;
 
     @Enumerated(EnumType.STRING)
+    @Column( length = 20)
     private AppointmentStatus status;
 
     public record Appointment(

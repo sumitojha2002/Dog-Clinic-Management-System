@@ -3,5 +3,6 @@ package com.example.backend.entity.enums;
 public enum AppointmentStatus {
     PENDING,
     CONFIRMED,
-    CHECKED_IN
+    CHECKED_IN,
+    IN_PROGRESS
 }

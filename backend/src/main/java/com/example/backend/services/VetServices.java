@@ -1,7 +1,11 @@
 package com.example.backend.services;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,12 +13,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.entity.Appointments;
+import com.example.backend.entity.Dogs;
+import com.example.backend.entity.MedicalRecord;
 import com.example.backend.entity.Veterinarians;
+import com.example.backend.entity.dto.MedicalRecordDTO;
 import com.example.backend.entity.dto.VetDTO;
 import com.example.backend.entity.enums.AppointmentStatus;
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.helper.ProfileHelper;
 import com.example.backend.repository.AppointmentRepository;
+import com.example.backend.repository.DogsRepository;
+import com.example.backend.repository.MedicalRecordRepository;
 import com.example.backend.repository.VeterinarianRepository;
 import com.example.backend.response.Response;
 import com.example.backend.security.entity.User;
@@ -29,6 +38,7 @@ public class VetServices {
     private final VeterinarianRepository vetRepo;
     private final UserRepository userRepo;
     private final AppointmentRepository appRepo;
+    private final MedicalRecordRepository medicalRecordRepo;
     // vet
     @Transactional
     public ResponseEntity<?> setVetProfile(VetDTO vetDTO,UserDetails userDetails){
@@ -113,6 +123,92 @@ public class VetServices {
         }catch(Exception e){
             e.printStackTrace();
 
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // update to the appointment Status to IN_PROGRESS
+    public ResponseEntity<?> appointmentStatusToInProgress(Long id, UserDetails userDetails){
+        try{
+            User user = userRepo
+                .findByUsernameOrEmail(userDetails
+                .getUsername())
+                .orElseThrow(()-> new UserNotFoundException("User not found."));
+            
+            Veterinarians vet = vetRepo
+                .findByUserId(user.getId())
+                .orElseThrow(()->new UserNotFoundException("Veterinarian not found."));
+
+             Optional<Appointments> vetAppoinement = appRepo.findAllthAppointmentsOfVetId(vet.getId(),AppointmentStatus.PENDING)
+                .stream()
+                .filter(app-> app.getId() == id).findFirst();
+            
+            if(!vetAppoinement.isPresent()){
+                return Response.ResponseHandler("Appointment does not exist.", HttpStatus.NOT_FOUND);
+            }
+
+            Appointments appointment = vetAppoinement.get();
+            if(!appointment.getStatus().equals(AppointmentStatus.CHECKED_IN)){
+                return Response.ResponseHandler("Cannot set an appointment to IN_PROGRESS. Receptioninst must CHECK_IN first.", HttpStatus.CONFLICT);
+            }
+            appointment.setStatus(AppointmentStatus.IN_PROGRESS);
+            appRepo.save(appointment);
+            return Response.ResponseHandler("Appointment in progress.", HttpStatus.OK);
+
+        }catch(UserNotFoundException e){
+            e.printStackTrace();
+            return Response.ResponseHandler(e.getMessage(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<?> createMedicalRecord(Long id,MedicalRecordDTO medicalRecordDTO,UserDetails userDetails){
+        try{
+            User user = userRepo.findByUsernameOrEmail(userDetails.getUsername())
+                .orElseThrow(()-> new UserNotFoundException("User not found."));
+
+            
+            
+            Veterinarians vet = vetRepo.findByUserId(user.getId())
+                .orElseThrow(()-> new UserNotFoundException("Veterinarian not found."));
+            
+            Optional<Appointments> vetAppoinement = appRepo.findAllthAppointmentsOfVetId(vet.getId(),AppointmentStatus.PENDING)
+                .stream()
+                .filter(app-> app.getId() == id).findFirst();
+            
+            if(!vetAppoinement.isPresent()){
+                return Response.ResponseHandler("Appointment does not exist.", HttpStatus.NOT_FOUND);
+            }
+
+            Appointments appointment = vetAppoinement.get();
+            if(!appointment.getStatus().equals(AppointmentStatus.IN_PROGRESS)){
+                return Response.ResponseHandler("Cannot create medical record. Needs to be set IN_PROGRESS", HttpStatus.CONFLICT);
+            }
+            Date inputDate = new Date();
+            LocalDate localDate = LocalDate.ofInstant(inputDate.toInstant(), ZoneId.systemDefault());
+
+            Dogs dog = appointment.getDogs();
+
+            MedicalRecord medicalRecord = new MedicalRecord();
+            medicalRecord.setAppointments(appointment);
+            medicalRecord.setDogs(dog);
+            medicalRecord.setVeterinarians(vet);
+            medicalRecord.setNotes(medicalRecordDTO.getNotes());
+            medicalRecord.setSymptoms(medicalRecordDTO.getSymptoms());
+            medicalRecord.setTreatment(medicalRecordDTO.getTreatment());
+            medicalRecord.setDiagnosis(medicalRecordDTO.getDiagnosis());
+            medicalRecord.setVisitDate(localDate);
+
+            medicalRecordRepo.save(medicalRecord);
+            return Response.ResponseHandler("Successfully saved medical record.", HttpStatus.OK);
+        }catch(UserNotFoundException e){
+            e.printStackTrace();
+            return Response.ResponseHandler(e.getMessage(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

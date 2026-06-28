@@ -4,11 +4,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.backend.entity.dto.MedicalRecordDTO;
 import com.example.backend.entity.dto.VetDTO;
 import com.example.backend.services.VetServices;
 
@@ -36,5 +39,16 @@ public class VeterinarianController {
         return vetServices.getTheAppoinementAccToVetId(userDetails);
     }
 
-    
+    // Vet sets then when he starts the appointment
+    @PatchMapping("/appointments/{id}/start")
+    public ResponseEntity<?> appointmentStatusToInProgress(@PathVariable Long id,@AuthenticationPrincipal UserDetails userDetails){
+        return vetServices.appointmentStatusToInProgress(id,userDetails);
+    }
+
+    @PostMapping("/appointments/{id}/medical_record")
+    public ResponseEntity<?> setMedicalRecord(@PathVariable Long id,
+        @Valid @RequestBody MedicalRecordDTO medicalRecordDTO,
+        @AuthenticationPrincipal UserDetails userDetails){
+        return vetServices.createMedicalRecord(id, medicalRecordDTO,userDetails);
+    }
 }
