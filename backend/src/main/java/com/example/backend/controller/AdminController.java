@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -80,17 +81,17 @@ public class AdminController {
         return authService.addUser(userDTO, Roles.ROLE_RECEP);
     }
 
-    @PostMapping("/receptionist/{id}/morning")
+    @PatchMapping("/receptionist/{id}/morning")
     public ResponseEntity<?> changeTheShiftOfReceMorning(@PathVariable Long id){
         return adminService.changeReceShift(id, ReceShiftStatus.MORNING);
     }
 
-    @PostMapping("/receptionist/{id}/evening")
+    @PatchMapping("/receptionist/{id}/evening")
     public ResponseEntity<?> changeTheShiftOfReceEvening(@PathVariable Long id){
         return adminService.changeReceShift(id, ReceShiftStatus.EVENING);
     }
 
-    @PostMapping("/receptionist/{id}/fullday")
+    @PatchMapping("/receptionist/{id}/fullday")
     public ResponseEntity<?> changeTheShiftOfReceFullday(@PathVariable Long id){
         return adminService.changeReceShift(id, ReceShiftStatus.FULL_DAY);
     }

@@ -255,7 +255,7 @@ public class AdminServices {
 
     public ResponseEntity<?> changeReceShift(Long id,ReceShiftStatus shift){
        try{
-           Optional<Receptionist> rece = receptRepo.findReceFromUserId(id);
+           Optional<Receptionist> rece = receptRepo.findReceFromReceId(id);
            
            if(!rece.isPresent()){
                throw new UserNotFoundException("User not found.");

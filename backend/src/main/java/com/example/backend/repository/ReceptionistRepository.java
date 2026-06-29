@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import com.example.backend.entity.Receptionist;
 
 public interface ReceptionistRepository extends JpaRepository<Receptionist,Long>{
-    @Query("SELECT u FROM Receptionist u WHERE u.user.id = :id")
-    public Optional<Receptionist> findReceFromUserId(@Param("id") Long id);
+    @Query("""
+        SELECT r FROM Receptionist r WHERE r.id = :id
+    """)
+    public Optional<Receptionist> findReceFromReceId(@Param("id") Long id);
 }

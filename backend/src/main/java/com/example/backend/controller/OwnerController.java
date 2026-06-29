@@ -1,7 +1,10 @@
 package com.example.backend.controller;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.entity.Dogs;
@@ -73,6 +77,10 @@ public class OwnerController {
            return ownerService.addPet(ownerPetDTO,owners);
     }
 
+    @GetMapping("/dogs/appointment/timing")
+    public List<LocalTime> getAllAvailabeTime(@RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate localDate){
+        return ownerService.getAppointmentTime(localDate);
+    }
 
     // Appointment
     @PostMapping("/dogs/{id}/appointment")

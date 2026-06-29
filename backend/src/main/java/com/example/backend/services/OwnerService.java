@@ -1,7 +1,9 @@
 package com.example.backend.services;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -164,10 +166,47 @@ public class OwnerService {
     }
     }
 
+    public List<LocalTime> getAppointmentTime(LocalDate localDate){
+        List<LocalTime> allSlots = new ArrayList<>(List.of(
+            LocalTime.of(9,0),
+            LocalTime.of(9,30),
+            LocalTime.of(10,0),
+            LocalTime.of(10,30),
+            LocalTime.of(11,0),
+            LocalTime.of(11,30),
+            LocalTime.of(13,0),
+            LocalTime.of(13,30),
+            LocalTime.of(14,0),
+            LocalTime.of(14,30),
+            LocalTime.of(15,0),
+            LocalTime.of(15,30),
+            LocalTime.of(16,0),
+            LocalTime.of(16,30)
+        ));
+
+        List<LocalTime> removeTimeTiming  = appRepo.getAllAppointmentsTime(localDate).stream().map(ap-> ap.getAppointmentTime()).toList();
+        if(removeTimeTiming.isEmpty()){
+            return allSlots;
+        }
+        allSlots.removeAll(removeTimeTiming);
+        return allSlots;
+    }
+
+
     // Set Appoitment
     @Transactional
     public ResponseEntity<?> setAppoinmentForThePet(Long id, AppointmentDTO appDTO,UserDetails userDetails){
         try{
+
+
+            List<Appointments> apps = appRepo.getAllAppointments().stream()
+                .filter(ap-> ap.getAppointmentDate().equals(appDTO.getAppointmentDate()) & ap.getAppointmentTime().equals(appDTO.getAppointmentTime())).toList();
+
+            if(!apps.isEmpty()){
+                return Response.ResponseHandler("Try different date or time.", HttpStatus.CONFLICT);
+            }
+
+    
             Dogs dog = dogsRepo
                 .findById(id)
                 .orElseThrow(()-> new UserNotFoundException("Dog with this id not found.")); 
@@ -196,7 +235,7 @@ public class OwnerService {
                 .anyMatch(app -> app.getAppointmentDate().equals(appDTO.getAppointmentDate()));
 
             if(hasConflict){
-                return Response.ResponseHandler(HttpStatus.CONFLICT.getReasonPhrase(),HttpStatus.CONFLICT);
+                return Response.ResponseHandler("This dog has already an appointment with vet today.",HttpStatus.CONFLICT);
             }
             
             Appointments appointments = new Appointments();

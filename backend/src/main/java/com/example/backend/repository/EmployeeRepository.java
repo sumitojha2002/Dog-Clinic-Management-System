@@ -13,7 +13,8 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
     @Query("""
         SELECT DISTINCT e FROM Employee e
         LEFT JOIN FETCH e.user
-        LEFT JOIN FETCH e.veterinarians
+        LEFT JOIN FETCH e.veterinarians v
+        LEFT JOIN FETCH v.specialization
         LEFT JOIN FETCH e.receptionist
     """)
     List<Employee> findAllEmployees();
@@ -21,7 +22,8 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long>{
     @Query("""
         SELECT DISTINCT e FROM Employee e
         LEFT JOIN FETCH e.user
-        LEFT JOIN FETCH e.veterinarians
+        LEFT JOIN FETCH e.veterinarians v
+        LEFT JOIN FETCH v.specialization
         LEFT JOIN FETCH e.receptionist
         WHERE e.user.id = :id
     """)

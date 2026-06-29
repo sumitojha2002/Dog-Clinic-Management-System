@@ -1,6 +1,8 @@
 package com.example.backend.services;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.entity.Appointments;
+import com.example.backend.entity.Dogs;
 import com.example.backend.entity.Employee;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.Receptionist;
@@ -19,6 +22,7 @@ import com.example.backend.entity.enums.EmpStatus;
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.helper.ProfileHelper;
 import com.example.backend.repository.AppointmentRepository;
+import com.example.backend.repository.DogsRepository;
 import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.repository.OwnerRepository;
 import com.example.backend.response.Response;
@@ -33,6 +37,7 @@ public class ReceptionistService {
     private final EmployeeRepository empRepo;
     private final OwnerRepository ownerRepo;
     private final AppointmentRepository appRepo;
+    private final DogsRepository dogRepo;
     // Receptionist
 
     public ResponseEntity<?> getReceProfile(Long id){
@@ -178,16 +183,25 @@ public class ReceptionistService {
     public ResponseEntity<?> changeAppCheckIn(Long id){
         try{
             Optional<Appointments> appointment = appRepo.findByAppID(id);
+            
+            Date inputDate = new Date();
+            
+            LocalDate localDate = LocalDate.ofInstant(inputDate.toInstant(), ZoneId.systemDefault());
 
-            if(appointment.isPresent()){
+            if(appointment.isPresent() && appointment.get().getAppointmentDate().isEqual(localDate)){
                 if(appointment.get().getStatus().equals(AppointmentStatus.CONFIRMED)){
                     appointment.get().setStatus(AppointmentStatus.CHECKED_IN);
+                    Dogs dog = appointment.get().getDogs();
+                    dog.setLastVisitDate(localDate);
+                    dogRepo.save(dog);
                     appRepo.save(appointment.get());
                 }else if(appointment.get().getStatus().equals(AppointmentStatus.CONFIRMED)){
                     return Response.ResponseHandler("Already confirmed.", HttpStatus.CONFLICT);
                 }else{
                     return Response.ResponseHandler("Cannot change pending to checked in.", HttpStatus.CONFLICT);
                 }
+            }else{
+                return Response.ResponseHandler("Status cannot be changed to confirmed not matching with appointment date.", HttpStatus.CONFLICT);
             }
             return Response.ResponseHandler("Status changed to checked in successfully.", HttpStatus.OK);
         }catch(UserNotFoundException e){

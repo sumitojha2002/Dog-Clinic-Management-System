@@ -52,13 +52,6 @@ public class ReceptionistController {
         return receService.getOwnersProfilesbyId(id);
     }
 
-    // dogs
-    // @GetMapping("/dogs")
-    // public ResponseEntity<?> getAllDogsInfo(@RequestParam(required = false) String name,@RequestParam(required = false) String breed){
-    //     return receService.getAllDogs(name,breed);
-    // }
-
-
     // appointments
     @GetMapping("/appointments")
     public ResponseEntity<?> getAppointments(@RequestParam(required = false) String status,@RequestParam(required = false)  

@@ -12,7 +12,34 @@ import com.example.backend.entity.Appointments;
 import com.example.backend.entity.enums.AppointmentStatus;
 
 public interface AppointmentRepository extends JpaRepository<Appointments,Long>{
+        @Query("""
+           SELECT a
+           FROM Appointments a
+           LEFT JOIN FETCH a.veterinarians v
+           LEFT JOIN FETCH v.specialization
+           LEFT JOIN FETCH v.user
+           LEFT JOIN FETCH a.dogs d
+           LEFT JOIN FETCH d.allergies
+           LEFT JOIN FETCH d.chronicConditions
+           LEFT JOIN FETCH a.owners o
+           LEFT JOIN FETCH o.user
+                        """)
+        List<Appointments> getAllAppointments();
 
+        @Query("""
+           SELECT a
+           FROM Appointments a
+           LEFT JOIN FETCH a.veterinarians v
+           LEFT JOIN FETCH v.specialization
+           LEFT JOIN FETCH v.user
+           LEFT JOIN FETCH a.dogs d
+           LEFT JOIN FETCH d.allergies
+           LEFT JOIN FETCH d.chronicConditions
+           LEFT JOIN FETCH a.owners o
+           LEFT JOIN FETCH o.user
+           WHERE a.appointmentDate = :date
+                        """)
+        List<Appointments> getAllAppointmentsTime(@Param("date") LocalDate date);
 
     @Query("""
             SELECT a
@@ -22,8 +49,8 @@ public interface AppointmentRepository extends JpaRepository<Appointments,Long>{
     List<Appointments> findByDogId(@Param("id") Long id);
 
     @Query("""
-            SELECT a
-            FROM Appointments a
+           SELECT a
+           FROM Appointments a
            LEFT JOIN FETCH a.veterinarians v
            LEFT JOIN FETCH v.specialization
            LEFT JOIN FETCH v.user
@@ -75,8 +102,11 @@ public interface AppointmentRepository extends JpaRepository<Appointments,Long>{
     @Query("""
         SELECT a FROM Appointments a
         LEFT JOIN FETCH a.veterinarians v
+        LEFT JOIN FETCH v.specialization
         LEFT JOIN FETCH v.user
-        LEFT JOIN FETCH a.dogs
+        LEFT JOIN FETCH a.dogs d
+        LEFT JOIN FETCH d.allergies
+        LEFT JOIN FETCH d.chronicConditions
         LEFT JOIN FETCH a.owners o
         LEFT JOIN FETCH o.user   
         WHERE a.id = :id 

@@ -2,10 +2,12 @@ package com.example.backend.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 import com.example.backend.entity.enums.AppointmentStatus;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -49,6 +51,7 @@ public class Appointments {
     private String reason;
 
     private LocalDate appointmentDate;
+    
     private LocalTime appointmentTime;
 
     @Enumerated(EnumType.STRING)
