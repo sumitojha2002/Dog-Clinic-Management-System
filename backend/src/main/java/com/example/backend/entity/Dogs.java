@@ -73,7 +73,20 @@ public class Dogs {
     private List<Appointments> appointment =  new ArrayList<>();
 
 
-    public record DogInner(Long id,String name,String breed,String gender,String color){}
+    public record DogInner(
+        Long id,
+        String name,
+        String breed,
+        String gender,
+        String color,
+        Double weight,
+        LocalDate dateOfBirth,
+        VactionationStatus vactionationStatus,
+        Set<String> allergies,
+        Set<String> chronicConditions,
+        LocalDate registeredDate,
+        LocalDate lastVisitDate,
+        PetStatus status){}
 
     public record DogInfo(
         Long id,

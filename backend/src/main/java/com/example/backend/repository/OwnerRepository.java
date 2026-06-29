@@ -13,7 +13,14 @@ public interface OwnerRepository extends JpaRepository<Owners,Long>{
 
     @Query("SELECT o FROM Owners o LEFT JOIN FETCH o.user")
     public List<Owners> findAllUser();
-    @Query("SELECT o FROM Owners o LEFT JOIN FETCH o.dogs WHERE o.user.id = :id")
+    @Query("""
+            SELECT o FROM Owners o
+             LEFT JOIN FETCH o.dogs d
+             LEFT JOIN FETCH d.allergies
+             LEFT JOIN FETCH d.chronicConditions
+             LEFT JOIN FETCH o.user
+             WHERE o.user.id = :id
+            """)
     public Optional<Owners> findByUserId(@Param("id") Long id); 
 
     @Query("""

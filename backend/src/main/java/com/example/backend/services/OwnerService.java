@@ -65,7 +65,11 @@ public class OwnerService {
 
     public ResponseEntity<?> findPetsByID(Long id,Owners owner){
         try{
-            List<Dogs.DogInner> listOfDogs = getAllDogs(owner);
+            List<Dogs.DogInner> listOfDogs = owner.getDogs()
+                .stream()
+                .map(ProfileHelper::getDogsInnerInfo)
+                .toList();
+            
             Optional<Dogs.DogInner> foundDog =  listOfDogs.stream().filter(dog-> dog.id().equals(id)).findFirst();
             
             if(foundDog.isPresent()){
@@ -81,22 +85,31 @@ public class OwnerService {
         }
     }
 
-    // rework needed
-    public List<Dogs.DogInner> getAllDogs(Owners owner){
-        return dogsRepo.findAllDogs(owner.getId())
-                                    .stream()
-                                    .map(dogs-> new Dogs.DogInner(
-                                        dogs.getId(),
-                                        dogs.getName(), 
-                                        dogs.getBreed(), 
-                                        dogs.getGender(), 
-                                        dogs.getColor())).toList();
+    public ResponseEntity<?> getAllDogs(Owners owners){
+        try{
+            List<Dogs.DogInner> dogs  = owners
+            .getDogs()
+            .stream()
+            .map(ProfileHelper::getDogsInnerInfo)
+            .toList();
+            if(dogs.isEmpty()){
+                return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+            }
+            return Response.ResponseHandler(HttpStatus.FOUND.getReasonPhrase(), HttpStatus.FOUND,dogs);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
 
     @Transactional
     public ResponseEntity<?> addPet(OwnerPetDTO ownerPetdto,Owners owners){
         try{
-            List<Dogs.DogInner> dogsList = getAllDogs(owners);
+            List<Dogs.DogInner> dogsList = owners.getDogs()
+                .stream()
+                .map(ProfileHelper::getDogsInnerInfo)
+                .toList();
 
             Optional<Dogs.DogInner> foundDog = dogsList.stream()
                                                         .filter(dog->

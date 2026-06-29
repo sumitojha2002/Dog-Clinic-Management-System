@@ -131,12 +131,8 @@ public class AdminServices {
             
             List<Dogs.DogInner> dogs = dogsRepo.findAllDogsByNameAndBreed(safeBreed,safeName)
                                                 .stream()
-                                                .map(dog-> new Dogs.DogInner(dog.getId(), 
-                                                                            dog.getName(), 
-                                                                            dog.getBreed(), 
-                                                                            dog.getGender(), 
-                                                                            dog.getColor())).toList();
-
+                                                .map(ProfileHelper::getDogsInnerInfo)
+                                                .toList();
                 if(dogs.isEmpty()){
                     return Response.ResponseHandler("No dogs found.", HttpStatus.NOT_FOUND);
                 }else{

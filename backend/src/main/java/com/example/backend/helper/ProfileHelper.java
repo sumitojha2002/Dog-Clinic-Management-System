@@ -11,6 +11,25 @@ import com.example.backend.security.entity.User;
 
 public class ProfileHelper {
 
+    public static Dogs.DogInner getDogsInnerInfo(Dogs dog){
+        if(dog == null) return null;
+        
+        return new Dogs.DogInner(
+                dog.getId(), 
+                dog.getName(), 
+                dog.getBreed(), 
+                dog.getGender(), 
+                dog.getColor(),
+                dog.getWeight(),
+                dog.getDateOfBirth(),
+                dog.getVaccinationStatus(),
+                dog.getAllergies(),
+                dog.getChronicConditions(),
+                dog.getRegisteredDate(),
+                dog.getLastVisitDate(),
+                dog.getStatus());
+    }
+
     public static Owners.OwnersProfile getAllOwnersProfile(Owners owner){
 
         if (owner == null) {
@@ -42,7 +61,15 @@ public class ProfileHelper {
                 dog.getName(), 
                 dog.getBreed(), 
                 dog.getGender(), 
-                dog.getColor()))
+                dog.getColor(),
+                dog.getWeight(),
+                dog.getDateOfBirth(),
+                dog.getVaccinationStatus(),
+                dog.getAllergies(),
+                dog.getChronicConditions(),
+                dog.getRegisteredDate(),
+                dog.getLastVisitDate(),
+                dog.getStatus()))
                 .orElse(null);
              
         Owners.OwnersProfile owners = Optional.ofNullable(appointments)

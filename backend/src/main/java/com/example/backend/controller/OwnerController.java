@@ -51,7 +51,7 @@ public class OwnerController {
     }
 
     @GetMapping("/dogs")
-    public List<Dogs.DogInner> findAllDogs(@AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<?> findAllDogs(@AuthenticationPrincipal UserDetails userDetails){
         User user = userRepository.findByUsernameOrEmail(userDetails.getUsername()).get();
         Owners owners = ownerRepo.findByUserId(user.getId()).get();
         return ownerService.getAllDogs(owners);

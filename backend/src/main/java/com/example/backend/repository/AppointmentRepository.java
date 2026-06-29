@@ -43,7 +43,7 @@ public interface AppointmentRepository extends JpaRepository<Appointments,Long>{
            LEFT JOIN FETCH a.veterinarians v
            LEFT JOIN FETCH v.specialization
            LEFT JOIN FETCH v.user
-           LEFT JOIN FETCH a.dogs
+           LEFT JOIN FETCH a.dogs d
            LEFT JOIN FETCH d.allergies
            LEFT JOIN FETCH d.chronicConditions
            LEFT JOIN FETCH a.owners o
@@ -61,7 +61,7 @@ public interface AppointmentRepository extends JpaRepository<Appointments,Long>{
            LEFT JOIN FETCH a.veterinarians v
            LEFT JOIN FETCH v.specialization
            LEFT JOIN FETCH v.user
-           LEFT JOIN FETCH a.dogs
+           LEFT JOIN FETCH a.dogs d
            LEFT JOIN FETCH d.allergies
            LEFT JOIN FETCH d.chronicConditions
            LEFT JOIN FETCH a.owners o
