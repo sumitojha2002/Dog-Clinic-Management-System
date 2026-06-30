@@ -1,8 +1,6 @@
 package com.example.backend.controller;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.backend.entity.Dogs;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.dto.AppointmentDTO;
 import com.example.backend.entity.dto.OwnerPetDTO;
@@ -78,7 +75,7 @@ public class OwnerController {
     }
 
     @GetMapping("/dogs/appointment/timing")
-    public List<LocalTime> getAllAvailabeTime(@RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate localDate){
+    public ResponseEntity<?> getAllAvailabeTime(@RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate localDate){
         return ownerService.getAppointmentTime(localDate);
     }
 

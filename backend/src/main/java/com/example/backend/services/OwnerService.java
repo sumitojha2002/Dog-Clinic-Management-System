@@ -37,6 +37,7 @@ import com.example.backend.security.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import tools.jackson.databind.ext.javatime.DateTimeParseException;
 
 @Service
 @RequiredArgsConstructor
@@ -115,7 +116,7 @@ public class OwnerService {
 
             Optional<Dogs.DogInner> foundDog = dogsList.stream()
                                                         .filter(dog->
-                                                            dog.name().matches(ownerPetdto.getName()))
+                                                            dog.name().toLowerCase().matches(ownerPetdto.getName().toLowerCase()))
                                                             .findFirst();
             if(foundDog.isPresent()){
                 return Response.ResponseHandler("Cannot have pet dog with same name.", HttpStatus.NOT_ACCEPTABLE);
@@ -166,32 +167,41 @@ public class OwnerService {
     }
     }
 
-    public List<LocalTime> getAppointmentTime(LocalDate localDate){
-        List<LocalTime> allSlots = new ArrayList<>(List.of(
-            LocalTime.of(9,0),
-            LocalTime.of(9,30),
-            LocalTime.of(10,0),
-            LocalTime.of(10,30),
-            LocalTime.of(11,0),
-            LocalTime.of(11,30),
-            LocalTime.of(13,0),
-            LocalTime.of(13,30),
-            LocalTime.of(14,0),
-            LocalTime.of(14,30),
-            LocalTime.of(15,0),
-            LocalTime.of(15,30),
-            LocalTime.of(16,0),
-            LocalTime.of(16,30)
-        ));
+    public ResponseEntity<?> getAppointmentTime(LocalDate localDate){
+        try{
 
-        List<LocalTime> removeTimeTiming  = appRepo.getAllAppointmentsTime(localDate).stream().map(ap-> ap.getAppointmentTime()).toList();
-        if(removeTimeTiming.isEmpty()){
-            return allSlots;
+            List<LocalTime> allSlots = new ArrayList<>(List.of(
+                LocalTime.of(9,0),
+                LocalTime.of(9,30),
+                LocalTime.of(10,0),
+                LocalTime.of(10,30),
+                LocalTime.of(11,0),
+                LocalTime.of(11,30),
+                LocalTime.of(13,0),
+                LocalTime.of(13,30),
+                LocalTime.of(14,0),
+                LocalTime.of(14,30),
+                LocalTime.of(15,0),
+                LocalTime.of(15,30),
+                LocalTime.of(16,0),
+                LocalTime.of(16,30)
+            ));
+            
+            List<LocalTime> removeTimeTiming  = appRepo.getAllAppointmentsTime(localDate).stream().map(ap-> ap.getAppointmentTime()).toList();
+            if(removeTimeTiming.isEmpty()){
+                return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,allSlots);
+            }
+            allSlots.removeAll(removeTimeTiming);
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,allSlots);
+        }catch(DateTimeParseException e){
+            e.printStackTrace();
+            return Response.ResponseHandler("Invalid date.", HttpStatus.OK);
+
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        allSlots.removeAll(removeTimeTiming);
-        return allSlots;
     }
-
 
     // Set Appoitment
     @Transactional
