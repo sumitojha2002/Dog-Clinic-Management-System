@@ -1,0 +1,21 @@
+{
+  "name": "frontend",
+  "private":true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:owner": "npm run dev --workspace=owner-portal",
+    "dev:vet": "npm run dev --workspace=vet-portal",
+    "dev:admin": "npm run dev --workspace=admin-portal"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
