@@ -57,7 +57,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of("http://localhost:3001"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTION"));
+        configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         
