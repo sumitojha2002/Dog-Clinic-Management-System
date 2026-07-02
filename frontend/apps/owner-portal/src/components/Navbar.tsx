@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { Button } from "./ui/button";
 
 export default function Navbar() {
+  const navigate = useNavigate();
   return (
     <div className="flex justify-between">
       <div className=" w-full items-start">
@@ -17,7 +18,9 @@ export default function Navbar() {
       <div className="w-full flex justify-end items-center">
         <div className="gap-3 flex justify-between">
           <Button>Sign up</Button>
-          <Button variant={"outline"}>login</Button>
+          <Button variant={"outline"} onClick={() => navigate("/login")}>
+            login
+          </Button>
         </div>
       </div>
     </div>

@@ -4,6 +4,8 @@ import { useAuth } from "./components/provider/AuthProvider";
 import ProtectedRoute from "./components/routes/protectedRoutes/ProtectedRoute";
 import MainLayout from "./components/layouts/MainLayout";
 import Home from "./pages/Home";
+import AuthLayout from "./components/layouts/AuthLayout";
+import Login from "./pages/Login";
 
 function App() {
   const { loading } = useAuth();
@@ -13,11 +15,16 @@ function App() {
   }
   return (
     <Routes>
+      // main layout
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
       </Route>
-      <Route element={<ProtectedRoute allowedRole="ROLE_OWNER" />}>
+      // auth layout
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<Login />} />
       </Route>
+      // protected route
+      <Route element={<ProtectedRoute allowedRole="ROLE_OWNER" />}></Route>
     </Routes>
   );
 }

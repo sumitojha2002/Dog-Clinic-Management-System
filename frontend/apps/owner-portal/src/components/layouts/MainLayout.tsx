@@ -3,7 +3,7 @@ import Navbar from "../Navbar";
 
 function MainLayout() {
   return (
-    <div>
+    <div className="border">
       <div>
         <div>
           <Navbar />
