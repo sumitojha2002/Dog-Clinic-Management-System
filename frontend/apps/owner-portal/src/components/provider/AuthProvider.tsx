@@ -11,8 +11,8 @@ import axios from "axios";
 import { decodeToken } from "../../utils/helpers";
 
 interface AuthContextType {
-  accessToken: string | null;
-  setAccessToken: (token: string | null) => void;
+  accessToken: string | undefined;
+  setAccessToken: (token: string | undefined) => void;
   isAuthenticated: boolean;
   role: string | null;
   user: TokenPayload | null;
@@ -31,7 +31,7 @@ export const useAuth = () => {
 };
 
 export default function AuthProvider({ children }: AuthProviderProps) {
-  const [accessToken, setAccessToken] = useState<string | null>("");
+  const [accessToken, setAccessToken] = useState<string | undefined>("");
   const [user, setUser] = useState<TokenPayload | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -52,8 +52,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       {},
       { withCredentials: true },
     );
-    const data = res.data;
-    setAccessToken(null);
+    setAccessToken(undefined);
     setUser(null);
   };
 
@@ -66,9 +65,11 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       );
       const data = res.data;
       setAccessToken(data.accessToken);
+      const payload = decodeToken<TokenPayload>(data.accessToken);
+      setUser(payload);
     } catch (error) {
       console.error("Token refresh failed:", error);
-      setAccessToken(null);
+      setAccessToken(undefined);
       setUser(null);
       throw new Error("NOT authorized");
     }
@@ -81,7 +82,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       try {
         await refreshAccessToken();
       } catch {
-        setAccessToken(null);
+        setAccessToken(undefined);
         setUser(null);
       } finally {
         setLoading(false);

@@ -8,6 +8,7 @@ export const login = async (loginInfo: Login): Promise<ResponseLogin> => {
   const response = await axios.post<ResponseLogin>(
     baseUrl + `/login`,
     loginInfo,
+    { withCredentials: true },
   );
   return response.data;
 };

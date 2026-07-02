@@ -1,22 +1,35 @@
-import React, { useState, type FormEvent } from "react";
+import React, { useEffect, useState, type FormEvent } from "react";
 
 import { Button } from "../components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { login } from "../services/api/authapi";
+import { useAuth } from "../components/provider/AuthProvider";
 
 function Login() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
+  const auth = useAuth();
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: login,
+    onSuccess: (data) => {
+      auth.setAccessToken(data.accessToken);
+      alert("Loged in successfully.");
+      navigate("/");
+    },
+    onError: (error) => {
+      console.log("mutation error:", error);
+    },
   });
+
+  useEffect(() => {
+    console.log("accessToken updated:", auth);
+  }, [auth.accessToken]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();

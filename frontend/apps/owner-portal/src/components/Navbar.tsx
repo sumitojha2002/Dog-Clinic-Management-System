@@ -1,8 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { Button } from "./ui/button";
+import { useAuth } from "./provider/AuthProvider";
 
 export default function Navbar() {
+  const auth = useAuth();
   const navigate = useNavigate();
   return (
     <div className="flex justify-between">
@@ -17,10 +19,19 @@ export default function Navbar() {
       </div>
       <div className="w-full flex justify-end items-center">
         <div className="gap-3 flex justify-between">
-          <Button>Sign up</Button>
-          <Button variant={"outline"} onClick={() => navigate("/login")}>
-            login
-          </Button>
+          {auth.isAuthenticated ?
+            <>
+            <Button>Profile</Button>
+              <Button variant={"outline"} onClick={() => auth.logout()}>
+                Log Out
+              </Button>
+            </>
+          : <>
+              <Button>Sign up</Button>
+              <Button variant={"outline"} onClick={() => navigate("/login")}>
+                Login
+              </Button>
+          </>}
         </div>
       </div>
     </div>
