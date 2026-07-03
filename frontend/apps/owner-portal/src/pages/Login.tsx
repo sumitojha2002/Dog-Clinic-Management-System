@@ -6,10 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { login } from "../services/api/authapi";
 import { useAuth } from "../components/provider/AuthProvider";
+import type { AxiosError } from "axios";
+import type { BackendError } from "../services/api/apitypes";
 
 function Login() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [errMsg, setErrMsg] = useState<string | undefined>("");
   const auth = useAuth();
   const navigate = useNavigate();
 
@@ -18,18 +21,14 @@ function Login() {
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      auth.setAccessToken(data.accessToken);
-      alert("Loged in successfully.");
+      auth.setAccessToken(data.data?.accessToken);
+      alert(data.message);
       navigate("/");
     },
-    onError: (error) => {
-      console.log("mutation error:", error);
+    onError: (error: AxiosError<BackendError>) => {
+      setErrMsg(error.response?.data?.message);
     },
   });
-
-  useEffect(() => {
-    console.log("accessToken updated:", auth);
-  }, [auth.accessToken]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -73,8 +72,13 @@ function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <Button variant={"outline"}>Login</Button>
+        <Button variant={"outline"}>
+          {mutation.isPending ? "Logging in" : "Login"}
+        </Button>
       </form>
+      <div className=" mt-3">
+        <p className="text-red-500">{errMsg}</p>
+      </div>
     </div>
   );
 }

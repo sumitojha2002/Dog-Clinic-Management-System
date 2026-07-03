@@ -21,17 +21,18 @@ export default function Navbar() {
         <div className="gap-3 flex justify-between">
           {auth.isAuthenticated ?
             <>
-            <Button>Profile</Button>
+              <Button>Profile</Button>
               <Button variant={"outline"} onClick={() => auth.logout()}>
                 Log Out
               </Button>
             </>
           : <>
-              <Button>Sign up</Button>
+              <Button onClick={() => navigate("/signup")}>Sign up</Button>
               <Button variant={"outline"} onClick={() => navigate("/login")}>
                 Login
               </Button>
-          </>}
+            </>
+          }
         </div>
       </div>
     </div>
