@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
@@ -51,7 +52,7 @@ public class AuthController {
     
     @PostMapping("/login")
     @Transactional
-    public ResponseEntity<Object> login(@RequestBody LoginDTO logindto){
+    public ResponseEntity<?> login(@RequestBody LoginDTO logindto){
         try{
             System.out.println(logindto);
             Authentication auth = authManger.authenticate(new UsernamePasswordAuthenticationToken(logindto.getUsername(), logindto.getPassword()));
@@ -77,8 +78,13 @@ public class AuthController {
 
             String accessToken = jwtService.generateAccessToken(userDetails.getUsername(), userDetails.getAuthorities());
             
+            Map<String,String> data =  new HashMap<>(Map.of("accessToken",accessToken));
+
             refreshRepo.save(refreshTokendb);
-            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(Map.of("accessToken", accessToken));
+            return ResponseEntity
+                .ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(Map.of("message","User has been logged in successfully","status",HttpStatus.OK,"data",data));
         }catch(Exception e){
             e.printStackTrace();
             throw new UserAlreadyExistException("Invalid username or password.");
