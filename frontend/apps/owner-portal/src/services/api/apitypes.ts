@@ -31,3 +31,21 @@ export interface SignUp {
   password: string;
   email: string;
 }
+
+export interface OwnerProfile {
+  user: UserInfo;
+  ownerId: number;
+  phoneNumber: string | null;
+  address: string | null;
+  registrationDate: string | undefined;
+}
+
+interface UserInfo {
+  username: string;
+  email: string;
+}
+
+export interface UserUpdateProfileInfo {
+  phoneNumber: string;
+  address: string;
+}

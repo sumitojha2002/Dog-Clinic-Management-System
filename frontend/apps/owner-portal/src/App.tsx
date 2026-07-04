@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import AuthLayout from "./components/layouts/AuthLayout";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+import Profile from "./pages/Profile";
 
 function App() {
   const { loading } = useAuth();
@@ -26,7 +27,9 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
       </Route>
       // protected route
-      <Route element={<ProtectedRoute allowedRole="ROLE_OWNER" />}></Route>
+      <Route element={<ProtectedRoute allowedRole="ROLE_OWNER" />}>
+        <Route path="/profile" element={<Profile />} />
+      </Route>
     </Routes>
   );
 }

@@ -7,7 +7,7 @@ export default function Navbar() {
   const auth = useAuth();
   const navigate = useNavigate();
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between mt-5">
       <div className=" w-full items-start">
         <img height="70px" width="70px" src={logo} alt="websitelogo" />
       </div>
@@ -21,7 +21,7 @@ export default function Navbar() {
         <div className="gap-3 flex justify-between">
           {auth.isAuthenticated ?
             <>
-              <Button>Profile</Button>
+              <Button onClick={() => navigate("/profile")}>Profile</Button>
               <Button variant={"outline"} onClick={() => auth.logout()}>
                 Log Out
               </Button>

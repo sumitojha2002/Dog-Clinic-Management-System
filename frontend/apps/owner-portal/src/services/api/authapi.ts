@@ -1,14 +1,20 @@
 import axios from "axios";
-import type { Login, Response, ResponseLogin, SignUp } from "./apitypes";
+import type {
+  Login,
+  OwnerProfile,
+  Response,
+  ResponseLogin,
+  SignUp,
+  UserUpdateProfileInfo,
+} from "./apitypes";
 
-const baseUrl = "http://localhost:9090/auth";
-
+const baseUrl = "http://localhost:9090";
 // use to login
 export const login = async (
   loginInfo: Login,
 ): Promise<Response<ResponseLogin>> => {
   const response = await axios.post<Response<ResponseLogin>>(
-    baseUrl + `/login`,
+    baseUrl + `/auth/login`,
     loginInfo,
     { withCredentials: true },
   );
@@ -18,9 +24,35 @@ export const login = async (
 // sign up
 export const signup = async (signupInfo: SignUp): Promise<Response> => {
   const response = await axios.post<Response>(
-    baseUrl + `/register/petowner`,
+    baseUrl + `/auth/register/petowner`,
     signupInfo,
     { withCredentials: true },
   );
   return response.data;
+};
+
+// get owner profile
+export const getOwnerProfile = async (
+  token: string | undefined,
+): Promise<Response<OwnerProfile>> => {
+  const response = await axios.get<Response<OwnerProfile>>(
+    baseUrl + "/owner/profile",
+    { headers: { Authorization: `Bearer ` + token } },
+  );
+  return response.data;
+};
+
+// update owner profile
+export const updateOwnerProfile = async (
+  token: string | undefined,
+  userUpdateProfileInfo: UserUpdateProfileInfo,
+): Promise<Response<UserUpdateProfileInfo>> => {
+  const responce = await axios.post<Response<UserUpdateProfileInfo>>(
+    baseUrl + "/owner/profile",
+    userUpdateProfileInfo,
+    {
+      headers: { Authorization: `Bearer ` + token },
+    },
+  );
+  return responce.data;
 };

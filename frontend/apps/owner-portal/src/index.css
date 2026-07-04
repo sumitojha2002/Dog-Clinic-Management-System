@@ -143,3 +143,19 @@ body {
     @apply font-sans;
   }
 }
+
+input[type="text"]:disabled {
+  background-color: #f5f5f5; /* Light gray background */
+  color: #a0a0a0; /* Faded text color */
+  border: 1px solid #d3d3d3; /* Faded border */
+  cursor: not-allowed; /* Changes mouse cursor to a red circle with a slash */
+  opacity: 0.7; /* Drops total opacity slightly */
+}
+
+input[type="tel"]:disabled {
+  background-color: #f5f5f5; /* Light gray background */
+  color: #a0a0a0; /* Faded text color */
+  border: 1px solid #d3d3d3; /* Faded border */
+  cursor: not-allowed; /* Changes mouse cursor to a red circle with a slash */
+  opacity: 0.7; /* Drops total opacity slightly */
+}
