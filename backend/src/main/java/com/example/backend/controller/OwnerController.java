@@ -3,10 +3,12 @@ package com.example.backend.controller;
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -66,8 +68,8 @@ public class OwnerController {
     }
 
 
-    @PostMapping("/dogs")
-    public ResponseEntity<?> addDog(@RequestBody OwnerPetDTO ownerPetDTO
+    @PostMapping(value="/dogs",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> addDog(@Valid @ModelAttribute OwnerPetDTO ownerPetDTO
                                     ,@AuthenticationPrincipal UserDetails userDetails){
             User user = userRepository.findByUsernameOrEmail(userDetails.getUsername()).get();
             Owners owners = ownerRepo.findByUserId(user.getId()).get();

@@ -11,12 +11,23 @@ import com.example.backend.security.entity.User;
 
 public class ProfileHelper {
 
+    public static Dogs.DogCardInfo getDogCardInfo(Dogs dog){
+        if(dog == null) return null;
+        return new Dogs.DogCardInfo(
+            dog.getId(),
+            dog.getImageUrl(),
+            dog.getName(), 
+            dog.getDateOfBirth(), 
+            dog.getBreed());
+    }
+
     public static Dogs.DogInner getDogsInnerInfo(Dogs dog){
         if(dog == null) return null;
         
         return new Dogs.DogInner(
                 dog.getId(), 
                 dog.getName(), 
+                dog.getImageUrl(),
                 dog.getBreed(), 
                 dog.getGender(), 
                 dog.getColor(),
@@ -59,6 +70,7 @@ public class ProfileHelper {
             .map(dog-> new Dogs.DogInner(
                 dog.getId(), 
                 dog.getName(), 
+                dog.getImageUrl(),
                 dog.getBreed(), 
                 dog.getGender(), 
                 dog.getColor(),

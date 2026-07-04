@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.cloudinary.Cloudinary;
 import com.example.backend.entity.Appointments;
 import com.example.backend.entity.Dogs;
 import com.example.backend.entity.MedicalRecord;
@@ -34,6 +35,7 @@ import com.example.backend.repository.VeterinarianRepository;
 import com.example.backend.response.Response;
 import com.example.backend.security.entity.User;
 import com.example.backend.security.repository.UserRepository;
+import com.example.backend.security.services.CloudinaryServices;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +51,7 @@ public class OwnerService {
     private final AppointmentRepository appRepo;
     private final VeterinarianRepository vetRepo;
     private final MedicalRecordRepository medicalRecordRepo;
-
+    private final CloudinaryServices cloudinaryServices;
     @Transactional
     public ResponseEntity<?> updateOwnersProfile(OwnerProfileDTO ownersProfiledto, Owners owners){
         try{
@@ -90,15 +92,17 @@ public class OwnerService {
 
     public ResponseEntity<?> getAllDogs(Owners owners){
         try{
-            List<Dogs.DogInner> dogs  = owners
+            List<Dogs.DogCardInfo> dogs  = owners
             .getDogs()
             .stream()
-            .map(ProfileHelper::getDogsInnerInfo)
+            .map(ProfileHelper::getDogCardInfo)
             .toList();
+
             if(dogs.isEmpty()){
                 return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
             }
-            return Response.ResponseHandler(HttpStatus.FOUND.getReasonPhrase(), HttpStatus.FOUND,dogs);
+            
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,dogs);
         }catch(Exception e){
             e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -129,6 +133,17 @@ public class OwnerService {
             Dogs dogs = new Dogs();
             
             owners.getDogs().add(dogs);
+            String mimeType = ownerPetdto.getImageUrl().getContentType();
+            List<String> filesType = new ArrayList<>(List.of("image/png","image/jpg","image/jpeg"));
+            
+            // Method 2: Analyzing File Bytes Using Apache Tika (Secure)
+
+            if(mimeType == null || !filesType.contains(mimeType)){
+                return Response.ResponseHandler("Invalid image format must be png,jpg or jpge.", HttpStatus.BAD_REQUEST);
+            }
+
+            String url = cloudinaryServices.upload(ownerPetdto.getImageUrl());
+            dogs.setImageUrl(url);
             dogs.setName(ownerPetdto.getName());
             dogs.setBreed(ownerPetdto.getBreed());
             dogs.setGender(ownerPetdto.getGender());
