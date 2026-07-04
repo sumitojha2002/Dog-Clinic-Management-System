@@ -59,7 +59,7 @@ public class OwnerService {
             owners.setPhoneNumber(ownersProfiledto.getPhoneNumber());
             System.out.println(owners.getUser().getUsername()+owners.getAddress()+owners.getPhoneNumber()+owners.getAlternatePhoneNumber());
             ownerRepo.save(owners);
-            return Response.ResponseHandler("User profile has been successfully updated.", HttpStatus.OK);
+            return Response.ResponseHandler("User profile has been successfully updated.", HttpStatus.OK,ownersProfiledto);
         }catch(Exception e){
 
             return Response.ResponseHandler("Failed to update the Profile.", HttpStatus.BAD_REQUEST);
