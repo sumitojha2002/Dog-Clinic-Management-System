@@ -4,6 +4,14 @@ export interface Response<T = void> {
   data?: T;
 }
 
+export interface DogCardInfo {
+  id: number;
+  imageURL: null | string;
+  name: string;
+  dateOfBirth: string;
+  breed: string;
+}
+
 export interface Login {
   username: string;
   password: string;

@@ -1,4 +1,5 @@
 import Navbar from "../../Navbar";
+import ProfileSwitcher from "../../ProfileSwitcher";
 import { useAuth } from "../../provider/AuthProvider";
 import { Navigate, Outlet } from "react-router-dom";
 
@@ -24,6 +25,9 @@ function ProtectedRoute({ allowedRole }: Props) {
   return (
     <div>
       <Navbar />
+      <div>
+        <ProfileSwitcher />
+      </div>
       <div>
         <Outlet />
       </div>

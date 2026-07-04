@@ -34,7 +34,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const [accessToken, setAccessToken] = useState<string | undefined>("");
   const [user, setUser] = useState<TokenPayload | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
   const didInit = useRef(false);
 
   useEffect(() => {

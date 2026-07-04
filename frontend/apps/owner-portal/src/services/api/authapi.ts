@@ -1,5 +1,6 @@
 import axios from "axios";
 import type {
+  DogCardInfo,
   Login,
   OwnerProfile,
   Response,
@@ -55,4 +56,20 @@ export const updateOwnerProfile = async (
     },
   );
   return responce.data;
+};
+
+// get all dogs card info
+export const getAllDogsCardInfo = async (
+  token: string | undefined,
+): Promise<Response<DogCardInfo[]>> => {
+  const response = await axios.get<Response<DogCardInfo[]>>(
+    baseUrl + "/owner/dogs",
+    {
+      headers: { Authorization: `Bearer ` + token},
+    },
+  );
+  console.log("API response:", response);
+  console.log("API response.data:", response.data);
+
+  return response.data;
 };

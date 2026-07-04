@@ -21,7 +21,9 @@ export default function Navbar() {
         <div className="gap-3 flex justify-between">
           {auth.isAuthenticated ?
             <>
-              <Button onClick={() => navigate("/profile")}>Profile</Button>
+              <Button onClick={() => navigate("/owner/profile")}>
+                Profile
+              </Button>
               <Button variant={"outline"} onClick={() => auth.logout()}>
                 Log Out
               </Button>
