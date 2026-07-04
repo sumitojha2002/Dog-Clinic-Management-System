@@ -39,6 +39,7 @@ public class Dogs {
     @JoinColumn(name="owner_id",nullable=false)
     private Owners owners;
 
+    private String imageUrl;
     private String name;
     private String breed;
     private String gender;
@@ -72,10 +73,18 @@ public class Dogs {
     @OneToMany(mappedBy = "dogs",fetch = FetchType.LAZY)
     private List<Appointments> appointment =  new ArrayList<>();
 
+    public record DogCardInfo(
+        Long id,
+        String imageURL,
+        String name,
+        LocalDate dateOfBirth,
+        String breed
+    ){}
 
     public record DogInner(
         Long id,
         String name,
+        String imageUrl,
         String breed,
         String gender,
         String color,
