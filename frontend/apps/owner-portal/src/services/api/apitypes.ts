@@ -57,3 +57,20 @@ export interface UserUpdateProfileInfo {
   phoneNumber: string;
   address: string;
 }
+
+export interface DogsProfile {
+  id: number;
+  name: string;
+  imageUrl: null | string;
+  breed: string;
+  gender: string;
+  color: string;
+  weight: number | null;
+  dateOfBirth: string;
+  vactionationStatus: string;
+  allergies: string[];
+  chronicConditions: string[];
+  registeredDate: string;
+  lastVisistDate: null | string;
+  status: null | string;
+}

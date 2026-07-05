@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import DogsProfileCard from "../components/cards/DogsProfileCard";
 import { getAllDogsCardInfo } from "../services/api/authapi";
 import { useAuth } from "../components/provider/AuthProvider";
-import { useEffect } from "react";
 
 function DogsProfilesListUI() {
   const auth = useAuth();
@@ -14,10 +13,6 @@ function DogsProfilesListUI() {
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
   });
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   if (isPending) {
     return <div>loading...</div>;

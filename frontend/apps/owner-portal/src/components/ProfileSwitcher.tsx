@@ -19,7 +19,7 @@ function ProfileSwitcher() {
       </div>
       <div>
         <Button
-          disabled={pathname == "/dogs/profile"}
+          disabled={pathname.startsWith("/dogs/profile")}
           onClick={() => {
             navigate("/dogs/profile");
           }}

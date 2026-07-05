@@ -1,4 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "../ui/button";
+import { useAuth } from "../provider/AuthProvider";
+import { getDogProfileById } from "../../services/api/authapi";
+import { useNavigate } from "react-router-dom";
 
 interface DogsInfo {
   id: number;
@@ -9,6 +13,8 @@ interface DogsInfo {
 }
 
 function DogsProfileCard(dogData: DogsInfo) {
+  const navigate = useNavigate();
+
   return (
     <div className="flex justify-center">
       <div className="border w-75 h-90">
@@ -34,7 +40,9 @@ function DogsProfileCard(dogData: DogsInfo) {
               <h3>{dogData.dateOfBirth}</h3>
             </div>
           </div>
-          <Button>View Profile</Button>
+          <Button onClick={() => navigate(`/dogs/profile/${dogData.id}`)}>
+            View Profile
+          </Button>
         </div>
       </div>
     </div>

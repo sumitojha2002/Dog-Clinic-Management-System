@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
 import DogsProfilesListUI from "./pages/DogsProfilesListUI";
+import DogsProfile from "./pages/DogsProfile";
 
 function App() {
   const { loading } = useAuth();
@@ -31,6 +32,7 @@ function App() {
       <Route element={<ProtectedRoute allowedRole="ROLE_OWNER" />}>
         <Route path="/owner/profile" element={<Profile />} />
         <Route path="/dogs/profile" element={<DogsProfilesListUI />} />
+        <Route path="/dogs/profile/:id" element={<DogsProfile />} />
       </Route>
     </Routes>
   );
