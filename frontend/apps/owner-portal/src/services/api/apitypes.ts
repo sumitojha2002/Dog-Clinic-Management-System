@@ -74,3 +74,12 @@ export interface DogsProfile {
   lastVisistDate: null | string;
   status: null | string;
 }
+
+export interface DogPostProfile {
+  name: string;
+  imageUrl: File;
+  breed: string;
+  gender: string;
+  color: string;
+  dateOfBirth: string;
+}

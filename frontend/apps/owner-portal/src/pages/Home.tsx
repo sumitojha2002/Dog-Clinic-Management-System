@@ -2,12 +2,8 @@ import { Button } from "../components/ui/button";
 import vetone from "../assets/vet1-removebg-preview.png";
 import vettwo from "../assets/vet2-removebg-preview.png";
 import { FlaskConical } from "lucide-react";
-import { useEffect } from "react";
-import { useAuth } from "../components/provider/AuthProvider";
 import ProductCard from "../components/cards/ProductCard";
 function Home() {
-  const auth = useAuth();
-
   return (
     <div className="mt-20">
       <div>

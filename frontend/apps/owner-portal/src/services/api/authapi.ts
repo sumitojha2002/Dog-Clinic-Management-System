@@ -1,6 +1,8 @@
 import axios from "axios";
+import { z } from "zod";
 import type {
   DogCardInfo,
+  DogPostProfile,
   DogsProfile,
   Login,
   OwnerProfile,
@@ -9,6 +11,7 @@ import type {
   SignUp,
   UserUpdateProfileInfo,
 } from "./apitypes";
+import type { dogInfoSchema } from "../../utils/helpers";
 
 const baseUrl = "http://localhost:9090";
 // use to login
@@ -83,5 +86,15 @@ export const getDogProfileById = async (
     baseUrl + `/owner/dogs/${id}`,
     { headers: { Authorization: "Bearer " + token } },
   );
+  return response.data;
+};
+
+export const postNewDogProfile = async (
+  token: string | undefined,
+  dogInfo: FormData,
+): Promise<Response> => {
+  const response = await axios.post<Response>(baseUrl + "/owner/dogs", dogInfo, {
+    headers: { Authorization: `Bearer ` + token },
+  });
   return response.data;
 };

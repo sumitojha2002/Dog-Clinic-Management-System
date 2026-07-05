@@ -10,6 +10,8 @@ import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
 import DogsProfilesListUI from "./pages/DogsProfilesListUI";
 import DogsProfile from "./pages/DogsProfile";
+import DogsProfileAdd from "./pages/DogsProfileAdd";
+import ProtectedRouteNavbarNoSwitch from "./components/routes/protectedRoutes/ProtectedRouteNavbarNoSwitchProfile";
 
 function App() {
   const { loading } = useAuth();
@@ -33,6 +35,11 @@ function App() {
         <Route path="/owner/profile" element={<Profile />} />
         <Route path="/dogs/profile" element={<DogsProfilesListUI />} />
         <Route path="/dogs/profile/:id" element={<DogsProfile />} />
+      </Route>
+      <Route
+        element={<ProtectedRouteNavbarNoSwitch allowedRole="ROLE_OWNER" />}
+      >
+        <Route path="/dogs" element={<DogsProfileAdd />} />
       </Route>
     </Routes>
   );
