@@ -27,7 +27,7 @@ export const login = async (
 };
 
 // sign up
-export const signup = async (signupInfo: SignUp): Promise<Response> => {
+export const signup = async (signupInfo: FormData): Promise<Response> => {
   const response = await axios.post<Response>(
     baseUrl + `/auth/register/petowner`,
     signupInfo,
@@ -93,8 +93,12 @@ export const postNewDogProfile = async (
   token: string | undefined,
   dogInfo: FormData,
 ): Promise<Response> => {
-  const response = await axios.post<Response>(baseUrl + "/owner/dogs", dogInfo, {
-    headers: { Authorization: `Bearer ` + token },
-  });
+  const response = await axios.post<Response>(
+    baseUrl + "/owner/dogs",
+    dogInfo,
+    {
+      headers: { Authorization: `Bearer ` + token },
+    },
+  );
   return response.data;
 };

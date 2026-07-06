@@ -1,57 +1,60 @@
 import { ChevronLeft } from "lucide-react";
-import React, { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { signup } from "../services/api/authapi";
 import type { AxiosError } from "axios";
 import type { BackendError, Errors } from "../services/api/apitypes";
+import type z from "zod";
+import { signupSchema } from "../utils/helpers";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+type SignUpForm = z.infer<typeof signupSchema>;
 
 function SignUp() {
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<SignUpForm>({
+    resolver: zodResolver(signupSchema),
+  });
 
   const navigate = useNavigate();
 
-  //errors
-  const [error, setError] = useState<string | undefined>("");
-  const [usernameError, setUsernameError] = useState<string | undefined>("");
-  const [emailError, setEmailError] = useState<string | undefined>("");
-  const [passError, setPassError] = useState<string | undefined>("");
-
   const mutation = useMutation({
-    mutationFn: signup,
+    mutationFn: (formdata: FormData) => signup(formdata),
     onSuccess: (data) => {
       alert(data.message);
       navigate("/login");
     },
     onError: (error: AxiosError<BackendError<Errors>>) => {
-      if (error.response?.data.message) setError(error.response?.data?.message);
+      const backendErrors = error.response?.data.errors;
 
-      if (error.response?.data.errors?.username)
-        setUsernameError(error.response.data.errors.username);
+      if (error.response?.data.message)
+        setError("root", { message: error.response.data.message });
 
-      if (error.response?.data.errors?.email)
-        setEmailError(error.response.data.errors.email);
+      if (backendErrors?.username)
+        setError("username", { message: backendErrors.username });
 
-      if (error.response?.data.errors?.password)
-        setPassError(error.response.data.errors.password);
+      if (backendErrors?.email)
+        setError("email", { message: backendErrors.email });
+
+      if (backendErrors?.password)
+        setError("password", { message: backendErrors.password });
     },
   });
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  const formSubmit = (data: SignUpForm) => {
+    const formData = new FormData();
+    console.log(data);
+    formData.append("username", data.username);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
 
-    mutation.mutate({
-      username,
-      password,
-      email,
-    });
-
-    setUsername("");
-    setPassword("");
-    setEmail("");
+    mutation.mutate(formData);
   };
 
   return (
@@ -64,25 +67,22 @@ function SignUp() {
       <div>
         <h1 className="text-5xl m-10">Sign up</h1>
       </div>
-      <form onSubmit={handleSubmit} className="text-center flex flex-col gap-6">
+      <form
+        onSubmit={handleSubmit(formSubmit)}
+        className="text-center flex flex-col gap-6"
+      >
         <div className="grid grid-cols-2">
           <label>Username</label>
 
-          <input
-            type="text"
-            className="border-b"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
+          <input type="text" className="border-b" {...register("username")} />
         </div>
-        {usernameError && (
+        {errors.username && (
           <div className="grid grid-cols-2">
             <div></div>
             <div>
               <p className="text-red-600 text-[12px] text-left">
                 {" "}
-                * {usernameError}
+                * {errors.username.message}
               </p>
             </div>
           </div>
@@ -90,21 +90,15 @@ function SignUp() {
         <div className="grid grid-cols-2">
           <label>Email</label>
 
-          <input
-            type="text"
-            className="border-b"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <input type="text" className="border-b" {...register("email")} />
         </div>
-        {emailError && (
+        {errors.email && (
           <div className="grid grid-cols-2">
             <div></div>
             <div>
               <p className="text-red-600 text-[12px] text-left">
                 {" "}
-                * {emailError}
+                * {errors.email.message}
               </p>
             </div>
           </div>
@@ -114,27 +108,25 @@ function SignUp() {
           <input
             type="password"
             className="border-b"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            {...register("password")}
           />
         </div>
-        {passError && (
+        {errors.password && (
           <div className="grid grid-cols-2">
             <div></div>
             <div>
               <p className="text-red-600 text-[12px] text-left">
                 {" "}
-                * {passError}
+                * {errors.password.message}
               </p>
             </div>
           </div>
         )}
-        {error && <p className="text-red-600">{error}</p>}
+        {errors.root && <p className="text-red-600">{errors.root.message}</p>}
         <Button
           className="w-full mt-4"
           type="submit"
-          disabled={mutation.isPending}
+          disabled={mutation.isPending || isSubmitting}
         >
           {mutation.isPending ? "Signing in...." : "Sign up"}
         </Button>

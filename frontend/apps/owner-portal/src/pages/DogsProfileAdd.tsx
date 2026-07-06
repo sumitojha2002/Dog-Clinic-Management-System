@@ -3,7 +3,7 @@ import { Button } from "../components/ui/button";
 import { useEffect, useState } from "react";
 import DogProfilePic from "../../src/assets/dogpfp.png";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate, type ErrorResponse } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { dogInfoSchema } from "../utils/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -161,7 +161,9 @@ function DogsProfileAdd() {
                 </div>
               )}
             </div>
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending ? "Adding Dog..." : "Add Dog"}
+            </Button>
           </div>
         </form>
       </div>

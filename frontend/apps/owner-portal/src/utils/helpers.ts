@@ -26,3 +26,20 @@ export const dogInfoSchema = z.object({
       "Profile picture is required",
     ),
 });
+
+export const signupSchema = z.object({
+  username: z
+    .string()
+    .max(50, "Name is to long")
+    .min(1, "Name is required")
+    .refine((name) => !name.includes(" "), {
+      message: "Name should not contain space",
+    }),
+
+  password: z
+    .string()
+    .min(5, "Password must be at least 5 characters")
+    .max(20, "Password is long"),
+
+  email: z.string().email("Enter a valid email"),
+});
