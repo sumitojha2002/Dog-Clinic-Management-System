@@ -12,6 +12,7 @@ import DogsProfilesListUI from "./pages/DogsProfilesListUI";
 import DogsProfile from "./pages/DogsProfile";
 import DogsProfileAdd from "./pages/DogsProfileAdd";
 import ProtectedRouteNavbarNoSwitch from "./components/routes/protectedRoutes/ProtectedRouteNavbarNoSwitchProfile";
+import Appointment from "./pages/Appointment";
 
 function App() {
   const { loading } = useAuth();
@@ -39,6 +40,7 @@ function App() {
       <Route
         element={<ProtectedRouteNavbarNoSwitch allowedRole="ROLE_OWNER" />}
       >
+        <Route path="/dogs/:id/book-appointment" element={<Appointment />} />
         <Route path="/dogs" element={<DogsProfileAdd />} />
       </Route>
     </Routes>

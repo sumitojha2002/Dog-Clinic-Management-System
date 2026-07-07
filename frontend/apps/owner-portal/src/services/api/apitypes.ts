@@ -28,11 +28,19 @@ export interface BackendError<T = void> {
   errors?: T;
 }
 
+export interface AppointmentErrors {
+  reason: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  vetId: string;
+}
+
 export interface Errors {
   username: string;
   password: string;
   email: string;
 }
+
 
 export interface SignUp {
   username: string;

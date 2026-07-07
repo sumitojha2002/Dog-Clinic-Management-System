@@ -79,28 +79,30 @@ function DogsProfile() {
           <div className="grid grid-cols-2">
             <h1>Allergies</h1>
             <h1 className="border-b">
-              {data.data?.allergies && data.data.allergies.length > 0 ?
+              {data.data?.allergies && data.data.allergies.length > 0 ? (
                 <div>
                   {data.data.allergies.map((allergies) => (
                     <div>{allergies}</div>
                   ))}
                 </div>
-              : <div></div>}
+              ) : (
+                <div></div>
+              )}
             </h1>
           </div>
           <div className="grid grid-cols-2">
             <h1>Chronic Conditions</h1>
             <h1 className="border-b">
-              {(
-                data?.data?.chronicConditions &&
-                data.data.chronicConditions.length > 0
-              ) ?
+              {data?.data?.chronicConditions &&
+              data.data.chronicConditions.length > 0 ? (
                 <div>
                   {data.data.chronicConditions.map((chronic) => (
                     <div>{chronic}</div>
                   ))}
                 </div>
-              : <div></div>}
+              ) : (
+                <div></div>
+              )}
             </h1>
           </div>
         </div>
@@ -121,7 +123,13 @@ function DogsProfile() {
           </div>
         </div>
         <div>
-          <Button className="flex border w-full"> Book An Appointent</Button>
+          <Button
+            className="flex border w-full"
+            onClick={() => navigate(`/dogs/${id}/book-appointment`)}
+          >
+            {" "}
+            Book An Appointent
+          </Button>
         </div>
       </div>
     </div>

@@ -43,3 +43,13 @@ export const signupSchema = z.object({
 
   email: z.string().email("Enter a valid email"),
 });
+
+
+export const AppointmentSchema = z.object(
+  {
+    reason: z.string().min(1, "Reason is required").max(50,"Reason should be short"),
+    appointmentDate: z.string().min(1,"Date is required"),
+    appointmentTime: z.string().min(1, "Time is required"),
+    vetId:z.string().min(1,"Vet needs to be selected"),
+  }
+)

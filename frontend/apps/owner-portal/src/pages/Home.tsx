@@ -66,7 +66,7 @@ function Home() {
                     <div>
                       <FlaskConical size={20} />
                     </div>
-                    <div className="text-[10px] rounded-[10px] border border-black pl-1 pr-1">
+                    <div className="text-[10px]  rounded-[10px] border border-black pl-1 pr-1">
                       Rs. 200
                     </div>
                   </div>

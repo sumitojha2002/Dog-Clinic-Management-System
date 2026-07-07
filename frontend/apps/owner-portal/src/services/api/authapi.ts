@@ -1,17 +1,14 @@
 import axios from "axios";
-import { z } from "zod";
+
 import type {
   DogCardInfo,
-  DogPostProfile,
   DogsProfile,
   Login,
   OwnerProfile,
   Response,
   ResponseLogin,
-  SignUp,
   UserUpdateProfileInfo,
 } from "./apitypes";
-import type { dogInfoSchema } from "../../utils/helpers";
 
 const baseUrl = "http://localhost:9090";
 // use to login
@@ -102,3 +99,18 @@ export const postNewDogProfile = async (
   );
   return response.data;
 };
+
+export const bookAppointmentDog = async (
+  token: string | undefined,
+  id: string,
+  appInfo:FormData
+): Promise<Response> => {
+  const response = await axios.post<Response>(baseUrl + `/owner/dogs/${id}/appointment`,
+    appInfo,
+    {
+      headers: { Authorization: `Bearer ` + token }
+    },
+  );
+  return response.data;
+  
+}
