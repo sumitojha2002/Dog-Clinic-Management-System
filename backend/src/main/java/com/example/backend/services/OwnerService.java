@@ -1,5 +1,6 @@
 package com.example.backend.services;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -52,94 +53,96 @@ public class OwnerService {
     private final VeterinarianRepository vetRepo;
     private final MedicalRecordRepository medicalRecordRepo;
     private final CloudinaryServices cloudinaryServices;
+
     @Transactional
-    public ResponseEntity<?> updateOwnersProfile(OwnerProfileDTO ownersProfiledto, Owners owners){
-        try{
+    public ResponseEntity<?> updateOwnersProfile(OwnerProfileDTO ownersProfiledto, Owners owners) {
+        try {
             System.out.println(ownersProfiledto);
             owners.setAddress(ownersProfiledto.getAddress());
             owners.setAlternatePhoneNumber(ownersProfiledto.getAlternatePhoneNumber());
             owners.setPhoneNumber(ownersProfiledto.getPhoneNumber());
-            System.out.println(owners.getUser().getUsername()+owners.getAddress()+owners.getPhoneNumber()+owners.getAlternatePhoneNumber());
+            System.out.println(owners.getUser().getUsername() + owners.getAddress() + owners.getPhoneNumber()
+                    + owners.getAlternatePhoneNumber());
             ownerRepo.save(owners);
-            return Response.ResponseHandler("User profile has been successfully updated.", HttpStatus.OK,ownersProfiledto);
-        }catch(Exception e){
+            return Response.ResponseHandler("User profile has been successfully updated.", HttpStatus.OK,
+                    ownersProfiledto);
+        } catch (Exception e) {
 
             return Response.ResponseHandler("Failed to update the Profile.", HttpStatus.BAD_REQUEST);
         }
     }
 
-    public ResponseEntity<?> findPetsByID(Long id,Owners owner){
-        try{
+    public ResponseEntity<?> findPetsByID(Long id, Owners owner) {
+        try {
             List<Dogs.DogInner> listOfDogs = owner.getDogs()
-                .stream()
-                .map(ProfileHelper::getDogsInnerInfo)
-                .toList();
-            
-            Optional<Dogs.DogInner> foundDog =  listOfDogs.stream().filter(dog-> dog.id().equals(id)).findFirst();
-            
-            if(foundDog.isPresent()){
+                    .stream()
+                    .map(ProfileHelper::getDogsInnerInfo)
+                    .toList();
+
+            Optional<Dogs.DogInner> foundDog = listOfDogs.stream().filter(dog -> dog.id().equals(id)).findFirst();
+
+            if (foundDog.isPresent()) {
                 Dogs.DogInner resDog = foundDog.get();
                 return Response.ResponseHandler("The dog with id found successfully.", HttpStatus.OK, resDog);
-            }else{
+            } else {
                 throw new UserNotFoundException("Dog not found. May not be users dogs id.");
             }
-            }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return Response.ResponseHandler("Dog not found. May not be users dogs id.", HttpStatus.NOT_FOUND);
         }
     }
 
-    public ResponseEntity<?> getAllDogs(Owners owners){
-        try{
-            List<Dogs.DogCardInfo> dogs  = owners
-            .getDogs()
-            .stream()
-            .map(ProfileHelper::getDogCardInfo)
-            .toList();
+    public ResponseEntity<?> getAllDogs(Owners owners) {
+        try {
+            List<Dogs.DogCardInfo> dogs = owners
+                    .getDogs()
+                    .stream()
+                    .map(ProfileHelper::getDogCardInfo)
+                    .toList();
 
-            if(dogs.isEmpty()){
+            if (dogs.isEmpty()) {
                 return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
             }
-            
-            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,dogs);
-        }catch(Exception e){
+
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, dogs);
+        } catch (Exception e) {
             e.printStackTrace();
-            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-
     @Transactional
-    public ResponseEntity<?> addPet(OwnerPetDTO ownerPetdto,Owners owners){
-        try{
+    public ResponseEntity<?> addPet(OwnerPetDTO ownerPetdto, Owners owners) {
+        try {
             List<Dogs.DogInner> dogsList = owners.getDogs()
-                .stream()
-                .map(ProfileHelper::getDogsInnerInfo)
-                .toList();
+                    .stream()
+                    .map(ProfileHelper::getDogsInnerInfo)
+                    .toList();
 
             Optional<Dogs.DogInner> foundDog = dogsList.stream()
-                                                        .filter(dog->
-                                                            dog.name().toLowerCase().matches(ownerPetdto.getName().toLowerCase()))
-                                                            .findFirst();
-            if(foundDog.isPresent()){
+                    .filter(dog -> dog.name().toLowerCase().matches(ownerPetdto.getName().toLowerCase()))
+                    .findFirst();
+            if (foundDog.isPresent()) {
                 return Response.ResponseHandler("Cannot have pet dog with same name.", HttpStatus.NOT_ACCEPTABLE);
             }
 
             Date inputDate = new Date();
-            
+
             LocalDate localDate = LocalDate.ofInstant(inputDate.toInstant(), ZoneId.systemDefault());
-            
+
             Dogs dogs = new Dogs();
-            
+
             owners.getDogs().add(dogs);
             String mimeType = ownerPetdto.getImageUrl().getContentType();
-            List<String> filesType = new ArrayList<>(List.of("image/png","image/jpg","image/jpeg"));
-            
+            List<String> filesType = new ArrayList<>(List.of("image/png", "image/jpg", "image/jpeg"));
+
             // Method 2: Analyzing File Bytes Using Apache Tika (Secure)
 
-            if(mimeType == null || !filesType.contains(mimeType)){
-                return Response.ResponseHandler("Invalid image format must be png,jpg or jpge.", HttpStatus.BAD_REQUEST);
+            if (mimeType == null || !filesType.contains(mimeType)) {
+                return Response.ResponseHandler("Invalid image format must be png,jpg or jpge.",
+                        HttpStatus.BAD_REQUEST);
             }
 
             String url = cloudinaryServices.upload(ownerPetdto.getImageUrl());
@@ -155,116 +158,118 @@ public class OwnerService {
 
             dogsRepo.save(dogs);
             return Response.ResponseHandler("Your pet has successfully registered.", HttpStatus.CREATED);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return Response.ResponseHandler("Failed to register your pet", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     // Owner Profile
-    public ResponseEntity<?> getOwnerProfile(User user){
-        try{
-            Owners.OwnersProfile owner =  ownerRepo.findByUserId(user.getId())
-                .stream()
-                .map(u ->new Owners.OwnersProfile(new User.userInfo(user.getUsername(), user.getEmail()),
-                u.getId(),
-                u.getPhoneNumber(),
-                u.getAlternatePhoneNumber(),
-                u.getAddress(),
-                u.getRegistrationDate())
-        )
-        .findFirst().get();
-    
-        return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,owner);
-    }catch(Exception e){
-        e.printStackTrace();
-        return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    public ResponseEntity<?> getOwnerProfile(User user) {
+        try {
+            Owners.OwnersProfile owner = ownerRepo.findByUserId(user.getId())
+                    .stream()
+                    .map(u -> new Owners.OwnersProfile(new User.userInfo(user.getUsername(), user.getEmail()),
+                            u.getId(),
+                            u.getPhoneNumber(),
+                            u.getAlternatePhoneNumber(),
+                            u.getAddress(),
+                            u.getRegistrationDate()))
+                    .findFirst().get();
+
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, owner);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public ResponseEntity<?> getAppointmentTime(LocalDate localDate){
-        try{
+    public ResponseEntity<?> getAppointmentTime(LocalDate localDate,Long vetId) {
+        try {
 
             List<LocalTime> allSlots = new ArrayList<>(List.of(
-                LocalTime.of(9,0),
-                LocalTime.of(9,30),
-                LocalTime.of(10,0),
-                LocalTime.of(10,30),
-                LocalTime.of(11,0),
-                LocalTime.of(11,30),
-                LocalTime.of(13,0),
-                LocalTime.of(13,30),
-                LocalTime.of(14,0),
-                LocalTime.of(14,30),
-                LocalTime.of(15,0),
-                LocalTime.of(15,30),
-                LocalTime.of(16,0),
-                LocalTime.of(16,30)
-            ));
+                    LocalTime.of(9, 0),
+                    LocalTime.of(9, 30),
+                    LocalTime.of(10, 0),
+                    LocalTime.of(10, 30),
+                    LocalTime.of(11, 0),
+                    LocalTime.of(11, 30),
+                    LocalTime.of(13, 0),
+                    LocalTime.of(13, 30),
+                    LocalTime.of(14, 0),
+                    LocalTime.of(14, 30),
+                    LocalTime.of(15, 0),
+                    LocalTime.of(15, 30),
+                    LocalTime.of(16, 0),
+                    LocalTime.of(16, 30)));
             
-            List<LocalTime> removeTimeTiming  = appRepo.getAllAppointmentsTime(localDate).stream().map(ap-> ap.getAppointmentTime()).toList();
-            if(removeTimeTiming.isEmpty()){
-                return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,allSlots);
+            
+            List<LocalTime> removeTimeTiming = appRepo.getAllAppointmentsTime(localDate,vetId).stream()
+                    .map(ap -> ap.getAppointmentTime()).toList();
+            if (removeTimeTiming.isEmpty()) {
+                return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, allSlots);
             }
             allSlots.removeAll(removeTimeTiming);
-            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,allSlots);
-        }catch(DateTimeParseException e){
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, allSlots);
+        } catch (DateTimeParseException e) {
             e.printStackTrace();
             return Response.ResponseHandler("Invalid date.", HttpStatus.OK);
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     // Set Appoitment
     @Transactional
-    public ResponseEntity<?> setAppoinmentForThePet(Long id, AppointmentDTO appDTO,UserDetails userDetails){
-        try{
-
+    public ResponseEntity<?> setAppoinmentForThePet(Long id, AppointmentDTO appDTO, UserDetails userDetails) {
+        try {
 
             List<Appointments> apps = appRepo.getAllAppointments().stream()
-                .filter(ap-> ap.getAppointmentDate().equals(appDTO.getAppointmentDate()) & ap.getAppointmentTime().equals(appDTO.getAppointmentTime())).toList();
+                    .filter(ap -> ap.getAppointmentDate().equals(appDTO.getAppointmentDate())
+                            & ap.getAppointmentTime().equals(appDTO.getAppointmentTime()))
+                    .toList();
 
-            if(!apps.isEmpty()){
+            if (!apps.isEmpty()) {
                 return Response.ResponseHandler("Try different date or time.", HttpStatus.CONFLICT);
             }
 
-    
             Dogs dog = dogsRepo
-                .findById(id)
-                .orElseThrow(()-> new UserNotFoundException("Dog with this id not found.")); 
+                    .findById(id)
+                    .orElseThrow(() -> new UserNotFoundException("Dog with this id not found."));
 
             Veterinarians vet = vetRepo
-                .findById(appDTO.getVetId())
-                .orElseThrow(()-> new UserNotFoundException("Veterinarian not found."));
+                    .findById(appDTO.getVetId())
+                    .orElseThrow(() -> new UserNotFoundException("Veterinarian not found."));
 
             String username = userDetails.getUsername();
 
             User user = userRepo
-                .findByUsernameOrEmail(username)
-                .orElseThrow(()-> new UserNotFoundException("user not found."));
+                    .findByUsernameOrEmail(username)
+                    .orElseThrow(() -> new UserNotFoundException("user not found."));
 
             Owners owner = ownerRepo
-                .findByUserId(user.getId())
-                .orElseThrow(()-> new UserNotFoundException("user not found."));
-            
-                
-            if(!dog.getOwners().getId().equals(owner.getId())){
+                    .findByUserId(user.getId())
+                    .orElseThrow(() -> new UserNotFoundException("user not found."));
+
+            if (!dog.getOwners().getId().equals(owner.getId())) {
                 return Response.ResponseHandler(HttpStatus.FORBIDDEN.getReasonPhrase(), HttpStatus.FORBIDDEN);
             }
-            
-            boolean hasConflict = appRepo.findByDogId(id)
-                .stream()
-                .anyMatch(app -> app.getAppointmentDate().equals(appDTO.getAppointmentDate()));
 
-            if(hasConflict){
-                return Response.ResponseHandler("This dog has already an appointment with vet today.",HttpStatus.CONFLICT);
+            boolean hasConflict = appRepo.findByDogId(id)
+                    .stream()
+                    .anyMatch(app -> app.getAppointmentDate().equals(appDTO.getAppointmentDate()));
+
+            if (hasConflict) {
+                return Response.ResponseHandler("This dog has already an appointment with vet today.",
+                        HttpStatus.CONFLICT);
             }
-            
+
             Appointments appointments = new Appointments();
-            
+
             appointments.setAppointmentDate(appDTO.getAppointmentDate());
             appointments.setAppointmentTime(appDTO.getAppointmentTime());
             appointments.setDogs(dog);
@@ -273,48 +278,69 @@ public class OwnerService {
             appointments.setOwners(owner);
             appointments.setVeterinarians(vet);
             appRepo.save(appointments);
-            
+
             return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
-             
-        }catch(UserNotFoundException e){
+
+        } catch (UserNotFoundException e) {
             return Response.ResponseHandler(e.getMessage(), HttpStatus.NOT_FOUND);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     // get medical record
-    public ResponseEntity<?> medicalRecord(Long id,UserDetails userDetails){
-        try{
+    public ResponseEntity<?> medicalRecord(Long id, UserDetails userDetails) {
+        try {
             User user = userRepo
-            .findByUsernameOrEmail(userDetails
-                .getUsername())
-                .orElseThrow(()-> new UsernameNotFoundException("User not found exception."));
-                
-                Owners owners = ownerRepo.findByUserId(user.getId())
-                .orElseThrow(()-> new UserNotFoundException("Owners not found."));
-                
-                List<Dogs> dogs = owners.getDogs();
-                
-                boolean dogBelongsToOwner = dogs.stream()
-                .anyMatch(d-> d.getId() == id);
-                
-                if(!dogBelongsToOwner){
-                    return Response.ResponseHandler("The dog does not belog to the owner", HttpStatus.CONFLICT);
-                }    
-                
-                List<MedicalRecord.medicalRecord> dog = medicalRecordRepo.findMedicalRecordById(id)
-                .stream()
-                .map(ProfileHelper::getMedicalRecord)
-                .toList();
-                return Response.ResponseHandler("All medical record of the dog", HttpStatus.OK,dog);
-            }catch(UserNotFoundException e){
-                e.printStackTrace();
-                return Response.ResponseHandler(e.getMessage(), HttpStatus.NOT_FOUND);
-            }catch(Exception e){
-                e.printStackTrace();
-                return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+                    .findByUsernameOrEmail(userDetails
+                            .getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found exception."));
+
+            Owners owners = ownerRepo.findByUserId(user.getId())
+                    .orElseThrow(() -> new UserNotFoundException("Owners not found."));
+
+            List<Dogs> dogs = owners.getDogs();
+
+            boolean dogBelongsToOwner = dogs.stream()
+                    .anyMatch(d -> d.getId() == id);
+
+            if (!dogBelongsToOwner) {
+                return Response.ResponseHandler("The dog does not belog to the owner", HttpStatus.CONFLICT);
             }
+
+            List<MedicalRecord.medicalRecord> dog = medicalRecordRepo.findMedicalRecordById(id)
+                    .stream()
+                    .map(ProfileHelper::getMedicalRecord)
+                    .toList();
+            return Response.ResponseHandler("All medical record of the dog", HttpStatus.OK, dog);
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
+            return Response.ResponseHandler(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // get all vet list
+
+    public ResponseEntity<?> getVetsList() {
+        try {
+            List<Veterinarians.vetListInfo> vetList = vetRepo.findAllVets().stream()
+                    .map(vet -> new Veterinarians.vetListInfo(vet.getId(),
+                            new User.userInfo(vet.getUser().getUsername(), vet.getUser().getEmail())))
+                    .toList();
+            if (vetList.isEmpty())
+                return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, vetList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

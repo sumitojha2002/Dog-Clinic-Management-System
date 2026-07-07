@@ -37,9 +37,10 @@ public interface AppointmentRepository extends JpaRepository<Appointments,Long>{
            LEFT JOIN FETCH d.chronicConditions
            LEFT JOIN FETCH a.owners o
            LEFT JOIN FETCH o.user
-           WHERE a.appointmentDate = :date
+           WHERE a.appointmentDate = :date AND 
+                v.id = :vetId
                         """)
-        List<Appointments> getAllAppointmentsTime(@Param("date") LocalDate date);
+        List<Appointments> getAllAppointmentsTime(@Param("date") LocalDate date,@Param("vetId") Long id);
 
     @Query("""
             SELECT a

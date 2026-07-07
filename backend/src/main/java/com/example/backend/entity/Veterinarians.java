@@ -22,7 +22,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@Entity 
+@Entity
 public class Veterinarians {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,28 +31,35 @@ public class Veterinarians {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id",referencedColumnName = "id")
-    private User user;   
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     @Column(unique = true)
     private String licenseNumber;
 
     @ElementCollection
-    @CollectionTable(name="specialization", joinColumns = @JoinColumn(name="vet_id"))
+    @CollectionTable(name = "specialization", joinColumns = @JoinColumn(name = "vet_id"))
     @Column(name = "specialization")
-    private Set<String> specialization =  new HashSet<>();
+    private Set<String> specialization = new HashSet<>();
 
     private Long yearsOfExperience;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="emp_id",referencedColumnName = "id")
+    @JoinColumn(name = "emp_id", referencedColumnName = "id")
     private Employee employee;
 
-    @OneToMany(mappedBy = "veterinarians",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "veterinarians", fetch = FetchType.LAZY)
     private List<Appointments> appointment;
 
-    public record vetProfile(User.userInfo user,Long vetId, String licenseNumber,Set<String> specialization, Long yearsOfExperience){}
-    public record vet(Long vetId,String licenseNumber,Set<String> specialization,Long yearsOfExperience){}
+    public record vetListInfo(Long vetId, User.userInfo userinfo) {
+    }
+
+    public record vetProfile(User.userInfo user, Long vetId, String licenseNumber, Set<String> specialization,
+            Long yearsOfExperience) {
+    }
+
+    public record vet(Long vetId, String licenseNumber, Set<String> specialization, Long yearsOfExperience) {
+    }
 }

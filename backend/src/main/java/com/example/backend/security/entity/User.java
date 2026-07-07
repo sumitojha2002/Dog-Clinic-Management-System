@@ -39,5 +39,7 @@ public class User {
 
     public record getEmpProfile(String username,String email,Employee.Emp emp){};
 
-    public record userInfo(String username,String email){};
+    public record userInfo(String username, String email) {
+    };
+    
 }

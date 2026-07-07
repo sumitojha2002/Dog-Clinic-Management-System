@@ -1,5 +1,6 @@
 package com.example.backend.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,4 +28,12 @@ public interface VeterinarianRepository extends JpaRepository<Veterinarians,Long
             WHERE v.user.id = :id
             """)
     Optional<Veterinarians> findVetByUserId(@Param("id") Long id);
+
+    @Query("""
+                SELECT v FROM 
+                Veterinarians v
+                LEFT JOIN FETCH v.specialization
+                LEFT JOIN FETCH v.user
+                    """)
+        List<Veterinarians> findAllVets();
 }

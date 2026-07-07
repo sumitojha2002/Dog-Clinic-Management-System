@@ -8,6 +8,7 @@ import com.example.backend.entity.MedicalRecord;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.Veterinarians;
 import com.example.backend.security.entity.User;
+import com.example.backend.security.entity.User.userInfo;
 
 public class ProfileHelper {
 
@@ -136,32 +137,33 @@ public class ProfileHelper {
             veterinarians.getYearsOfExperience());
     }
 
-    public static MedicalRecord.medicalRecord getMedicalRecord(MedicalRecord medicalRecord){
-        
-        if(medicalRecord == null){
+    public static MedicalRecord.medicalRecord getMedicalRecord(MedicalRecord medicalRecord) {
+
+        if (medicalRecord == null) {
             return null;
         }
 
         Dogs.DogMedicalRecord dogMedicalRecord = Optional.ofNullable(medicalRecord)
-            .map(MedicalRecord::getDogs)
-            .map(dogs-> new Dogs.DogMedicalRecord(
-                dogs.getId(), 
-                dogs.getName(), 
-                dogs.getBreed(), 
-                dogs.getGender(), 
-                dogs.getColor(), 
-                dogs.getWeight()))
-            .orElse(null);
+                .map(MedicalRecord::getDogs)
+                .map(dogs -> new Dogs.DogMedicalRecord(
+                        dogs.getId(),
+                        dogs.getName(),
+                        dogs.getBreed(),
+                        dogs.getGender(),
+                        dogs.getColor(),
+                        dogs.getWeight()))
+                .orElse(null);
 
         return new MedicalRecord.medicalRecord(
-            medicalRecord.getId(),
-            medicalRecord.getDiagnosis(),
-            medicalRecord.getTreatment(),
-            medicalRecord.getSymptoms(),
-            medicalRecord.getNotes(),
-            dogMedicalRecord);
+                medicalRecord.getId(),
+                medicalRecord.getDiagnosis(),
+                medicalRecord.getTreatment(),
+                medicalRecord.getSymptoms(),
+                medicalRecord.getNotes(),
+                dogMedicalRecord);
 
     }
+
 
     // public static Dogs.DogInfo getDogsInfo()
 }
