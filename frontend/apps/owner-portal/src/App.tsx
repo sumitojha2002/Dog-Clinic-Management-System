@@ -40,7 +40,7 @@ function App() {
       <Route
         element={<ProtectedRouteNavbarNoSwitch allowedRole="ROLE_OWNER" />}
       >
-        <Route path="/dogs/:id/book-appointment" element={<Appointment />} />
+        <Route path="/dogs/:id/appointment/new" element={<Appointment />} />
         <Route path="/dogs" element={<DogsProfileAdd />} />
       </Route>
     </Routes>

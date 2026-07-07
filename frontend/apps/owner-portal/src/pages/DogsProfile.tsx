@@ -125,7 +125,7 @@ function DogsProfile() {
         <div>
           <Button
             className="flex border w-full"
-            onClick={() => navigate(`/dogs/${id}/book-appointment`)}
+            onClick={() => navigate(`/dogs/${id}/appointment/new`)}
           >
             {" "}
             Book An Appointent

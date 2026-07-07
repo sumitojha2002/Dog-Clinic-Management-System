@@ -4,6 +4,12 @@ export interface Response<T = void> {
   data?: T;
 }
 
+export interface ResponseForTiming{
+  message: string;
+  status: string;
+  data?: string[];
+}
+
 export interface DogCardInfo {
   id: number;
   imageURL: null | string;
@@ -90,4 +96,13 @@ export interface DogPostProfile {
   gender: string;
   color: string;
   dateOfBirth: string;
+}
+
+export interface VetListInfo{
+  vetId: number,
+  userinfo: UserInfo
+}
+
+export interface Timing{
+  slot: string;
 }

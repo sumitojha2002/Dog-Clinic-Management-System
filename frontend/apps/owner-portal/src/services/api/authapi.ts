@@ -6,8 +6,11 @@ import type {
   Login,
   OwnerProfile,
   Response,
+  ResponseForTiming,
   ResponseLogin,
+  Timing,
   UserUpdateProfileInfo,
+  VetListInfo,
 } from "./apitypes";
 
 const baseUrl = "http://localhost:9090";
@@ -113,4 +116,19 @@ export const bookAppointmentDog = async (
   );
   return response.data;
   
+}
+
+// fetch all the vets
+
+export const getAllVet = async (token: string | undefined):Promise<Response<VetListInfo[]>> => {
+  const response = await axios.get<Response<VetListInfo[]>>(baseUrl + "/owner/vet-list", { headers: { Authorization: `Bearer ` + token } });
+  return response.data;
+}
+
+
+// fetch timing of the vets
+
+export const getVetTimeings = async (token: string | undefined, vetId: string, localDate: string): Promise<ResponseForTiming> => {
+  const response = await axios.get<ResponseForTiming>(baseUrl+"/owner/available",{headers:{Authorization: `Bearer `+token},params:{localDate: localDate,vetId:vetId}})
+  return response.data;
 }

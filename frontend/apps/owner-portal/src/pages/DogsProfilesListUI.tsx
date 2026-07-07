@@ -3,7 +3,7 @@ import DogsProfileCard from "../components/cards/DogsProfileCard";
 import { getAllDogsCardInfo } from "../services/api/authapi";
 import { useAuth } from "../components/provider/AuthProvider";
 import { Button } from "../components/ui/button";
-import { useNavigate, useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function DogsProfilesListUI() {
   const auth = useAuth();
