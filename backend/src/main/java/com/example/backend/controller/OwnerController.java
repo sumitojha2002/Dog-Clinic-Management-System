@@ -85,7 +85,7 @@ public class OwnerController {
     @PostMapping("/dogs/{id}/appointment")
     public ResponseEntity<?> appointmentForDog(
         @PathVariable Long id,
-        @Valid @RequestBody AppointmentDTO appDto,
+        @Valid @ModelAttribute AppointmentDTO appDto,
         @AuthenticationPrincipal UserDetails userDetails){
             return ownerService.setAppoinmentForThePet(id, appDto, userDetails);
         }
