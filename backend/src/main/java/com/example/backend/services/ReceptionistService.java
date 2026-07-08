@@ -130,13 +130,6 @@ public class ReceptionistService {
         }
     }
 
-    // dogs
-    // public ResponseEntity<?> getAllDogsInfo(String name,String breed){
-    //     String safeString = (name != null && !name.isEmpty()) ? name : null;
-    //     String safeBreed  = (breed != null && !breed.isEmpty()) ? breed: null;
-
-
-    // }
 
     // Appointments
     public ResponseEntity<?> getAppointments(String status,LocalDate date){

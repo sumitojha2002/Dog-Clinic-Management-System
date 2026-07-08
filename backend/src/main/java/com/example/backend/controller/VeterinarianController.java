@@ -1,9 +1,12 @@
 package com.example.backend.controller;
 
+
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +19,7 @@ import com.example.backend.entity.dto.MedicalRecordDTO;
 import com.example.backend.entity.dto.VetDTO;
 import com.example.backend.services.VetServices;
 
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -25,8 +29,8 @@ import lombok.RequiredArgsConstructor;
 public class VeterinarianController {
     private final VetServices vetServices;
 
-    @PostMapping("/profile")
-    public ResponseEntity<?> setVetProfile(@AuthenticationPrincipal UserDetails userDetails,@Valid @RequestBody VetDTO vetDTO){
+    @PostMapping(value="/profile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> setVetProfile(@AuthenticationPrincipal UserDetails userDetails,@Valid @ModelAttribute VetDTO vetDTO){
         return vetServices.setVetProfile(vetDTO,userDetails);
     }
 

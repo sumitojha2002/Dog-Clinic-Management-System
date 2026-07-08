@@ -5,6 +5,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -14,10 +16,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.entity.dto.LoginDTO;
@@ -33,6 +37,7 @@ import com.example.backend.security.repository.UserRepository;
 import com.example.backend.security.services.AuthService;
 import com.example.backend.security.services.CustomUserDetialsServices;
 import com.example.backend.security.services.JwtService;
+import com.example.backend.services.VetServices;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -50,7 +55,7 @@ public class AuthController {
     private final RefreshRepository refreshRepo;
     private final CustomUserDetialsServices cusUserDelSer;
     private final UserRepository userRepo;
-    
+    private final VetServices vetServices;
     @PostMapping("/login")
     @Transactional
     public ResponseEntity<?> login(@RequestBody LoginDTO logindto){
@@ -151,5 +156,11 @@ public class AuthController {
                                               .build();
         refreshRepo.deleteByRefreshToken(refreshToken);
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE,cookie.toString()).body(Map.of("message","Log Out"));
+    }
+
+    @GetMapping("/mainVets")
+    public ResponseEntity<?> getVetsProfileForTheMainPage(@RequestParam(required = false,defaultValue = "1") int pageNum,@RequestParam(required = false,defaultValue = "3") int pageSize){
+        
+        return vetServices.getVetProfileForMain(pageNum,pageSize);
     }
 }

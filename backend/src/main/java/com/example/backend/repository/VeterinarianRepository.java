@@ -3,6 +3,8 @@ package com.example.backend.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,4 +38,13 @@ public interface VeterinarianRepository extends JpaRepository<Veterinarians,Long
                 LEFT JOIN FETCH v.user
                     """)
         List<Veterinarians> findAllVets();
+
+    @Query(value="""
+            SELECT v FROM 
+            Veterinarians v
+            LEFT JOIN FETCH v.specialization 
+            LEFT JOIN FETCH v.user
+            """,
+           countQuery = "SELECT count(v) FROM Veterinarians v")
+    Page<Veterinarians> findVetforHomePage(Pageable pageable);
 }

@@ -1,5 +1,6 @@
 package com.example.backend.helper;
 
+import java.lang.foreign.Linker.Option;
 import java.util.Optional;
 
 import com.example.backend.entity.Appointments;
@@ -137,6 +138,22 @@ public class ProfileHelper {
             veterinarians.getYearsOfExperience());
     }
 
+    public static Veterinarians.vetCard getVetCardProfile(Veterinarians vet){
+        if(vet == null){
+            return null;
+        }
+
+        User.userInfo userInfo = Optional.ofNullable(vet)
+            .map(Veterinarians::getUser)
+            .map(user-> new User.userInfo(user.getUsername(), user.getEmail()))
+            .orElse(null);
+
+        return new Veterinarians.vetCard(userInfo,
+             vet.getId(), 
+             vet.getImageURL(), 
+            vet.getSpecialization());
+    }
+
     public static MedicalRecord.medicalRecord getMedicalRecord(MedicalRecord medicalRecord) {
 
         if (medicalRecord == null) {
@@ -165,5 +182,7 @@ public class ProfileHelper {
     }
 
 
+
     // public static Dogs.DogInfo getDogsInfo()
+
 }

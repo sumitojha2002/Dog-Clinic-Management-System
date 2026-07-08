@@ -2,6 +2,8 @@ package com.example.backend.entity.dto;
 
 import java.util.Set;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -11,6 +13,8 @@ import lombok.Data;
 
 @Data
 public class VetDTO {
+    
+    private MultipartFile image;
 
     @NotEmpty(message = "Phone number cannot be empty.")
     @NotNull(message ="Phone number cannot be null.")

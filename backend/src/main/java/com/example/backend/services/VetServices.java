@@ -7,10 +7,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.example.backend.entity.Appointments;
 import com.example.backend.entity.Dogs;
@@ -21,6 +25,7 @@ import com.example.backend.entity.dto.MedicalRecordDTO;
 import com.example.backend.entity.dto.VetDTO;
 import com.example.backend.entity.enums.AppointmentStatus;
 import com.example.backend.exception.UserNotFoundException;
+import com.example.backend.helper.CheckHelper;
 import com.example.backend.helper.ProfileHelper;
 import com.example.backend.repository.AppointmentRepository;
 import com.example.backend.repository.DogsRepository;
@@ -29,6 +34,7 @@ import com.example.backend.repository.VeterinarianRepository;
 import com.example.backend.response.Response;
 import com.example.backend.security.entity.User;
 import com.example.backend.security.repository.UserRepository;
+import com.example.backend.security.services.CloudinaryServices;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +47,7 @@ public class VetServices {
     private final AppointmentRepository appRepo;
     private final DogsRepository dogRepo;
     private final MedicalRecordRepository medicalRecordRepo;
+    private final CloudinaryServices cloudService;
     // vet
     @Transactional
     public ResponseEntity<?> setVetProfile(VetDTO vetDTO,UserDetails userDetails){
@@ -59,7 +66,14 @@ public class VetServices {
                 String item = str.next();
                 System.out.println(item);
             }
-           
+
+            String mimeType = vetDTO.getImage().getContentType();
+
+            if(mimeType == null || !CheckHelper.filesType.contains(mimeType)){
+               return Response.ResponseHandler("Invalid image type.", HttpStatus.FORBIDDEN);
+            }
+            String imageUrl = cloudService.upload(vetDTO.getImage());
+            vet.setImageURL(imageUrl);
             vet.getSpecialization().addAll(vetDTO.getSpecialization());
             vet.setYearsOfExperience(vetDTO.getYearsOfExperince());
             
@@ -69,12 +83,33 @@ public class VetServices {
         }catch(UserNotFoundException e){
             e.printStackTrace();
             return Response.ResponseHandler(e.getMessage(), HttpStatus.NOT_FOUND);
+        }catch(MaxUploadSizeExceededException e){
+            e.printStackTrace();
+            return Response.ResponseHandler("File size too big should be 10MB", HttpStatus.FORBIDDEN);    
+        
         }catch(Exception e){
             e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    // getVetProfile for home page
+    public ResponseEntity<?> getVetProfileForMain(int PageNum,int PageSize){
+        try{
+            Page<Veterinarians> vetPage = vetRepo.findVetforHomePage(PageRequest.of(PageNum-1, PageSize));
+            
+            List<Veterinarians.vetCard> vetList = vetPage
+                .getContent()
+                .stream()
+                .map(ProfileHelper::getVetCardProfile)
+                .toList();
+
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,vetList);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     public ResponseEntity<?> getVetProfile(UserDetails userDetails){
         try{

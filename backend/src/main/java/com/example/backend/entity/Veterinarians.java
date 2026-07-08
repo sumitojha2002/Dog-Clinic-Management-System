@@ -24,9 +24,12 @@ import lombok.ToString;
 @Data
 @Entity
 public class Veterinarians {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    private String imageURL;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -62,4 +65,6 @@ public class Veterinarians {
 
     public record vet(Long vetId, String licenseNumber, Set<String> specialization, Long yearsOfExperience) {
     }
+
+    public record vetCard(User.userInfo user,Long vetId,String imageURL,Set<String> specialization){}
 }

@@ -27,6 +27,7 @@ import com.example.backend.entity.dto.OwnerProfileDTO;
 import com.example.backend.entity.enums.AppointmentStatus;
 import com.example.backend.entity.enums.VactionationStatus;
 import com.example.backend.exception.UserNotFoundException;
+import com.example.backend.helper.CheckHelper;
 import com.example.backend.helper.ProfileHelper;
 import com.example.backend.repository.AppointmentRepository;
 import com.example.backend.repository.DogsRepository;
@@ -136,11 +137,11 @@ public class OwnerService {
 
             owners.getDogs().add(dogs);
             String mimeType = ownerPetdto.getImageUrl().getContentType();
-            List<String> filesType = new ArrayList<>(List.of("image/png", "image/jpg", "image/jpeg"));
+            
 
             // Method 2: Analyzing File Bytes Using Apache Tika (Secure)
 
-            if (mimeType == null || !filesType.contains(mimeType)) {
+            if (mimeType == null || !CheckHelper.filesType.contains(mimeType)) {
                 return Response.ResponseHandler("Invalid image format must be png,jpg or jpge.",
                         HttpStatus.BAD_REQUEST);
             }
