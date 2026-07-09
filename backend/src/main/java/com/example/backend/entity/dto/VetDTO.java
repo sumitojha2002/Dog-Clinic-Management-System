@@ -16,6 +16,10 @@ public class VetDTO {
     
     private MultipartFile image;
 
+    @NotNull(message = "Name cannot be null.")
+    @NotEmpty(message = "Name cannot be empty.")
+    private String name;
+
     @NotEmpty(message = "Phone number cannot be empty.")
     @NotNull(message ="Phone number cannot be null.")
     @Size(min = 10, max=10, message="must contain 10 digits.")

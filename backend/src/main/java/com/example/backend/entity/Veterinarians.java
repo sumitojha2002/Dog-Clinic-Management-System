@@ -31,6 +31,8 @@ public class Veterinarians {
     
     private String imageURL;
 
+    private String name;
+
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToOne(fetch = FetchType.LAZY)
@@ -56,7 +58,7 @@ public class Veterinarians {
     @OneToMany(mappedBy = "veterinarians", fetch = FetchType.LAZY)
     private List<Appointments> appointment;
 
-    public record vetListInfo(Long vetId, User.userInfo userinfo) {
+    public record vetListInfo(Long vetId, String name) {
     }
 
     public record vetProfile(User.userInfo user, Long vetId, String licenseNumber, Set<String> specialization,
@@ -66,5 +68,6 @@ public class Veterinarians {
     public record vet(Long vetId, String licenseNumber, Set<String> specialization, Long yearsOfExperience) {
     }
 
-    public record vetCard(User.userInfo user,Long vetId,String imageURL,Set<String> specialization){}
+
+    public record vetCard(Long vetId,String name,String imageURL,Set<String> specialization){}
 }

@@ -5,8 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.boot.data.autoconfigure.web.DataWebProperties.Pageable;
-import org.springframework.data.domain.PageRequest;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;

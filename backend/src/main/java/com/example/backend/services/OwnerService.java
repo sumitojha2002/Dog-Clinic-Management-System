@@ -1,6 +1,5 @@
 package com.example.backend.services;
 
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -15,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.cloudinary.Cloudinary;
 import com.example.backend.entity.Appointments;
 import com.example.backend.entity.Dogs;
 import com.example.backend.entity.MedicalRecord;
@@ -331,8 +329,7 @@ public class OwnerService {
     public ResponseEntity<?> getVetsList() {
         try {
             List<Veterinarians.vetListInfo> vetList = vetRepo.findAllVets().stream()
-                    .map(vet -> new Veterinarians.vetListInfo(vet.getId(),
-                            new User.userInfo(vet.getUser().getUsername(), vet.getUser().getEmail())))
+                    .map(vet -> new Veterinarians.vetListInfo(vet.getId(),vet.getName()))
                     .toList();
             if (vetList.isEmpty())
                 return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);

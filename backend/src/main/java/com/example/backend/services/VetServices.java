@@ -5,11 +5,11 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,10 +23,12 @@ import com.example.backend.entity.Veterinarians;
 import com.example.backend.entity.dto.DogsVetDTO;
 import com.example.backend.entity.dto.MedicalRecordDTO;
 import com.example.backend.entity.dto.VetDTO;
+import com.example.backend.entity.dto.VetUpdateDTO;
 import com.example.backend.entity.enums.AppointmentStatus;
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.helper.CheckHelper;
 import com.example.backend.helper.ProfileHelper;
+import com.example.backend.helper.URLHelper;
 import com.example.backend.repository.AppointmentRepository;
 import com.example.backend.repository.DogsRepository;
 import com.example.backend.repository.MedicalRecordRepository;
@@ -73,6 +75,7 @@ public class VetServices {
                return Response.ResponseHandler("Invalid image type.", HttpStatus.FORBIDDEN);
             }
             String imageUrl = cloudService.upload(vetDTO.getImage());
+            vet.setName(vetDTO.getName());
             vet.setImageURL(imageUrl);
             vet.getSpecialization().addAll(vetDTO.getSpecialization());
             vet.setYearsOfExperience(vetDTO.getYearsOfExperince());
@@ -132,6 +135,69 @@ public class VetServices {
         }
     }
 
+
+    // update vet Profile
+    public ResponseEntity<?> updateProile(VetUpdateDTO vetDTO,UserDetails userDetails){
+        try{
+
+            User user = userRepo.findByUsernameOrEmail(userDetails
+                .getUsername())
+                .orElseThrow(()-> new 
+                UserNotFoundException("Vet not found exception"));
+
+            Veterinarians vet = vetRepo.findByUserId(user.getId())
+                .orElseThrow(()-> new UserNotFoundException("Vet not found exception."));
+            
+           if(vetDTO.getSpecialization() != null && !vetDTO.getSpecialization().isEmpty()){
+                vet.getSpecialization().clear();
+                vet.getSpecialization().addAll(vetDTO.getSpecialization());
+            }
+
+            if(vetDTO.getImage() != null && !vetDTO.getImage().isEmpty()){
+                String mimeType = vetDTO.getImage().getContentType();
+                
+                if(mimeType == null || !CheckHelper.filesType.contains(mimeType)){
+                     return Response.ResponseHandler("Invalid file type must be png, jpeg or jpg", HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+                }
+            if(vet.getImageURL() != null){
+
+                Map result = cloudService.delete(URLHelper.CloudinaryUrlSlicerPublicId(vet.getImageURL()));
+
+                if(!"ok".equals(result.get("result"))){
+                    return Response.ResponseHandler("Could not delete image.", HttpStatus.CONFLICT);
+                }
+            }
+                String url = cloudService.upload(vetDTO.getImage());
+                vet.setImageURL(url);
+            }
+
+            if(vetDTO.getName() != null && !vetDTO.getName().isEmpty()){
+                vet.setName(vetDTO.getName());
+            }
+
+            if(vetDTO.getLicenseNumber() != null && !vetDTO.getLicenseNumber().isEmpty()){
+                vet.setLicenseNumber(vetDTO.getLicenseNumber());
+            }
+
+            if(vetDTO.getPhoneNumber() != null && !vetDTO.getPhoneNumber().isEmpty()){
+                vet.getEmployee().setPhoneNumber(vetDTO.getPhoneNumber());
+            }
+
+            if(vetDTO.getYearsOfExperince() != null){
+                vet.setYearsOfExperience(vetDTO.getYearsOfExperince());
+            }
+
+            vetRepo.save(vet);
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
+            }
+        catch(UserNotFoundException e){
+            e.printStackTrace();
+            return Response.ResponseHandler(e.getMessage(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     // List of appoinment acc to the appointed vet 
 

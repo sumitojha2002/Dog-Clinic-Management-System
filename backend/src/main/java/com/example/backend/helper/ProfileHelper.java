@@ -1,6 +1,5 @@
 package com.example.backend.helper;
 
-import java.lang.foreign.Linker.Option;
 import java.util.Optional;
 
 import com.example.backend.entity.Appointments;
@@ -9,7 +8,6 @@ import com.example.backend.entity.MedicalRecord;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.Veterinarians;
 import com.example.backend.security.entity.User;
-import com.example.backend.security.entity.User.userInfo;
 
 public class ProfileHelper {
 
@@ -143,13 +141,9 @@ public class ProfileHelper {
             return null;
         }
 
-        User.userInfo userInfo = Optional.ofNullable(vet)
-            .map(Veterinarians::getUser)
-            .map(user-> new User.userInfo(user.getUsername(), user.getEmail()))
-            .orElse(null);
-
-        return new Veterinarians.vetCard(userInfo,
+        return new Veterinarians.vetCard(
              vet.getId(), 
+             vet.getName(),
              vet.getImageURL(), 
             vet.getSpecialization());
     }

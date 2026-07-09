@@ -17,6 +17,8 @@ public interface VeterinarianRepository extends JpaRepository<Veterinarians,Long
             SELECT v FROM
             Veterinarians v
             LEFT JOIN FETCH v.user
+            LEFT JOIN FETCH v.specialization
+            LEFT JOIN FETCH v.employee e
             WHERE v.user.id = :id
             """)
     Optional<Veterinarians> findByUserId(@Param("id") Long id);

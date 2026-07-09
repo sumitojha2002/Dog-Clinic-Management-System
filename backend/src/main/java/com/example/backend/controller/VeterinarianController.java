@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.entity.dto.DogsVetDTO;
 import com.example.backend.entity.dto.MedicalRecordDTO;
 import com.example.backend.entity.dto.VetDTO;
+import com.example.backend.entity.dto.VetUpdateDTO;
 import com.example.backend.services.VetServices;
 
-import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +32,11 @@ public class VeterinarianController {
     @PostMapping(value="/profile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> setVetProfile(@AuthenticationPrincipal UserDetails userDetails,@Valid @ModelAttribute VetDTO vetDTO){
         return vetServices.setVetProfile(vetDTO,userDetails);
+    }
+
+    @PatchMapping("/profile")
+    public ResponseEntity<?> updateVetProfile(@ModelAttribute VetUpdateDTO vetDTO,@AuthenticationPrincipal UserDetails userDetails){
+        return vetServices.updateProile(vetDTO,userDetails);
     }
 
     @GetMapping("/profile")
