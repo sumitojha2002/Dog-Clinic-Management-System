@@ -46,25 +46,25 @@ function Appointment() {
       navigate("/dogs/profile");
     },
     onError: (error: AxiosError<BackendError<AppointmentErrors>>) => {
-      const errorsfrombackend = error.response.data.errors;
-      if (error.response.data.message) {
+      const errorsfrombackend = error.response?.data.errors;
+      if (error.response?.data.message) {
         alert(error.response.data.message);
       }
-      if (errorsfrombackend.reason) {
+      if (errorsfrombackend?.reason) {
         setError("reason", { message: errorsfrombackend.reason });
       }
 
-      if (errorsfrombackend.appointmentDate) {
+      if (errorsfrombackend?.appointmentDate) {
         setError("appointmentDate", {
           message: errorsfrombackend.appointmentDate,
         });
       }
-      if (errorsfrombackend.appointmentTime) {
+      if (errorsfrombackend?.appointmentTime) {
         setError("appointmentTime", {
           message: errorsfrombackend.appointmentTime,
         });
       }
-      if (errorsfrombackend.vetId) {
+      if (errorsfrombackend?.vetId) {
         setError("vetId", { message: errorsfrombackend.vetId });
       }
     },
@@ -125,7 +125,6 @@ function Appointment() {
               <div className="w-1/2">Veterinarian </div>
               <div className="w-1/2 flex flex-col justify-center ">
                 <select
-                  name="vet"
                   id="vet"
                   {...register("vetId")}
                   disabled={isOptsIsLoading || isOptsError}
@@ -135,20 +134,18 @@ function Appointment() {
                     <option value="">Error fetching data. Try again.</option>
                   )}
 
-                  {opts &&
+                  {opts?.data &&
                     opts.data.map((opt) => (
                       <option key={opt.vetId} value={opt.vetId}>
-                        {opt.userinfo.username}
+                        {opt.name}
                       </option>
                     ))}
                 </select>
-                {errors.vetId ? (
+                {errors.vetId ?
                   <div className="text-red-500 text-center">
                     *{errors.vetId.message}
                   </div>
-                ) : (
-                  <></>
-                )}
+                : <></>}
               </div>
             </label>
             <label
@@ -162,13 +159,11 @@ function Appointment() {
                   {...register("appointmentDate")}
                   className="border-b"
                 />
-                {errors.appointmentDate ? (
+                {errors.appointmentDate ?
                   <div className="text-red-500">
                     * {errors.appointmentDate.message}
                   </div>
-                ) : (
-                  <></>
-                )}
+                : <></>}
               </div>
             </label>
 
@@ -185,20 +180,18 @@ function Appointment() {
                 >
                   {isVetTimingIsLoading && <option>Loading...</option>}
                   {isVetTimingIsError && <option>Error fetching timing</option>}
-                  {vetTiming &&
+                  {vetTiming?.data &&
                     vetTiming.data.map((time) => (
                       <option key={time} value={time}>
                         {time}
                       </option>
                     ))}
                 </select>
-                {errors.appointmentTime ? (
+                {errors.appointmentTime ?
                   <div className="text-center text-red-500">
                     * {errors.appointmentTime.message}
                   </div>
-                ) : (
-                  <></>
-                )}
+                : <></>}
               </div>
             </label>
 
@@ -209,13 +202,11 @@ function Appointment() {
               <h1>Reason</h1>
               <div>
                 <textarea {...register("reason")} className="border" />
-                {errors.reason ? (
+                {errors.reason ?
                   <div className="text-red-500 text-center">
                     * {errors.reason.message}
                   </div>
-                ) : (
-                  <></>
-                )}
+                : <></>}
               </div>
             </label>
             <Button className="w-full" disabled={isAppointing || isSubmitting}>

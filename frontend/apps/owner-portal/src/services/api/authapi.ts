@@ -8,9 +8,9 @@ import type {
   Response,
   ResponseForTiming,
   ResponseLogin,
-  Timing,
   UserUpdateProfileInfo,
   VetListInfo,
+  VetsCard,
 } from "./apitypes";
 
 const baseUrl = "http://localhost:9090";
@@ -106,29 +106,52 @@ export const postNewDogProfile = async (
 export const bookAppointmentDog = async (
   token: string | undefined,
   id: string,
-  appInfo:FormData
+  appInfo: FormData,
 ): Promise<Response> => {
-  const response = await axios.post<Response>(baseUrl + `/owner/dogs/${id}/appointment`,
+  const response = await axios.post<Response>(
+    baseUrl + `/owner/dogs/${id}/appointment`,
     appInfo,
     {
-      headers: { Authorization: `Bearer ` + token }
+      headers: { Authorization: `Bearer ` + token },
     },
   );
   return response.data;
-  
-}
+};
 
 // fetch all the vets
 
-export const getAllVet = async (token: string | undefined):Promise<Response<VetListInfo[]>> => {
-  const response = await axios.get<Response<VetListInfo[]>>(baseUrl + "/owner/vet-list", { headers: { Authorization: `Bearer ` + token } });
+export const getAllVet = async (
+  token: string | undefined,
+): Promise<Response<VetListInfo[]>> => {
+  const response = await axios.get<Response<VetListInfo[]>>(
+    baseUrl + "/owner/vet-list",
+    { headers: { Authorization: `Bearer ` + token } },
+  );
   return response.data;
-}
-
+};
 
 // fetch timing of the vets
 
-export const getVetTimeings = async (token: string | undefined, vetId: string, localDate: string): Promise<ResponseForTiming> => {
-  const response = await axios.get<ResponseForTiming>(baseUrl+"/owner/available",{headers:{Authorization: `Bearer `+token},params:{localDate: localDate,vetId:vetId}})
+export const getVetTimeings = async (
+  token: string | undefined,
+  vetId: string,
+  localDate: string,
+): Promise<ResponseForTiming> => {
+  const response = await axios.get<ResponseForTiming>(
+    baseUrl + "/owner/available",
+    {
+      headers: { Authorization: `Bearer ` + token },
+      params: { localDate: localDate, vetId: vetId },
+    },
+  );
   return response.data;
-}
+};
+
+// get vets for home page
+
+export const getVetsCardForHome = async (): Promise<Response<VetsCard[]>> => {
+  const responce = await axios.get<Response<VetsCard[]>>(
+    baseUrl + "/auth/mainVets",
+  );
+  return responce.data;
+};

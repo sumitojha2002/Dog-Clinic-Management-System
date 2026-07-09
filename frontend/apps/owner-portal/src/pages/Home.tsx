@@ -3,7 +3,16 @@ import vetone from "../assets/vet1-removebg-preview.png";
 import vettwo from "../assets/vet2-removebg-preview.png";
 import { FlaskConical } from "lucide-react";
 import ProductCard from "../components/cards/ProductCard";
+import VetCard from "../components/cards/VetCard";
+import { useQuery } from "@tanstack/react-query";
+import { getVetsCardForHome } from "../services/api/authapi";
+
 function Home() {
+  const { data } = useQuery({
+    queryKey: ["vetsCard"],
+    queryFn: () => getVetsCardForHome(),
+  });
+
   return (
     <div className="mt-20">
       <div>
@@ -144,6 +153,22 @@ function Home() {
             <ProductCard />
             <ProductCard />
           </div>
+        </div>
+      </div>
+      <div className=" mt-40 mb-20">
+        <div>
+          <h1 className="text-4xl mt-10 mb-14 font-semibold flex justify-center flex-col">
+            <span>Meet the team that will take</span>
+            <span>care of your little friend</span>
+          </h1>
+        </div>
+        <div className="grid grid-cols-3 gap-4 pl-10 pr-10">
+          {data?.data &&
+            data.data.map((vet) => (
+              <div>
+                <VetCard {...vet} />
+              </div>
+            ))}
         </div>
       </div>
     </div>
