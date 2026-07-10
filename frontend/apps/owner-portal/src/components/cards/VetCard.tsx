@@ -7,7 +7,7 @@ function VetCard(vetInfo: VetsCard) {
     <div className="border rounded-[30px]">
       <div>
         <img
-          src={vetInfo.imageURL ?? ""}
+          src={vetInfo.imageURL || TwoPac}
           alt="vet-img"
           className="object-cover h-90 w-full rounded-t-[30px]"
         />

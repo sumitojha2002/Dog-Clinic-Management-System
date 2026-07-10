@@ -72,8 +72,6 @@ export const getAllDogsCardInfo = async (
       headers: { Authorization: `Bearer ` + token },
     },
   );
-  console.log("API response:", response);
-  console.log("API response.data:", response.data);
 
   return response.data;
 };

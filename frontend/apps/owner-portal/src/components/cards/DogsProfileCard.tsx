@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import { useAuth } from "../provider/AuthProvider";
 import { getDogProfileById } from "../../services/api/authapi";
 import { useNavigate } from "react-router-dom";
-
+import DogDefaultImg from "../../assets/dogpfp.png";
 interface DogsInfo {
   id: number;
   imageURL: string | null;
@@ -20,7 +20,7 @@ function DogsProfileCard(dogData: DogsInfo) {
       <div className="border w-75 h-90">
         <div className="flex justify-center  h-50 items-center">
           <img
-            src={dogData.imageURL ?? ""}
+            src={dogData.imageURL || DogDefaultImg}
             alt=""
             className="border w-40 h-40 rounded-[100px] object-cover"
           />

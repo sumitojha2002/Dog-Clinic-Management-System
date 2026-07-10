@@ -4,6 +4,7 @@ import { Button } from "../components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getDogProfileById } from "../services/api/authapi";
 import { useAuth } from "../components/provider/AuthProvider";
+import DogDefaultProfile from "../../src/assets/dogpfp.png";
 
 function DogsProfile() {
   const auth = useAuth();
@@ -38,7 +39,7 @@ function DogsProfile() {
       <div className="border h-auto mt-5 p-10 text-left flex flex-col gap-10">
         <div>
           <img
-            src={data.data?.imageUrl ?? ""}
+            src={data.data?.imageUrl || DogDefaultProfile}
             alt=""
             className="h-40 border w-40 object-contain"
           />
@@ -79,30 +80,28 @@ function DogsProfile() {
           <div className="grid grid-cols-2">
             <h1>Allergies</h1>
             <h1 className="border-b">
-              {data.data?.allergies && data.data.allergies.length > 0 ? (
+              {data.data?.allergies && data.data.allergies.length > 0 ?
                 <div>
                   {data.data.allergies.map((allergies) => (
                     <div>{allergies}</div>
                   ))}
                 </div>
-              ) : (
-                <div></div>
-              )}
+              : <div></div>}
             </h1>
           </div>
           <div className="grid grid-cols-2">
             <h1>Chronic Conditions</h1>
             <h1 className="border-b">
-              {data?.data?.chronicConditions &&
-              data.data.chronicConditions.length > 0 ? (
+              {(
+                data?.data?.chronicConditions &&
+                data.data.chronicConditions.length > 0
+              ) ?
                 <div>
                   {data.data.chronicConditions.map((chronic) => (
                     <div>{chronic}</div>
                   ))}
                 </div>
-              ) : (
-                <div></div>
-              )}
+              : <div></div>}
             </h1>
           </div>
         </div>
