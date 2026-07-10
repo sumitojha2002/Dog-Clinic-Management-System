@@ -5,12 +5,18 @@ import { FlaskConical } from "lucide-react";
 import ProductCard from "../components/cards/ProductCard";
 import VetCard from "../components/cards/VetCard";
 import { useQuery } from "@tanstack/react-query";
+import AboutDog from "../../src/assets/AboutImageDog.jpg";
+import BirthdayBoi from "../../src/assets/birthdayboi.jpg";
 import { getVetsCardForHome } from "../services/api/authapi";
 
 function Home() {
   const { data } = useQuery({
     queryKey: ["vetsCard"],
     queryFn: () => getVetsCardForHome(),
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   });
 
   return (
@@ -155,6 +161,42 @@ function Home() {
           </div>
         </div>
       </div>
+
+      <div className=" mt-30 mb-20 grid grid-cols-2 gap-2">
+        <div className="flex flex-col justify-between">
+          <img
+            src={AboutDog}
+            alt=""
+            className="h-120 object-cover rounded-2xl"
+          />
+          <div className="flex justify-center items-center">
+            <p className="p-5">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illum ad
+              excepturi provident culpa tempora fugiat exercitationem dolores
+              obcaecati expedita natus aperiam commodi non sed repellendus
+              deserunt, labore assumenda. Vel, magnam.
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col justify-between">
+          <div className="flex flex-col justify-center">
+            <h1 className="text-4xl mt-10 mb-10 font-semibold">About Us</h1>
+            <p className="p-5">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid
+              debitis quo eos odio, id reprehenderit corrupti animi enim
+              eveniet. Eos animi assumenda eaque repellendus laborum magnam
+              ipsam, recusandae asperiores atque!
+            </p>
+          </div>
+
+          <img
+            src={BirthdayBoi}
+            alt=""
+            className="w-full object-cover rounded-2xl"
+          />
+        </div>
+      </div>
+
       <div className=" mt-40 mb-20">
         <div>
           <h1 className="text-4xl mt-10 mb-14 font-semibold flex justify-center flex-col">
@@ -162,13 +204,9 @@ function Home() {
             <span>care of your little friend</span>
           </h1>
         </div>
-        <div className="grid grid-cols-3 gap-4 pl-10 pr-10">
+        <div className="grid grid-cols-3 gap-5 pl-10 pr-10">
           {data?.data &&
-            data.data.map((vet) => (
-              <div>
-                <VetCard {...vet} />
-              </div>
-            ))}
+            data.data.map((vet) => <VetCard key={vet.vetId} {...vet} />)}
         </div>
       </div>
     </div>
