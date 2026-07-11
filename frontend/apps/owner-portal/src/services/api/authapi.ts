@@ -153,3 +153,16 @@ export const getVetsCardForHome = async (): Promise<Response<VetsCard[]>> => {
   );
   return responce.data;
 };
+
+export const updateDogsProfile = async (
+  token: string | undefined,
+  id: string,
+  formData: FormData,
+): Promise<Response> => {
+  const response = await axios.patch<Response>(
+    baseUrl + `/owner/dogs/${id}`,
+    formData,
+    { headers: { Authorization: `Bearer ` + token } },
+  );
+  return response.data;
+};

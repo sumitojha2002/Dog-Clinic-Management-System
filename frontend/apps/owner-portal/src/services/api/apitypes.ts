@@ -112,3 +112,5 @@ export interface VetsCard {
   imageURL: null | string | undefined;
   specialization: string;
 }
+
+
