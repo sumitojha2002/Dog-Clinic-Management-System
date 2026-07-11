@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 import java.time.LocalDate;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.dto.AppointmentDTO;
 import com.example.backend.entity.dto.OwnerPetDTO;
+import com.example.backend.entity.dto.OwnerPetDTOUpdate;
 import com.example.backend.entity.dto.OwnerProfileDTO;
 import com.example.backend.repository.OwnerRepository;
 import com.example.backend.security.entity.User;
@@ -74,6 +77,11 @@ public class OwnerController {
         User user = userRepository.findByUsernameOrEmail(userDetails.getUsername()).get();
         Owners owners = ownerRepo.findByUserId(user.getId()).get();
         return ownerService.addPet(ownerPetDTO, owners);
+    }
+
+    @PatchMapping(value="/dogs/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateDog(@ModelAttribute OwnerPetDTOUpdate ownerPetDTOUpdate,@AuthenticationPrincipal UserDetails userDetails,@PathVariable Long id){
+        return ownerService.updateDogsProfile(ownerPetDTOUpdate, id, userDetails);
     }
 
     // @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate localDate

@@ -6,13 +6,16 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.hibernate.annotations.Check;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.backend.entity.Appointments;
 import com.example.backend.entity.Dogs;
@@ -21,12 +24,14 @@ import com.example.backend.entity.Owners;
 import com.example.backend.entity.Veterinarians;
 import com.example.backend.entity.dto.AppointmentDTO;
 import com.example.backend.entity.dto.OwnerPetDTO;
+import com.example.backend.entity.dto.OwnerPetDTOUpdate;
 import com.example.backend.entity.dto.OwnerProfileDTO;
 import com.example.backend.entity.enums.AppointmentStatus;
 import com.example.backend.entity.enums.VactionationStatus;
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.helper.CheckHelper;
 import com.example.backend.helper.ProfileHelper;
+import com.example.backend.helper.URLHelper;
 import com.example.backend.repository.AppointmentRepository;
 import com.example.backend.repository.DogsRepository;
 import com.example.backend.repository.MedicalRecordRepository;
@@ -162,6 +167,83 @@ public class OwnerService {
             return Response.ResponseHandler("Failed to register your pet", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    //  update dogs profile
+    @Transactional
+    public ResponseEntity<?> updateDogsProfile(OwnerPetDTOUpdate petDTO,Long dogId,UserDetails userDetails){
+        try{
+
+            User user = userRepo.findByUsernameOrEmail(userDetails.getUsername()).orElseThrow(()-> new UsernameNotFoundException("Owner Profile Not found"));
+            
+            Owners owner = ownerRepo.findByUserId(user.getId()).orElseThrow(()-> new UserNotFoundException("The user is not owner"));
+
+            Dogs dog = owner.getDogs().stream().filter(foundDog-> foundDog.getId().equals(dogId)).findFirst().orElse(null);
+
+            if(dog == null){
+                return Response.ResponseHandler("Dog does not belong to the owner", HttpStatus.CONFLICT);
+            } 
+
+            // image of the Dog
+            if(petDTO.getImageUrl() != null && !petDTO.getImageUrl().isEmpty()){
+                MultipartFile img = petDTO.getImageUrl();
+                String mimeType = img.getContentType();
+                
+                if(mimeType != null && !CheckHelper.filesType.contains(mimeType)){
+                    return Response.ResponseHandler("Image file type should be jpeg, png or jpg", HttpStatus.CONFLICT);
+                }
+
+                String dogImageUrl = dog.getImageUrl();
+
+                if(dogImageUrl != null){
+                    String imgURLId = URLHelper.CloudinaryUrlSlicerPublicId(dogImageUrl);
+                    Map result = cloudinaryServices.delete(imgURLId);
+
+                    if(!"ok".equals(result.get("result"))){
+                    return Response.ResponseHandler("Could not delete image.", HttpStatus.CONFLICT);
+                }
+            }
+            dog.setImageUrl(cloudinaryServices.upload(img));
+                
+            }
+
+                // dog name
+                if(petDTO.getName() != null && !petDTO.getName().isEmpty()){
+                    dog.setName(petDTO.getName());
+                }
+
+                // dog gender
+                if(petDTO.getGender() != null && !petDTO.getGender().isEmpty()){
+                    dog.setGender(petDTO.getGender());
+                }
+
+                // dog breed
+                if(petDTO.getBreed()!=null && !petDTO.getBreed().isEmpty()){
+                    dog.setBreed(petDTO.getBreed());
+                }
+
+                // dog color
+                if(petDTO.getColor()!= null && !petDTO.getColor().isEmpty()){
+                    dog.setColor(petDTO.getColor());
+                }
+
+                // dog dateOfBirth
+                if(petDTO.getDateOfBirth() != null){
+                    dog.setDateOfBirth(petDTO.getDateOfBirth());
+                }
+
+            dogsRepo.save(dog);
+            return Response.ResponseHandler("Dog's Profile has been updated successfully", HttpStatus.OK);
+            
+        }catch(UserNotFoundException e){
+            e.printStackTrace();
+            return Response.ResponseHandler(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     // Owner Profile
     public ResponseEntity<?> getOwnerProfile(User user) {
