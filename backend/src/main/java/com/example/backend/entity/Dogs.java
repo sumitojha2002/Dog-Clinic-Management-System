@@ -118,4 +118,6 @@ public class Dogs {
         String gender,
         String color,
         Double weight){}
+
+    public record DogsInfoForAppointment(Long dogId,String name){}
 }

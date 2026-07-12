@@ -66,4 +66,14 @@ public class Appointments {
         LocalDate appointmentDate,
         LocalTime appLocalTime
     ) {}
+
+    public record AppointmentRecordForOwner(
+        Long appId,
+        Dogs.DogsInfoForAppointment dogs,
+        String reason,
+        AppointmentStatus appointmentStatus,
+        Veterinarians.vetListInfo vetInfo,
+        LocalDate appointmentDate,
+        LocalTime appLocalTime
+    ){}
 }

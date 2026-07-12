@@ -22,6 +22,7 @@ import com.example.backend.entity.Dogs;
 import com.example.backend.entity.MedicalRecord;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.Veterinarians;
+import com.example.backend.entity.Appointments.Appointment;
 import com.example.backend.entity.dto.AppointmentDTO;
 import com.example.backend.entity.dto.OwnerPetDTO;
 import com.example.backend.entity.dto.OwnerPetDTOUpdate;
@@ -368,6 +369,39 @@ public class OwnerService {
             e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    public ResponseEntity<?> getAllAppointments(Long id,UserDetails userDetails){
+        try{
+            User user = userRepo.findByUsernameOrEmail(userDetails.getUsername()).orElseThrow(()-> new UserNotFoundException("User not found"));
+
+            Owners owner = ownerRepo.findByUserId(user.getId()).orElseThrow(()-> new UserNotFoundException("User not found"));
+
+            Optional<Dogs> dog = owner.getDogs().stream().filter(d-> d.getId().equals(id)).findFirst();
+
+            if(!dog.isPresent()){
+                return Response.ResponseHandler("Dog does not exists", HttpStatus.NOT_FOUND);    
+            }
+
+            List<Appointments.AppointmentRecordForOwner> apps = appRepo.getAllAppointmentsForOwnerBasedDogId(id)
+                .stream()
+                .map(ProfileHelper::getAllAppointmentOfDog)
+                .toList();
+            
+            if(apps.isEmpty()){
+                return Response.ResponseHandler("No appointments made till yet.", HttpStatus.OK);
+            }
+                
+            return Response.ResponseHandler("All the found appointments are: ", HttpStatus.OK, apps);
+
+        }catch(UserNotFoundException e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

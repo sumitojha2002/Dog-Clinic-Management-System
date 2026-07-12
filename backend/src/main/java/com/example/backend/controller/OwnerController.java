@@ -38,6 +38,7 @@ public class OwnerController {
     private final OwnerService ownerService;
     private final UserRepository userRepository;
     private final OwnerRepository ownerRepo;
+   
 
     // add data in the profile
     @PostMapping("/profile")
@@ -100,6 +101,13 @@ public class OwnerController {
         return ownerService.setAppoinmentForThePet(id, appDto, userDetails);
     }
 
+    @GetMapping("/dogs/{id}/appointment")
+    public ResponseEntity<?> getAllAppointmentsDog(
+        @PathVariable Long id,
+        @AuthenticationPrincipal UserDetails userDetails){
+        return ownerService.getAllAppointments(id,userDetails);
+    }
+
     @GetMapping("/dogs/{id}/medical_records")
     public ResponseEntity<?> getMedicalRecord(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         return ownerService.medicalRecord(id, userDetails);
@@ -109,6 +117,8 @@ public class OwnerController {
     public ResponseEntity<?> getVetsList() {
         return ownerService.getVetsList();
     }
+
+
 
 }
 

@@ -176,6 +176,32 @@ public class ProfileHelper {
     }
 
 
+    public static Appointments.AppointmentRecordForOwner getAllAppointmentOfDog(Appointments app){
+        
+        if(app == null){
+            return null;
+        }
+        
+        Dogs.DogsInfoForAppointment dogs = Optional.ofNullable(app)
+        .map(Appointments::getDogs)
+        .map(dog -> new Dogs.DogsInfoForAppointment(
+            dog.getId()
+            ,dog.getName()))
+        .orElse(null);
+
+        Veterinarians.vetListInfo vet = Optional.ofNullable(app)
+            .map(Appointments::getVeterinarians)
+            .map(v -> new Veterinarians.vetListInfo(v.getId(),v.getName()))
+            .orElse(null);
+
+        return new Appointments.AppointmentRecordForOwner(app.getId(),
+            dogs, 
+            app.getReason(), 
+            app.getStatus(), 
+            vet, 
+            app.getAppointmentDate(), 
+            app.getAppointmentTime());
+    }
 
     // public static Dogs.DogInfo getDogsInfo()
 
