@@ -12,7 +12,9 @@ import DogsProfilesListUI from "./pages/DogsProfilesListUI";
 import DogsProfile from "./pages/DogsProfile";
 import DogsProfileAdd from "./pages/DogsProfileAdd";
 import ProtectedRouteNavbarNoSwitch from "./components/routes/protectedRoutes/ProtectedRouteNavbarNoSwitchProfile";
-import Appointment from "./pages/Appointment";
+import Appointment from "./pages/NewAppointment";
+import NewAppointment from "./pages/NewAppointment";
+import ViewAppointment from "./pages/ViewAppointment";
 
 function App() {
   const { loading } = useAuth();
@@ -40,8 +42,9 @@ function App() {
       <Route
         element={<ProtectedRouteNavbarNoSwitch allowedRole="ROLE_OWNER" />}
       >
-        <Route path="/dogs/:id/appointment/new" element={<Appointment />} />
+        <Route path="/dogs/:id/appointment/new" element={<NewAppointment />} />
         <Route path="/dogs" element={<DogsProfileAdd />} />
+        <Route path="/dogs/:id/appointment" element={<ViewAppointment />} />
       </Route>
     </Routes>
   );

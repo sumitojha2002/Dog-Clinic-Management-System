@@ -63,6 +63,7 @@ function DogsProfile() {
     mutationFn: (formData: FormData) =>
       updateDogsProfile(auth.accessToken, id, formData),
   });
+
   const updateProfile = (data: PetsInfoForUpdate) => {
     console.log("has been used");
     const formdata = new FormData();
@@ -76,10 +77,6 @@ function DogsProfile() {
     if (dirtyFields.gender && data?.gender)
       formdata.append("gender", data.gender);
 
-    for (let [key, value] of formdata.entries()) {
-      console.log(`${key}:`, value);
-    }
-    console.log(dirtyFields);
     mutation.mutate(formdata);
   };
 
@@ -291,6 +288,12 @@ function DogsProfile() {
             Book An Appointent
           </Button>
         </div>
+        <Button
+          type="button"
+          onClick={() => navigate(`/dogs/${id}/appointment`)}
+        >
+          View Appointments
+        </Button>
       </div>
     </div>
   );

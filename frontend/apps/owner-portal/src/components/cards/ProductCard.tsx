@@ -2,9 +2,6 @@ import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 import image from "../../assets/bowl-removebg-preview.png";
 
-/*
-    #FFE6F2
-*/
 function ProductCard() {
   return (
     <div>

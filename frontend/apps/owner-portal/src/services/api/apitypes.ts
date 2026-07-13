@@ -113,4 +113,22 @@ export interface VetsCard {
   specialization: string;
 }
 
+export interface AppointmentInfo {
+  appId: number;
+  dogs: AppDog;
+  reason: string;
+  appointmentStatus: string;
+  vetInfo: AppVet;
+  appointmentDate: string;
+  appLocalTime: string;
+}
 
+export interface AppVet {
+  vetId: number;
+  name: string;
+}
+
+export interface AppDog {
+  dogId: number;
+  name: string;
+}

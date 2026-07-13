@@ -1,7 +1,7 @@
 import Navbar from "../../Navbar";
 
 import { useAuth } from "../../provider/AuthProvider";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, ScrollRestoration } from "react-router-dom";
 
 interface Props {
   allowedRole?: string;

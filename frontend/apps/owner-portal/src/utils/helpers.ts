@@ -62,3 +62,13 @@ export const dogProfileUpdate = z.object({
   gender: z.enum(["male", "female"]),
   imageUrl: z.custom<FileList>().optional(),
 });
+
+export const tagsBasedColor = (status: string) => {
+  const appoitmenstatus: Record<string, string> = {
+    PENDING: "text-yellow-500",
+    CONFIRMED: "text-green-500",
+    CHECKED_IN: "text-green-500",
+    IN_PROGRESS: "text-green-500",
+  };
+  return appoitmenstatus[status] ?? "text-gray-500";
+};

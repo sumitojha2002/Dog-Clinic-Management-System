@@ -21,7 +21,7 @@ import { ArrowLeft } from "lucide-react";
 
 type appointmentForm = z.infer<typeof AppointmentSchema>;
 
-function Appointment() {
+function NewAppointment() {
   const { id } = useParams();
   const auth = useAuth();
   const {
@@ -219,4 +219,4 @@ function Appointment() {
   );
 }
 
-export default Appointment;
+export default NewAppointment;

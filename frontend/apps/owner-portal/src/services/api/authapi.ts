@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import type {
+  AppointmentInfo,
   DogCardInfo,
   DogsProfile,
   Login,
@@ -166,3 +167,18 @@ export const updateDogsProfile = async (
   );
   return response.data;
 };
+
+export const getAllAppointments = async (
+  token: string | undefined,
+  id: string,
+): Promise<Response<AppointmentInfo[]>> => {
+  const response = await axios.get<Response<AppointmentInfo[]>>(
+    baseUrl + `/owner/dogs/${id}/appointment`,
+    {
+      headers: { Authorization: `Bearer ` + token },
+    },
+  );
+  return response.data;
+};
+
+
