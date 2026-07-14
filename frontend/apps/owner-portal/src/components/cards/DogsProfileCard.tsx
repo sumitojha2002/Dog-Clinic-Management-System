@@ -17,7 +17,7 @@ function DogsProfileCard(dogData: DogsInfo) {
 
   return (
     <div className="flex justify-center">
-      <div className="border w-75 h-90">
+      <div className="border w-75 h-100">
         <div className="flex justify-center  h-50 items-center">
           <img
             src={dogData.imageURL || DogDefaultImg}
@@ -39,10 +39,17 @@ function DogsProfileCard(dogData: DogsInfo) {
               <label className="">Date of Birth:</label>
               <h3>{dogData.dateOfBirth}</h3>
             </div>
+            <div className="flex flex-col p-2 gap-2 mt-2">
+              <Button onClick={() => navigate(`/dogs/profile/${dogData.id}`)}>
+                View Profile
+              </Button>
+              <Button
+                onClick={() => navigate(`/dogs/${dogData.id}/appointment`)}
+              >
+                View Appointment
+              </Button>
+            </div>
           </div>
-          <Button onClick={() => navigate(`/dogs/profile/${dogData.id}`)}>
-            View Profile
-          </Button>
         </div>
       </div>
     </div>
