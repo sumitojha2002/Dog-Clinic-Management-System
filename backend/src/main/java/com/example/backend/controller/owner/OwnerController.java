@@ -1,8 +1,7 @@
-package com.example.backend.controller;
+package com.example.backend.controller.owner;
 
 import java.time.LocalDate;
 
-import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

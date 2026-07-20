@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.hibernate.annotations.Check;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +21,6 @@ import com.example.backend.entity.Dogs;
 import com.example.backend.entity.MedicalRecord;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.Veterinarians;
-import com.example.backend.entity.Appointments.Appointment;
 import com.example.backend.entity.dto.AppointmentDTO;
 import com.example.backend.entity.dto.OwnerPetDTO;
 import com.example.backend.entity.dto.OwnerPetDTOUpdate;

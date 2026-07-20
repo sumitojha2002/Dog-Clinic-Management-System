@@ -1,4 +1,4 @@
-package com.example.backend.controller;
+package com.example.backend.controller.vet;
 
 
 import org.springframework.http.MediaType;

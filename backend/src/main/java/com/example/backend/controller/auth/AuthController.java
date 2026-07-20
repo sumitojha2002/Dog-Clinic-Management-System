@@ -1,4 +1,4 @@
-package com.example.backend.controller;
+package com.example.backend.controller.auth;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

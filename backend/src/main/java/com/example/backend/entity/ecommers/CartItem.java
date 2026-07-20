@@ -29,7 +29,7 @@ public class CartItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "products_sku_id", referencedColumnName = "id")
-    private ProductsSkus productsSkus;
+    private ProductsSkus productsskus;
     
     private Long quantity;
     
