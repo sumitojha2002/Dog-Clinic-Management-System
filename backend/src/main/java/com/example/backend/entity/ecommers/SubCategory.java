@@ -23,7 +23,7 @@ public class SubCategory {
     private Category parent;
 
     private String name;
-    private String desc;
+    private String description;
 
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;

@@ -1,7 +1,5 @@
 package com.example.backend.controller.admin;
 
-import java.util.Locale.Category;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,11 +15,13 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor
-public class AdminEcommersController {
+public class AdminCategoriesController {
     private final CategoryService categoryService;
     
-    @PostMapping("/category")
+    @PostMapping("/categories")
     public ResponseEntity<?> createCategory(@Valid @ModelAttribute CreateCategoryDTO createCategoryDTO){
         return categoryService.createCategory(createCategoryDTO);
     }
+
+
 }

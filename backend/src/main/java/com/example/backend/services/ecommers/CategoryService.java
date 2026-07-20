@@ -1,6 +1,7 @@
 package com.example.backend.services.ecommers;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,5 +35,9 @@ public class CategoryService {
             e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public Optional<Category> getCategoryById(Long id){
+        return categoryRepository.findById(id);
     }
 }
