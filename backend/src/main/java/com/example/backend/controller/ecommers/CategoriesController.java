@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.services.ecommers.CategoryService;
+import com.example.backend.services.ecommers.SubCategoryService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CategoriesController {
     private final CategoryService categoryService;
+    private final SubCategoryService subCategoryService;
 
     @GetMapping
     public ResponseEntity<?> getAllCategories(){
@@ -26,5 +28,9 @@ public class CategoriesController {
         return categoryService.getCategoriesById(id);
     }
 
+    @GetMapping("/{categoryId}/subcategories")
+    public ResponseEntity<?> getAllSubCategories(@PathVariable  Long id){
+        return subCategoryService.getAllSubCategoriesByCategoryId(id);
+    }
 
 }
