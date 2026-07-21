@@ -51,6 +51,7 @@ public class AdminController {
     public ResponseEntity<?> deleteDogById(@PathVariable Long id){
         return adminService.deleteByDogsId(id);
     }
+    
     @GetMapping("/dogs")
     public ResponseEntity<?> findAllDogs(@RequestParam(required = false) String name,@RequestParam(required = false) String breed ){
         return adminService.getAllDogsRecord(name,breed);

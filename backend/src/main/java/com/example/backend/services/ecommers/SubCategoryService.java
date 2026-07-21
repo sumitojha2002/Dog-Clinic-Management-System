@@ -32,7 +32,7 @@ public class SubCategoryService {
             LocalDateTime now = LocalDateTime.now();
 
             SubCategory subCategory = new SubCategory();
-            subCategory.setParent(category.get());
+            subCategory.setCategory(category.get());
             subCategory.setName(createSubCategoryDTO.getName());
             subCategory.setDescription(createSubCategoryDTO.getDescription());
             subCategory.setCreatedAt(now);
