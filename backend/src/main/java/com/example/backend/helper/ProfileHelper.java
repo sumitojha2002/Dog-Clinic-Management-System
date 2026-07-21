@@ -7,6 +7,7 @@ import com.example.backend.entity.Dogs;
 import com.example.backend.entity.MedicalRecord;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.Veterinarians;
+import com.example.backend.entity.ecommers.Category;
 import com.example.backend.security.entity.User;
 
 public class ProfileHelper {
@@ -204,5 +205,18 @@ public class ProfileHelper {
     }
 
     // public static Dogs.DogInfo getDogsInfo()
+
+    public static Category.displayAllCategory allCategoryMapper(Category category){
+        if(category == null){
+            return null;
+        }
+
+        return new Category.displayAllCategory(
+            category.getId(),
+            category.getName(),
+            category.getDescription(),
+            category.getCreatedAt(),
+            category.getDeletedAt());
+    }
 
 }

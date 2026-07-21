@@ -20,7 +20,7 @@ public class SubCategory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="parent_id",referencedColumnName = "id")
-    private Category parent;
+    private Category category;
 
     private String name;
     private String description;
