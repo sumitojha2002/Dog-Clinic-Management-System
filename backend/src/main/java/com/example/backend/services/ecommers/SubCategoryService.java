@@ -2,6 +2,7 @@ package com.example.backend.services.ecommers;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.example.backend.entity.ecommers.Category;
 import com.example.backend.entity.ecommers.SubCategory;
 import com.example.backend.entity.ecommers.dto.CreateSubCategoryDTO;
+import com.example.backend.helper.ProfileHelper;
 import com.example.backend.repository.ecommers.SubCategoryRepositroy;
 import com.example.backend.response.Response;
 
@@ -49,7 +51,7 @@ public class SubCategoryService {
     }
 
     @Transactional
-    public ResponseEntity<?> updateSubCategory(CreateSubCategoryDTO createSubCategoryDTO,Long id){
+    public ResponseEntity<?> updateSubCategory(Map<String,Object> updates,Long id){
         try{
             Optional<SubCategory> subCatOptional = subCategoryRepo.findById(id);
 
@@ -58,15 +60,14 @@ public class SubCategoryService {
             }
             SubCategory subCategory = subCatOptional.get();
 
-            if(!createSubCategoryDTO.getName().isEmpty()){
-                subCategory.setName(createSubCategoryDTO.getName());
-            }
+            updates.forEach((key,value)->{
+                if(key.equals("name")) subCategory.setName((String) value);
+                if(key.equals("description")) subCategory.setDescription((String) value);
+            });
 
-            if(!createSubCategoryDTO.getDescription().isEmpty()){
-                subCategory.setDescription(createSubCategoryDTO.getDescription());
-            }
+            SubCategory.subCategoryDisplay rSubCategory = ProfileHelper.subCategoryDisplay(subCategory, id);
             
-            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,subCategory);
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,rSubCategory);
 
         }catch(Exception e){
             e.printStackTrace();
@@ -77,13 +78,17 @@ public class SubCategoryService {
 
     public ResponseEntity<?> getAllSubCategoriesByCategoryId(Long id){
         try{
-            List<SubCategory> subCategories = subCategoryRepo.getAllSubCategoriesByCatId(id);
+            List<SubCategory.subCategoryDisplay> subCategories = subCategoryRepo.getAllSubCategoriesByCatId(id)
+                .stream()
+                .map((sub)->ProfileHelper.subCategoryDisplay(sub, id))
+                .toList();
 
-            if(subCategories.isEmpty()){
-                return Response.ResponseHandler("Empty there is no sub categories.", HttpStatus.NOT_FOUND);
+            if(subCategories.size() ==  0){
+                return Response.ResponseHandler("Empty there is no sub categories.", HttpStatus.NOT_FOUND,subCategories);
             }
 
-            return Response.ResponseHandler(HttpStatus.FOUND.getReasonPhrase(), HttpStatus.FOUND,subCategories);
+
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,subCategories);
 
         }catch(Exception e){
             e.printStackTrace();
@@ -98,8 +103,9 @@ public class SubCategoryService {
             if(!subCategory.isPresent()){
                 return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
             }
+            SubCategory.subCategoryDisplay resSubCatefory = ProfileHelper.subCategoryDisplay(subCategory.get(), id);
 
-            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(),HttpStatus.OK,subCategory);
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(),HttpStatus.OK,resSubCatefory);
         }catch(Exception e){
             e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);

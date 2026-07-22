@@ -12,7 +12,7 @@ public interface SubCategoryRepositroy extends JpaRepository<SubCategory,Long> {
     @Query("""
             SELECT s FROM
             SubCategory s
-            WHERE s.category.id = id
+            WHERE s.category.id = :id
             """)
     List<SubCategory> getAllSubCategoriesByCatId(@Param("id") Long id); 
 }

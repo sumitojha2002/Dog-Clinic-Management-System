@@ -2,8 +2,10 @@ package com.example.backend.services.ecommers;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -78,8 +80,11 @@ public class CategoryService {
             if(!category.isPresent()){
                 return Response.ResponseHandler("Category not found.", HttpStatus.NOT_FOUND);
             }
+            
+            Category.displayAllCategory categoryResult = ProfileHelper.allCategoryMapper(category.get());
+            
 
-            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,category);
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,categoryResult);
         }catch(Exception e){
             e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -87,7 +92,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public ResponseEntity<?> updateCategory(CreateCategoryDTO categoryDTO,Long id){
+    public ResponseEntity<?> updateCategory(Map<String,Object>update,Long id){
         try{
             Optional<Category> getCategory = categoryRepository.findById(id);
 
@@ -96,16 +101,15 @@ public class CategoryService {
         }
         Category category = getCategory.get();
 
-        if(!categoryDTO.getName().isEmpty()){
-            category.setName(categoryDTO.getName());
-        }
+        update.forEach((key,value)->{
+            if(key.equals("name")) category.setName((String) value);
+            if(key.equals("description"))category.setDescription((String) value);
+        });
 
-        if(!categoryDTO.getName().isEmpty()){
-            category.setName(categoryDTO.getName());
-        }
+        Category.displayAllCategory rCategory = ProfileHelper.allCategoryMapper(category);
 
         categoryRepository.save(category);
-        return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, category);
+        return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, rCategory);
     }catch(Exception e){
         e.printStackTrace();
         return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);

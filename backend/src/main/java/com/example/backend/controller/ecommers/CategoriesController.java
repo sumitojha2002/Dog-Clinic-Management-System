@@ -29,8 +29,8 @@ public class CategoriesController {
     }
 
     @GetMapping("/{categoryId}/subcategories")
-    public ResponseEntity<?> getAllSubCategories(@PathVariable  Long id){
-        return subCategoryService.getAllSubCategoriesByCategoryId(id);
+    public ResponseEntity<?> getAllSubCategories(@PathVariable  Long categoryId){
+        return subCategoryService.getAllSubCategoriesByCategoryId(categoryId);
     }
 
 }

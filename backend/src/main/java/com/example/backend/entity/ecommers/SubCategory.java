@@ -27,4 +27,6 @@ public class SubCategory {
 
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
+
+    public record subCategoryDisplay(Long id,Long categoryId,String name,String description){}
 }

@@ -8,6 +8,7 @@ import com.example.backend.entity.MedicalRecord;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.Veterinarians;
 import com.example.backend.entity.ecommers.Category;
+import com.example.backend.entity.ecommers.SubCategory;
 import com.example.backend.security.entity.User;
 
 public class ProfileHelper {
@@ -217,6 +218,14 @@ public class ProfileHelper {
             category.getDescription(),
             category.getCreatedAt(),
             category.getDeletedAt());
+    }
+
+    public static SubCategory.subCategoryDisplay subCategoryDisplay(SubCategory subCategory,Long categoryId){
+        if(subCategory == null){
+            return null;
+        }
+
+        return new SubCategory.subCategoryDisplay(subCategory.getId(), categoryId, subCategory.getName(), subCategory.getDescription());
     }
 
 }
