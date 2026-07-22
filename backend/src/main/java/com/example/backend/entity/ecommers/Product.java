@@ -22,7 +22,7 @@ public class Product {
     private Long id;
 
     private String name;
-    private String desc;
+    private String description;
     private String summery;
     
     private String cover;
@@ -31,9 +31,34 @@ public class Product {
     @JoinColumn(name="category_id",referencedColumnName = "id")
     private SubCategory subCategory;
 
-    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
+    @OneToMany(fetch=FetchType.LAZY , mappedBy = "product",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<CartItem> cartItems;
+
+
+    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductsSkus> productsSkus; 
 
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
+
+    public record productsRecord(
+        Long id,
+        Long subCategoryId,
+        String name,
+        String description,
+        String summery,
+        String cover,
+        LocalDateTime createdAt,
+        LocalDateTime deletedAt){}
+
+    public record productRecordSkus(
+        Long id,
+        Long subCategoryId,
+        String name,
+        String description,
+        String summery,
+        String cover,
+        LocalDateTime createAt,
+        LocalDateTime deleteAt,
+        List<ProductsSkus.productProductsSkus> productsSkus){}
 }

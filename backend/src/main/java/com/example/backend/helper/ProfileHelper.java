@@ -1,6 +1,8 @@
 package com.example.backend.helper;
 
+import java.util.List;
 import java.util.Optional;
+
 
 import com.example.backend.entity.Appointments;
 import com.example.backend.entity.Dogs;
@@ -8,6 +10,9 @@ import com.example.backend.entity.MedicalRecord;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.Veterinarians;
 import com.example.backend.entity.ecommers.Category;
+import com.example.backend.entity.ecommers.Product;
+import com.example.backend.entity.ecommers.ProductAttributes;
+import com.example.backend.entity.ecommers.ProductsSkus;
 import com.example.backend.entity.ecommers.SubCategory;
 import com.example.backend.security.entity.User;
 
@@ -228,4 +233,78 @@ public class ProfileHelper {
         return new SubCategory.subCategoryDisplay(subCategory.getId(), categoryId, subCategory.getName(), subCategory.getDescription());
     }
 
+
+    public static Product.productsRecord productDisplayRecord(Product product){
+        if(product == null){
+            return null;
+        }
+
+        Long subCategoryId = (product.getSubCategory() != null) ? product.getSubCategory().getId() : null;
+        return new Product.productsRecord(
+            product.getId(),
+            subCategoryId,
+            product.getName(),
+            product.getDescription(),
+            product.getSummery(),
+            product.getCover(),
+            product.getCreatedAt(),
+            product.getDeletedAt()
+        );
+    }
+
+    public static Product.productRecordSkus disaplyProductSkus(Product product){
+        if(product == null){
+            return null;
+        }
+
+        List<ProductsSkus.productProductsSkus> productsSkus = Optional.ofNullable(product)
+                .map(Product::getProductsSkus)
+                .map(pro -> pro.stream()
+                        .map(pros ->{ 
+
+                            ProductAttributes.productAttr size = Optional.ofNullable(pros)
+                            .map(ProductsSkus::getSizeAttributeId)
+                            .map(s-> new ProductAttributes.productAttr(
+                                s.getId(), 
+                                s.getProductAttributesType(), 
+                                s.getValue(), 
+                                s.getCreatedAt(), 
+                                s.getDeletedAt()))
+                            .orElse(null);
+
+                            ProductAttributes.productAttr color = Optional.ofNullable(pros)
+                            .map(ProductsSkus::getColorAttributeId)
+                            .map(c -> new ProductAttributes.productAttr(
+                                c.getId(), 
+                                c.getProductAttributesType(),
+                                c.getValue(), 
+                                c.getCreatedAt(),
+                                c.getDeletedAt()))
+                            .orElse(null);
+
+                            return new ProductsSkus.productProductsSkus(
+                                pros.getId(),
+                                pros.getProductId().getId(),
+                                pros.getSku(),
+                                pros.getPrice(),
+                                pros.getQuantity(),
+                                size,
+                                color,
+                                pros.getCreatedAt(),
+                                pros.getDeleteAt());
+                            })
+                            .toList())
+                .orElse(null);
+    
+    return new Product.productRecordSkus(
+        product.getId(), 
+        product.getSubCategory().getId(), 
+        product.getName(), 
+        product.getDescription(), 
+        product.getDescription(), 
+        product.getCover(), 
+        product.getCreatedAt(), 
+        product.getDeletedAt(), 
+        productsSkus);
+    }
 }

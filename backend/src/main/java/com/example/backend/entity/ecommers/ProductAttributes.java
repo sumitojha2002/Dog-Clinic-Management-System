@@ -23,4 +23,11 @@ public class ProductAttributes {
 
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
+
+    public record productAttr(
+        Long id, 
+        ProductAttributesType productAttributesType, 
+        String value,
+        LocalDateTime createdAt,
+        LocalDateTime deletedAt){}
 }
