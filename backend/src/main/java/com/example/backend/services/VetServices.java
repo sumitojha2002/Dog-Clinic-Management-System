@@ -161,7 +161,7 @@ public class VetServices {
                 }
             if(vet.getImageURL() != null){
 
-                Map result = cloudService.delete(URLHelper.CloudinaryUrlSlicerPublicId(vet.getImageURL()));
+                Map<?,?> result = cloudService.delete(URLHelper.CloudinaryUrlSlicerPublicId(vet.getImageURL()));
 
                 if(!"ok".equals(result.get("result"))){
                     return Response.ResponseHandler("Could not delete image.", HttpStatus.CONFLICT);

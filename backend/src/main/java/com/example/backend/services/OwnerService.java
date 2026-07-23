@@ -195,7 +195,7 @@ public class OwnerService {
 
                 if(dogImageUrl != null){
                     String imgURLId = URLHelper.CloudinaryUrlSlicerPublicId(dogImageUrl);
-                    Map result = cloudinaryServices.delete(imgURLId);
+                    Map<?,?> result = cloudinaryServices.delete(imgURLId);
 
                     if(!"ok".equals(result.get("result"))){
                     return Response.ResponseHandler("Could not delete image.", HttpStatus.CONFLICT);

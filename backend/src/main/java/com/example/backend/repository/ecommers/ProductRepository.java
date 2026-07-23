@@ -1,5 +1,7 @@
 package com.example.backend.repository.ecommers;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,4 +26,10 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             WHERE p.id = :id
             """)
     Product findAllProductSkus(@Param("id") Long id);
+
+    @Query("""
+           SELECT p FROM Product p
+           WHERE (:q IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%',:q,'%')))        
+           """)
+    List<Product> findBySearchname(@Param("q") String q);
 }
