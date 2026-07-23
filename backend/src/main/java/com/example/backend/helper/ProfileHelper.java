@@ -307,4 +307,17 @@ public class ProfileHelper {
         product.getDeletedAt(), 
         productsSkus);
     }
+
+    public static ProductAttributes.productAttr displayProductAttribute(ProductAttributes productAttributes){
+        if(productAttributes == null){
+            return null;
+        }
+
+        return new ProductAttributes.productAttr(
+            productAttributes.getId(),
+            productAttributes.getProductAttributesType(),
+            productAttributes.getValue(),
+            productAttributes.getCreatedAt(),
+            productAttributes.getDeletedAt());
+    }
 }
