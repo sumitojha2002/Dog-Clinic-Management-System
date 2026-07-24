@@ -320,4 +320,37 @@ public class ProfileHelper {
             productAttributes.getCreatedAt(),
             productAttributes.getDeletedAt());
     }
+
+    public static ProductsSkus.productProductsSkus displayProductsSkus(ProductsSkus productsSkus){
+        if(productsSkus == null){
+            return null;
+        }
+
+        ProductAttributes size = productsSkus.getSizeAttributeId();
+        ProductAttributes.productAttr sizeMapper = new ProductAttributes.productAttr(
+            size.getId(), 
+            size.getProductAttributesType(), 
+            size.getValue(), 
+            size.getCreatedAt(), 
+            size.getDeletedAt());
+
+        ProductAttributes color = productsSkus.getColorAttributeId();
+        ProductAttributes.productAttr colorMapper = new ProductAttributes.productAttr(
+            color.getId(), 
+            color.getProductAttributesType(), 
+            color.getValue(), 
+            color.getCreatedAt(), 
+            color.getDeletedAt());
+
+        return new ProductsSkus.productProductsSkus(
+            productsSkus.getId(),
+            productsSkus.getProductId().getId(),
+            productsSkus.getSku(),
+            productsSkus.getPrice(),
+            productsSkus.getQuantity(),
+            sizeMapper,
+            colorMapper,
+            productsSkus.getCreatedAt(),
+            productsSkus.getDeleteAt());
+    }
 }
