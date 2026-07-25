@@ -27,9 +27,7 @@ public class AdminController {
     private final AdminServices adminService;
     private final AuthService authService;
 
-
     // owners
-
     @GetMapping("/owners")
     public ResponseEntity<?> findAllOwners(){
         return adminService.getAllOwners();
@@ -53,7 +51,8 @@ public class AdminController {
     }
     
     @GetMapping("/dogs")
-    public ResponseEntity<?> findAllDogs(@RequestParam(required = false) String name,@RequestParam(required = false) String breed ){
+    public ResponseEntity<?> findAllDogs(@RequestParam(required = false) String name,
+    @RequestParam(required = false) String breed ){
         return adminService.getAllDogsRecord(name,breed);
     }
 
@@ -73,7 +72,6 @@ public class AdminController {
     public ResponseEntity<?> deleteById(@PathVariable Long id){
         return adminService.deleteEmpByEmpId(id);
     }
-
 
     // rec end-points
 

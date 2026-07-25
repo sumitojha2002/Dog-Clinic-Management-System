@@ -116,9 +116,6 @@ public class OwnerController {
     public ResponseEntity<?> getVetsList() {
         return ownerService.getVetsList();
     }
-
-
-
 }
 
 

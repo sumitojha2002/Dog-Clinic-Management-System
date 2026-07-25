@@ -37,4 +37,6 @@ public class Cart {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public record CartDisplay(Long id ,Double total,List<CartItem> cartItems) {}
 }

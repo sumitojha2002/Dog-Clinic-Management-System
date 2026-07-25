@@ -61,4 +61,13 @@ public class Product {
         LocalDateTime createAt,
         LocalDateTime deleteAt,
         List<ProductsSkus.productProductsSkus> productsSkus){}
+
+    public record productsCartRecord(
+        Long id,
+        String name,
+        String description,
+        String summery,
+        String cover,
+        LocalDateTime createdAt,
+        LocalDateTime deletedAt){}
 }

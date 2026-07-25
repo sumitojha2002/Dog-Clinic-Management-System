@@ -9,6 +9,7 @@ import com.example.backend.entity.Dogs;
 import com.example.backend.entity.MedicalRecord;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.Veterinarians;
+import com.example.backend.entity.ecommers.CartItem;
 import com.example.backend.entity.ecommers.Category;
 import com.example.backend.entity.ecommers.Product;
 import com.example.backend.entity.ecommers.ProductAttributes;
@@ -352,5 +353,30 @@ public class ProfileHelper {
             colorMapper,
             productsSkus.getCreatedAt(),
             productsSkus.getDeleteAt());
+    }
+
+    public static CartItem.cartItemDisplay displayCartItem(CartItem cartItem){
+            if(cartItem == null){
+                return null;
+            }
+
+            Product.productsCartRecord products = Optional.ofNullable(cartItem)
+                .map(CartItem::getProduct)
+                .map(pro-> new Product.productsCartRecord(
+                    pro.getId(), 
+                    pro.getName(), 
+                    pro.getDescription(), 
+                    pro.getSummery(), 
+                    pro.getCover(), 
+                    pro.getCreatedAt(), 
+                    pro.getDeletedAt())).orElse(null);
+
+            return new CartItem.cartItemDisplay(
+                cartItem.getId(),
+                cartItem.getCart().getId(),
+                products, 
+                cartItem.getQuantity(),
+                cartItem.getCreatedAt(), 
+                cartItem.getDeletedAt());
     }
 }

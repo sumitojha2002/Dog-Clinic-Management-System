@@ -34,5 +34,14 @@ public class CartItem {
     private Long quantity;
     
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime deletedAt;
+
+    public record cartItemDisplay(
+        Long id, 
+        Long cartId, 
+        Product.productsCartRecord product,
+        Long quantity,
+        LocalDateTime createdAt,
+        LocalDateTime deletedAt
+    ){}
 }
