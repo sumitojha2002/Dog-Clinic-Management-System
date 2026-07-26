@@ -13,19 +13,19 @@ import com.example.backend.entity.ecommers.ProductsSkus;
 
 public interface CartItemRepository extends JpaRepository<CartItem,Long>{
         @Query("""
-            SELECT c FROM Cart c
+            SELECT c FROM CartItem c
             LEFT JOIN FETCH c.product
             WHERE c.cart.id =:id
             """)
     List<CartItem> findCartItemsByCartId(@Param("id")Long id);
 
         @Query("""
-            SELECT c FROM Cart c
+            SELECT c FROM CartItem c
             LEFT JOIN FETCH c.product
             WHERE c.cart.id =:id
             """)
     Optional<CartItem> findCartItemByCartId(@Param("id")Long id);
         
-    Optional<CartItem> findByCartAndProductsSkus(Cart cart, ProductsSkus sku);
+    Optional<CartItem> findByCartAndProductsskus(Cart cart, ProductsSkus sku);
     void deleteByCart(Cart cart);
 }

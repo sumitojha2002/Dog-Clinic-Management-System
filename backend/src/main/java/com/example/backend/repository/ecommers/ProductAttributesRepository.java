@@ -11,8 +11,8 @@ import com.example.backend.entity.ecommers.ProductAttributes;
 public interface ProductAttributesRepository extends JpaRepository<ProductAttributes,Long> {
     
     @Query("""
-            SELECT a FROM ProductAttributes p
-            WHERE p.ProductAttributesType =: type
+            SELECT a FROM ProductAttributes a
+            WHERE a.productAttributesType =: type
             """)
     List<ProductAttributes> getProductAttribute(@Param("type") String type);
 }

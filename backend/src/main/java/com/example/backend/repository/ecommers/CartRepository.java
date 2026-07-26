@@ -11,7 +11,7 @@ import com.example.backend.entity.ecommers.Cart;
 public interface CartRepository extends JpaRepository<Cart,Long> {
     @Query("""
             SELECT c FROM Cart c
-            LEFT JOIN FETCH cartItems
+            LEFT JOIN FETCH c.cartItems
             WHERE c.user.id = :id
             """)
     Optional<Cart>  findByUserId(@Param("id") Long id);  
