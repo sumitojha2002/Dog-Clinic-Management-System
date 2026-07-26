@@ -13,7 +13,7 @@ import com.example.backend.entity.ecommers.Product;
 public interface ProductRepository extends JpaRepository<Product,Long> {
     @Query("""
             SELECT p FROM Product p 
-            WHERE p.subCategory.id =:id
+            WHERE (:id IS NULL OR p.subCategory.id = :id)
             """)
     Page<Product> findAllProducts(@Param("id") Long id,Pageable pageable);
 

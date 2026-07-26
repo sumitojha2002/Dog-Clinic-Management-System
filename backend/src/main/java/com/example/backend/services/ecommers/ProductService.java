@@ -84,9 +84,9 @@ public class ProductService {
                 return Response.ResponseHandler("Invalid image format must be png,jpg or jpge.", HttpStatus.BAD_REQUEST);
             }
 
-            Optional<SubCategory> subCategory = subCatRepo.findById(productdto.getSubCategoryId());
+            Optional<SubCategory> subCategory = subCatRepo.getSubCategoryById(productdto.getSubCategoryId());
             
-            if(subCategory.isPresent()){
+            if(!subCategory.isPresent()){
                 return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
             }
 
