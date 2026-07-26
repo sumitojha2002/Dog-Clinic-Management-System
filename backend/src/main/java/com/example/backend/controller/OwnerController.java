@@ -2,7 +2,6 @@ package com.example.backend.controller;
 
 import java.time.LocalDate;
 
-import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -79,16 +78,19 @@ public class OwnerController {
         return ownerService.addPet(ownerPetDTO, owners);
     }
 
-    @PatchMapping(value="/dogs/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateDog(@ModelAttribute OwnerPetDTOUpdate ownerPetDTOUpdate,@AuthenticationPrincipal UserDetails userDetails,@PathVariable Long id){
+    @PatchMapping(value = "/dogs/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateDog(@ModelAttribute OwnerPetDTOUpdate ownerPetDTOUpdate,
+            @AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id) {
         return ownerService.updateDogsProfile(ownerPetDTOUpdate, id, userDetails);
     }
 
-    // @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate localDate
+    // @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    // LocalDate localDate
     @GetMapping("/available")
     public ResponseEntity<?> getAllAvailabeTime(
-            @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate localDate,@RequestParam(required = true) Long vetId) {
-        return ownerService.getAppointmentTime(localDate,vetId);
+            @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate localDate,
+            @RequestParam(required = true) Long vetId) {
+        return ownerService.getAppointmentTime(localDate, vetId);
     }
 
     // Appointment
@@ -111,6 +113,3 @@ public class OwnerController {
     }
 
 }
-
-
-
