@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.backend.entity.ecommers.ProductAttributes;
 import com.example.backend.entity.ecommers.dto.CreateProductAttributeCategory;
+import com.example.backend.entity.ecommers.enums.ProductAttributesType;
 import com.example.backend.helper.ProfileHelper;
 import com.example.backend.repository.ecommers.ProductAttributesRepository;
 import com.example.backend.response.Response;
@@ -22,19 +23,21 @@ import lombok.RequiredArgsConstructor;
 public class ProductAttributeService {
     private final ProductAttributesRepository productAttributesRepo;
 
-    public ResponseEntity<?> getProductAttributes(String type){
-        try{
+    public ResponseEntity<?> getProductAttributes(ProductAttributesType type){
+        try {
             List<ProductAttributes.productAttr> productAttributes = productAttributesRepo.getProductAttribute(type)
                 .stream()
                 .map(ProfileHelper::displayProductAttribute)
                 .toList();
 
-            if(productAttributes.isEmpty()){
+            if (productAttributes.isEmpty()) {
                 return Response.ResponseHandler("No product attributes found.", HttpStatus.NOT_FOUND, productAttributes);
-            }    
+            }
 
-            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,productAttributes);
-        }catch(Exception e){
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, productAttributes);
+        } catch (IllegalArgumentException e) {
+            return Response.ResponseHandler("Invalid type provided.", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
             e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -44,10 +47,11 @@ public class ProductAttributeService {
     public ResponseEntity<?> createProductAttribute(CreateProductAttributeCategory createProductAttributeCategory){
         try{
             ProductAttributes productAttributes = new ProductAttributes();
-            
+            ProductAttributesType type = ProductAttributesType.valueOf(createProductAttributeCategory.getProductAttributesType().toUpperCase());
             LocalDateTime now = LocalDateTime.now();
+            System.out.println(type);
             
-            productAttributes.setProductAttributesType(createProductAttributeCategory.getProductAttributesType());
+            productAttributes.setProductAttributesType(type);
             productAttributes.setValue(createProductAttributeCategory.getValue());
             productAttributes.setCreatedAt(now);
             
