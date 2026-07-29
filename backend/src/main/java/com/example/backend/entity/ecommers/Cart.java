@@ -1,8 +1,7 @@
 package com.example.backend.entity.ecommers;
 
-
-
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.backend.security.entity.User;
@@ -16,9 +15,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 public class Cart {
     
@@ -33,7 +34,7 @@ public class Cart {
     private Double total;
 
     @OneToMany(mappedBy = "cart",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<CartItem> cartItems;
+    private List<CartItem> cartItems = new ArrayList<>();
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

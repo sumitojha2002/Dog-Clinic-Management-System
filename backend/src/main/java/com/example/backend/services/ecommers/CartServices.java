@@ -95,12 +95,36 @@ public class CartServices {
                 newCart = cart.get();
             }
 
-            CartItem newCartItem = new CartItem();
+            CartItem newCartItem;
+            
+            if(!newCart.getCartItems().isEmpty()){
+                newCartItem = newCart
+                    .getCartItems()
+                    .stream()
+                    .filter(pro-> 
+                        pro.getProductsskus().getId() == cartItemDTO.getSkuId())
+                        .findFirst()
+                        .get();
+            }else{
+                newCartItem = new CartItem();
+            }
+
             LocalDateTime now = LocalDateTime.now();
+            
             newCartItem.setProduct(foundProductSkus.getProductId());
             newCartItem.setProductsskus(foundProductSkus);
+
+            if(cartItemDTO.getQuantity() > foundProductSkus.getQuantity()){
+                return Response.ResponseHandler("Quantity is more then that of stock.", HttpStatus.CONFLICT);
+            }
+            
             newCartItem.setQuantity(cartItemDTO.getQuantity());
+
+
             newCartItem.setCreatedAt(now);
+            newCartItem.setCart(newCart);
+            newCart.setCreatedAt(now);
+            newCart.setUser(user.get());
             newCart.getCartItems().add(newCartItem);
 
             cartRepo.save(newCart);
@@ -198,7 +222,8 @@ public class CartServices {
             }
             
             cart.get().getCartItems().clear();
-            cartRepo.save(cart.get());
+
+            cartRepo.delete(cart.get());
             return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
         }catch(Exception e){
             e.printStackTrace();
