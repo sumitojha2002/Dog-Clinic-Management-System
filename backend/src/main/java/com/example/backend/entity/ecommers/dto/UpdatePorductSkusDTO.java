@@ -1,15 +1,13 @@
 package com.example.backend.entity.ecommers.dto;
 
-import com.example.backend.entity.ecommers.ProductAttributes;
-
 import jakarta.validation.constraints.Min;
 import lombok.Data;
 
 @Data
 public class UpdatePorductSkusDTO {
-    private ProductAttributes sizeOfProduct;
+    private Long sizeOfProduct;
 
-    private ProductAttributes colorOfProdudct;
+    private Long colorOfProdudct;
 
     private String sku;
 

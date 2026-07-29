@@ -43,7 +43,7 @@ public class ProductsSkus {
     private Long quantity;
 
     private LocalDateTime createdAt;
-    private LocalDateTime deleteAt;
+    private LocalDateTime updatedAt;
 
 
     @OneToMany(mappedBy = "productsskus",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
@@ -58,6 +58,6 @@ public class ProductsSkus {
         ProductAttributes.productAttr sizeAttributes,
         ProductAttributes.productAttr colorAttributes,
         LocalDateTime createAt,
-        LocalDateTime deleteAt
+        LocalDateTime updatedAt
     ){}
 }

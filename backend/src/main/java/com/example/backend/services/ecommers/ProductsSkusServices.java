@@ -148,12 +148,27 @@ public class ProductsSkusServices {
             }
 
             if(updatePorductSkusDTO.getSizeOfProduct() != null){
-                foundProductSkus.setSizeAttributeId(updatePorductSkusDTO.getSizeOfProduct());
+                Optional<ProductAttributes> productSizeAttributes = productAttrRepo.findById(updatePorductSkusDTO.getSizeOfProduct());
+
+                if(!productSizeAttributes.isPresent()){
+                    return Response.ResponseHandler("Product size attribute could not be found.", HttpStatus.NOT_FOUND);
+                }
+
+                foundProductSkus.setSizeAttributeId(productSizeAttributes.get());
             }
 
             if(updatePorductSkusDTO.getColorOfProdudct() != null){
-                foundProductSkus.setColorAttributeId(updatePorductSkusDTO.getColorOfProdudct());
+                Optional<ProductAttributes> productColorAttribute = productAttrRepo.findById(updatePorductSkusDTO.getColorOfProdudct());
+                
+                if(!productColorAttribute.isPresent()){
+                    return Response.ResponseHandler("Product color attribute could not be found.", HttpStatus.NOT_FOUND);
+                }
+                
+                foundProductSkus.setColorAttributeId(productColorAttribute.get());
             }
+            LocalDateTime now = LocalDateTime.now();
+            
+            foundProductSkus.setUpdatedAt(now);
 
             productSkusRepo.save(foundProductSkus);
 

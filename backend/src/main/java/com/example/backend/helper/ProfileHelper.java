@@ -292,7 +292,7 @@ public class ProfileHelper {
                                 size,
                                 color,
                                 pros.getCreatedAt(),
-                                pros.getDeleteAt());
+                                pros.getUpdatedAt());
                             })
                             .toList())
                 .orElse(null);
@@ -352,7 +352,7 @@ public class ProfileHelper {
             sizeMapper,
             colorMapper,
             productsSkus.getCreatedAt(),
-            productsSkus.getDeleteAt());
+            productsSkus.getUpdatedAt());
     }
 
     public static CartItem.cartItemDisplay displayCartItem(CartItem cartItem){
