@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.entity.ecommers.dto.UpdatePorductSkusDTO;
 import com.example.backend.services.ecommers.ProductsSkusServices;
@@ -14,8 +15,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RequestMapping("/admin/skus")
+@RestController
 public class AdminProductSkusController {
-    private ProductsSkusServices productsSkusServices;
+    private final ProductsSkusServices productsSkusServices;
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateProductSkus(@ModelAttribute UpdatePorductSkusDTO updatePorductSkusDTO,@PathVariable Long id){
@@ -23,7 +25,8 @@ public class AdminProductSkusController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProductSkus(@PathVariabel Long id){
+    public ResponseEntity<?> deleteProductSkus(@PathVariable Long id){
+        System.out.println(id);
         return productsSkusServices.deleteProductSkusById(id);
     }
 }

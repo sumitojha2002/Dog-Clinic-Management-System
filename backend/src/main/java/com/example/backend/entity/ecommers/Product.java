@@ -70,4 +70,6 @@ public class Product {
         String cover,
         LocalDateTime createdAt,
         LocalDateTime deletedAt){}
+
+    public record productId(Long id){}
 }

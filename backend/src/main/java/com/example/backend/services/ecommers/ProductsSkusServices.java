@@ -9,10 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.entity.ecommers.Product;
+import com.example.backend.entity.ecommers.ProductAttributes;
 import com.example.backend.entity.ecommers.ProductsSkus;
 import com.example.backend.entity.ecommers.dto.CreateProductSkusDTO;
 import com.example.backend.entity.ecommers.dto.UpdatePorductSkusDTO;
 import com.example.backend.helper.ProfileHelper;
+import com.example.backend.repository.ecommers.ProductAttributesRepository;
 import com.example.backend.repository.ecommers.ProductRepository;
 import com.example.backend.repository.ecommers.ProductSkusRepository;
 import com.example.backend.response.Response;
@@ -23,19 +25,30 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ProductsSkusServices {
-    public ProductRepository productRepo;
-    public ProductSkusRepository productSkusRepo;
+    private final ProductRepository productRepo;
+    private final ProductSkusRepository productSkusRepo;
+    private final ProductAttributesRepository productAttrRepo;
     
-    public ResponseEntity<?> getAllProductSkus(Long productId){
+    public ResponseEntity<?> getAllProductSkus(Long id){
         try{
-            Optional<Product> product = productRepo.findById(productId);
+            Optional<Product.productsCartRecord> product = productRepo.findById(id)
+                .stream()
+                .map(pro-> new Product.productsCartRecord(
+                    pro.getId(),
+                    pro.getName(),
+                    pro.getDescription(),
+                    pro.getSummery(),
+                    pro.getCover(),
+                    pro.getCreatedAt(),
+                    pro.getDeletedAt())).findFirst();
             
+
             if(!product.isPresent()){
                 return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
             }
 
             List<ProductsSkus.productProductsSkus> productsSkus = productSkusRepo
-                .getAllProductSkusByProductId(productId)
+                .getAllProductSkusByProductId(product.get().id())
                 .stream()
                 .map(ProfileHelper::displayProductsSkus)
                 .toList();
@@ -53,7 +66,7 @@ public class ProductsSkusServices {
 
     public ResponseEntity<?> getProductSkusById(Long id){
         try{
-            Optional<ProductsSkus> productsSkus = productSkusRepo.getProductSkusByProductId(id);
+            Optional<ProductsSkus> productsSkus = productSkusRepo.getProductSkusById(id);
             
             if(!productsSkus.isPresent()){
                 return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
@@ -72,24 +85,38 @@ public class ProductsSkusServices {
     @Transactional
     public ResponseEntity<?> createProductSkus(CreateProductSkusDTO createProductSkusDTO,Long productId){
         try{
-            Product product = productRepo.findAllProductSkus(productId);
+            Optional<Product> product = productRepo.findProductToCheck(productId);
 
-            if(product == null){
+            if(!product.isPresent()){
                 return Response.ResponseHandler("Product not found.", HttpStatus.NOT_FOUND);
             }
             ProductsSkus productsSkus = new ProductsSkus();
+
+            Optional<ProductAttributes>  productAttributeSize = productAttrRepo.findById(createProductSkusDTO.getSizeOfProduct());
+            
+            if(!productAttributeSize.isPresent()){
+                return Response.ResponseHandler("Size attribute not found.", HttpStatus.NOT_FOUND);
+            }
+
+            Optional<ProductAttributes>  productAttributeColor = productAttrRepo.findById(createProductSkusDTO.getColorOfProduct());
+            
+            if(!productAttributeColor.isPresent()){
+                return Response.ResponseHandler("Color attribute not found.", HttpStatus.NOT_FOUND);
+            }
+
+
             LocalDateTime now  = LocalDateTime.now();
 
-            productsSkus.setProductId(product);
-            productsSkus.setColorAttributeId(createProductSkusDTO.getColorOfProdudct());
+            productsSkus.setProductId(product.get());
+            productsSkus.setSizeAttributeId(productAttributeSize.get());
+            productsSkus.setColorAttributeId(productAttributeColor.get());
             productsSkus.setCreatedAt(now);
             productsSkus.setPrice(createProductSkusDTO.getPrice());
             productsSkus.setQuantity(createProductSkusDTO.getQuantity());
             productsSkus.setSku(createProductSkusDTO.getSku());
-            productsSkus.setColorAttributeId(createProductSkusDTO.getColorOfProdudct());
 
             productSkusRepo.save(productsSkus);
-            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,productsSkus);
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
         }catch(Exception e){
             e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);

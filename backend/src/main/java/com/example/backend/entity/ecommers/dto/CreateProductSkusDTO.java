@@ -1,26 +1,25 @@
 package com.example.backend.entity.ecommers.dto;
 
-import com.example.backend.entity.ecommers.ProductAttributes;
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class CreateProductSkusDTO {
-    @NotEmpty(message = "Size of the product cannot be empty.")
-    private ProductAttributes sizeOfProduct;
+    @NotNull(message = "Size of the product cannot be empty.")
+    private Long sizeOfProduct;
 
-    @NotEmpty(message = "Color of the product cannot be empty.")
-    private ProductAttributes colorOfProdudct;
+    @NotNull(message = "Color of the product cannot be empty.")
+    private Long colorOfProduct;
 
     @NotEmpty(message = "SKU cannot be empty")
     private String sku;
 
-    @NotEmpty(message = "Price cannot be empty.")
+    @NotNull(message = "Price cannot be empty.")
     private Double price;
 
-    @NotEmpty(message = "quantitiy cannot be emprty.")
+    @NotNull(message = "Quantity is required")
     @Min(value = 1, message = "Cannote be less then one.")
     private Long quantity;
 }

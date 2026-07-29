@@ -50,7 +50,7 @@ public class ProductAttributeService {
             ProductAttributesType type = ProductAttributesType.valueOf(createProductAttributeCategory.getProductAttributesType().toUpperCase());
             LocalDateTime now = LocalDateTime.now();
             System.out.println(type);
-            
+            System.out.println(createProductAttributeCategory);
             productAttributes.setProductAttributesType(type);
             productAttributes.setValue(createProductAttributeCategory.getValue());
             productAttributes.setCreatedAt(now);
@@ -69,7 +69,7 @@ public class ProductAttributeService {
         try{
             Optional<ProductAttributes> productAttributes = productAttributesRepo.findById(id);
             
-            if(productAttributes.isPresent()){
+            if(!productAttributes.isPresent()){
                 return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
             }
 

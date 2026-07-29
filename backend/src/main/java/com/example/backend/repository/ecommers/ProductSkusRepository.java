@@ -14,17 +14,9 @@ public interface ProductSkusRepository extends JpaRepository<ProductsSkus,Long>{
             SELECT s FROM ProductsSkus s
             LEFT JOIN FETCH s.sizeAttributeId
             LEFT JOIN FETCH s.colorAttributeId
-            WHERE s.productId =:productId
+            WHERE s.productId.id =:productId
             """)
-    List<ProductsSkus> getAllProductSkusByProductId(@Param("id")Long productId);
-
-    @Query("""
-            SELECT s FROM ProductsSkus s
-            LEFT JOIN FETCH s.sizeAttributeId
-            LEFT JOIN FETCH s.colorAttributeId
-            WHERE s.productId =:productId
-            """)
-    Optional<ProductsSkus> getProductSkusByProductId(@Param("id")Long productId);
+    List<ProductsSkus> getAllProductSkusByProductId(@Param("productId")Long productId);
 
         @Query("""
             SELECT s FROM ProductsSkus s

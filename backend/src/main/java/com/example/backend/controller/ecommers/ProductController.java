@@ -2,11 +2,13 @@ package com.example.backend.controller.ecommers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.services.ecommers.ProductService;
+import com.example.backend.services.ecommers.ProductsSkusServices;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
+    private final ProductsSkusServices productsSkusServices;
     
     @GetMapping
     public ResponseEntity<?> getAllProducts(
@@ -31,5 +34,12 @@ public class ProductController {
         return productService.getProductBySearch(name);
     }
 
+    @GetMapping("/{productId}/skus")
+    public ResponseEntity<?> getProductsSkusById(@PathVariable Long productId){
+        System.out.println(productId);
+        return productsSkusServices.getAllProductSkus(productId);
+    }
+
+    
 }
 

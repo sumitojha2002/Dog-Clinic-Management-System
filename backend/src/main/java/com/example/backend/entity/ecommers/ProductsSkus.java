@@ -45,7 +45,8 @@ public class ProductsSkus {
     private LocalDateTime createdAt;
     private LocalDateTime deleteAt;
 
-    @OneToMany(mappedBy = "productsskus",cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "productsskus",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<CartItem> cartItems;
 
     public record productProductsSkus(
