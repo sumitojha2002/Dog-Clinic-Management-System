@@ -142,32 +142,40 @@ public class CartServices {
             Optional<User> user = userRepo.findByUsernameOrEmail(userDetails.getUsername());
 
             if(!user.isPresent()){
-                return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+                return Response.ResponseHandler("User not found.", HttpStatus.NOT_FOUND);
             }
 
-            Cart cart = cartRepo.findByUserId(user.get().getId()).get();
-            
-            Optional<CartItem> cartItem = cart
+            Optional<Cart> cart = cartRepo.findByUserId(user.get().getId());
+
+            if(!cart.isPresent()){
+                return Response.ResponseHandler("Cart has not been created yet.", HttpStatus.CONFLICT);
+            }
+
+            Cart foundCart = cart.get();
+
+            Optional<CartItem> cartItem = foundCart
                 .getCartItems()
                 .stream()
-                .filter(c->c.getId()
-                            .equals(cartItemId))
-                            .findFirst();
-        
+                .filter(
+                    cItem -> cItem.getId() == cartItemId)
+                    .findFirst();
+
             if(!cartItem.isPresent()){
-                return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+                return Response.ResponseHandler("Cart Item not found.", HttpStatus.NOT_FOUND);
             }
 
             CartItem foundCartItem = cartItem.get();
+            
             Optional<ProductsSkus> productsSkus = productSkusRepo.getProductSkusById(foundCartItem.getProductsskus().getId());
 
-            if(productsSkus.get().getQuantity() < updateCartItemDTO.getQuantity()){
-                return Response.ResponseHandler(HttpStatus.BAD_REQUEST.getReasonPhrase(), HttpStatus.BAD_REQUEST);
+            if(productsSkus.get().getQuantity() <  updateCartItemDTO.getQuantity()){
+                return Response.ResponseHandler("Cannot place order quntity is greater then stock.", HttpStatus.BAD_REQUEST);
             }
 
             foundCartItem.setQuantity(updateCartItemDTO.getQuantity());
 
             cartItemRepo.save(foundCartItem);
+
             return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
         }catch(Exception e){
             e.printStackTrace();
@@ -184,20 +192,35 @@ public class CartServices {
                 return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
             }
 
-            Cart cart = cartRepo.findByUserId(user.get().getId()).get();
+            Optional<Cart> cart = cartRepo.findByUserId(user.get().getId());
 
-            Optional<CartItem> cartItem = cart.getCartItems()
+            if(!cart.isPresent()){
+                return Response.ResponseHandler("Cart not found.", HttpStatus.NOT_FOUND);
+            }
+
+            Cart foundCart = cart.get();
+
+            Optional<CartItem> cartItem = foundCart.getCartItems()
                         .stream()
                         .filter(c->c.getId().equals(cartItemId))
                         .findFirst();
 
             if(!cartItem.isPresent()){
+                System.out.println(cartItem);
                 return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(),HttpStatus.NOT_FOUND);
             }
 
             CartItem foundCartItem = cartItem.get();
 
-            cartItemRepo.delete(foundCartItem);
+            System.out.println(foundCartItem.getId());
+
+            foundCart.getCartItems().remove(foundCartItem);
+
+            cartRepo.save(foundCart);
+            
+            if(foundCart.getCartItems().isEmpty()){
+                cartRepo.delete(foundCart);
+            }
             return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK);
         }catch(Exception e){
             e.printStackTrace();

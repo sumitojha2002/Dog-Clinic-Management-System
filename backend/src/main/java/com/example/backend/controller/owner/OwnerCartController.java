@@ -34,7 +34,7 @@ public class OwnerCartController {
         return cartServices.addItem(userDetails, cartItemDTO);
     }
 
-    @PutMapping("/itmes/{cartItemId}")
+    @PutMapping("/items/{cartItemId}")
     public ResponseEntity<?> updateCartItemInCart(@AuthenticationPrincipal UserDetails userDetails,@PathVariable Long cartItemId,@ModelAttribute UpdateCartItemDTO cartItemDTO){
         return cartServices.updateCartItemInCart(userDetails,cartItemId,cartItemDTO);
     }
