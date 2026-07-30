@@ -1,5 +1,6 @@
 package com.example.backend.helper;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import com.example.backend.entity.ecommers.Product;
 import com.example.backend.entity.ecommers.ProductAttributes;
 import com.example.backend.entity.ecommers.ProductsSkus;
 import com.example.backend.entity.ecommers.SubCategory;
+import com.example.backend.entity.ecommers.WishList;
 import com.example.backend.security.entity.User;
 
 public class ProfileHelper {
@@ -379,4 +381,27 @@ public class ProfileHelper {
                 cartItem.getCreatedAt(), 
                 cartItem.getDeletedAt());
     }
+
+
+    public static WishList.usersWishList displayUserWishList(WishList wishList) {
+        if (wishList == null) {
+            return null;
+        }
+
+        List<Product.productsCartRecord> productList = Optional.ofNullable(wishList.getProducts())
+                .map(pro -> pro.stream()
+                        .map(p -> new Product.productsCartRecord(p.getId(),
+                                p.getName(),
+                                p.getDescription(),
+                                p.getSummery(),
+                                p.getCover(),
+                                p.getCreatedAt(),
+                                p.getDeletedAt()
+                            )).toList())
+                .orElse(Collections.emptyList());
+
+        return new WishList.usersWishList(wishList.getId(), productList);
+    }
+
+
 }

@@ -1,35 +1,35 @@
 package com.example.backend.entity.ecommers;
 
 import java.time.LocalDateTime;
-
+import java.util.ArrayList;
+import java.util.List;
 import com.example.backend.security.entity.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
-public class WishList {
-
+@Setter
+@Getter
+public class WishList { 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Fixed: Changed from @ManyToMany to @ManyToOne
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    // Fixed: Changed from @ManyToMany to @ManyToOne
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", referencedColumnName = "id")
-    private Product product;
-
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "wishlist_products", 
+        joinColumns = @JoinColumn(name = "wishlist_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<Product> products = new ArrayList<>();
+    
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
+
+    public record usersWishList(Long id, List<Product.productsCartRecord> products) { }
 }
