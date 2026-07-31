@@ -8,10 +8,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class OrderItem {
 
     @Id
@@ -29,10 +31,20 @@ public class OrderItem {
 
     // Fixed: Changed from @ManyToMany to @ManyToOne
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "products_sku_id", referencedColumnName = "id")
+    @JoinColumn(name = "products_skus_id", referencedColumnName = "id")
     private ProductsSkus productsSkus;
 
-    private int quantity;
+    private Long quantity;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public record orderItems(
+        Long id, 
+        Long quantity,
+        Product.productsCartRecord produCartRecord, 
+        ProductsSkus.productProductsSkus productsSkus,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
+        ) {}
 }

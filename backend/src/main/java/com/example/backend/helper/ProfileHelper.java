@@ -12,6 +12,7 @@ import com.example.backend.entity.Owners;
 import com.example.backend.entity.Veterinarians;
 import com.example.backend.entity.ecommers.CartItem;
 import com.example.backend.entity.ecommers.Category;
+import com.example.backend.entity.ecommers.OrderItem;
 import com.example.backend.entity.ecommers.Product;
 import com.example.backend.entity.ecommers.ProductAttributes;
 import com.example.backend.entity.ecommers.ProductsSkus;
@@ -403,5 +404,32 @@ public class ProfileHelper {
         return new WishList.usersWishList(wishList.getId(), productList);
     }
 
+    public static OrderItem.orderItems displayOrderItems(OrderItem orderItem){
+        if(orderItem == null){
+            return null;
+        }
+
+        Product.productsCartRecord product = Optional.ofNullable(orderItem.getProduct())
+            .map(p-> new Product.productsCartRecord(
+                p.getId(), 
+                p.getName(), 
+                p.getDescription(), 
+                p.getSummery(), 
+                p.getCover(), 
+                p.getCreatedAt(), 
+                p.getDeletedAt()))
+                .orElse(null);
+        
+        
+        ProductsSkus.productProductsSkus pSkus = ProfileHelper.displayProductsSkus(orderItem.getProductsSkus());
+        
+        return new OrderItem.orderItems(
+            orderItem.getId(), 
+            orderItem.getQuantity(), 
+            product, 
+            pSkus, 
+            orderItem.getCreatedAt(), 
+            orderItem.getUpdatedAt());
+    }
 
 }
