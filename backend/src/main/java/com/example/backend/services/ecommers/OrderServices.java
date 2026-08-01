@@ -124,4 +124,55 @@ public class OrderServices {
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public ResponseEntity<?> getAllOrdersByOrderDetailsId(UserDetails userDetails, Long id){
+        try{
+            Optional<User> user = userRepo.findByUsernameOrEmail(userDetails.getUsername());
+
+            if(!user.isPresent()){
+                return Response.ResponseHandler("User not found.", HttpStatus.NOT_FOUND);
+            }
+
+            User foundUser = user.get();
+
+            Optional<OrderDetails> orderDetial = orderDetailsRepo.getOrderDetailsByUserID(foundUser.getId(),id);
+
+            if(!orderDetial.isPresent()){
+                return Response.ResponseHandler("Order details not found", HttpStatus.OK);
+            }
+
+            OrderDetails.orderDetailsByUserId foundOrderDetails = ProfileHelper.displayOrderDetailsByUserIDAndID(orderDetial.get());
+            
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,foundOrderDetails);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<?> getAllOrderDetails(UserDetails userDetails){
+        try{
+            Optional<User> user = userRepo.findByUsernameOrEmail(userDetails.getUsername());
+
+            if(!user.isPresent()){
+                return Response.ResponseHandler("User not found.", HttpStatus.NOT_FOUND);
+            }
+
+            User foundUser = user.get();
+
+            List<OrderDetails.orderDetailsListInfo> orderDetailsListInfos = orderDetailsRepo.getOrderDetailsByUserId(foundUser.getId())
+                .stream()
+                .map(ProfileHelper::displayOrderDetailsList)
+                .toList();
+
+            if(orderDetailsListInfos.isEmpty()){
+                return Response.ResponseHandler("Order list is empty.", HttpStatus.OK,orderDetailsListInfos);
+            }
+
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, orderDetailsListInfos);
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

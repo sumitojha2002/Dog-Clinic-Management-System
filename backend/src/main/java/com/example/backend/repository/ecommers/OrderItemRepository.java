@@ -19,4 +19,7 @@ public  interface OrderItemRepository extends JpaRepository<OrderItem,Long> {
             WHERE d.user.id = :id
             """)
     List<OrderItem> findAllOrderItems(@Param("id") Long id);
+
+
+    
 }

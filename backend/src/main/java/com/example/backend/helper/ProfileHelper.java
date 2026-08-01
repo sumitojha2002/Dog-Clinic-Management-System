@@ -12,6 +12,7 @@ import com.example.backend.entity.Owners;
 import com.example.backend.entity.Veterinarians;
 import com.example.backend.entity.ecommers.CartItem;
 import com.example.backend.entity.ecommers.Category;
+import com.example.backend.entity.ecommers.OrderDetails;
 import com.example.backend.entity.ecommers.OrderItem;
 import com.example.backend.entity.ecommers.Product;
 import com.example.backend.entity.ecommers.ProductAttributes;
@@ -430,6 +431,39 @@ public class ProfileHelper {
             pSkus, 
             orderItem.getCreatedAt(), 
             orderItem.getUpdatedAt());
+    }
+
+    public static OrderDetails.orderDetailsByUserId displayOrderDetailsByUserIDAndID(OrderDetails orderDetails){
+        
+        if(orderDetails == null){
+            return null;
+        }
+
+        List<OrderItem.orderItems> orderItems = orderDetails.getOrderItem()
+            .stream()
+            .map(ProfileHelper::displayOrderItems)
+            .toList();
+        
+        return new OrderDetails.orderDetailsByUserId(
+            orderDetails.getId(),
+            orderDetails.getPaymentId(), 
+            orderDetails.getTotal(), 
+            orderItems,
+            orderDetails.getCreatedAt(),
+            orderDetails.getUpdatedAt());
+    }
+
+    public static OrderDetails.orderDetailsListInfo displayOrderDetailsList(OrderDetails orderDetails){
+        if(orderDetails == null){
+            return null;
+        }
+
+        return new OrderDetails.orderDetailsListInfo(
+            orderDetails.getId(),
+            orderDetails.getPaymentId(), 
+            orderDetails.getTotal(),
+            orderDetails.getCreatedAt(), 
+            orderDetails.getUpdatedAt());
     }
 
 }
