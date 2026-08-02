@@ -29,8 +29,6 @@ public class OrderDetails {
     @JoinColumn(name="user_id",referencedColumnName = "id")
     private User user;
 
-    private Long paymentId;
-
     private Double total;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -41,14 +39,12 @@ public class OrderDetails {
 
     public record orderDetailsListInfo(
         Long id,
-        Long paymentId,
         Double total,
         LocalDateTime createdAt,
         LocalDateTime updatedAt){}
 
     public record orderDetailsByUserId(
         Long id,
-        Long paymentId, 
         Double total,
         List<OrderItem.orderItems> orderItems,
         LocalDateTime createdAt,

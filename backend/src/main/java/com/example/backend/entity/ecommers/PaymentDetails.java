@@ -11,9 +11,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Setter
+@Getter
 @Entity
 public class PaymentDetails {
 
@@ -33,4 +35,12 @@ public class PaymentDetails {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public record paymentDetails(
+        Long id,
+        Long orderDetailId,
+        Double amount,
+        PaymentStatus paymentStatus,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt) {}
 }

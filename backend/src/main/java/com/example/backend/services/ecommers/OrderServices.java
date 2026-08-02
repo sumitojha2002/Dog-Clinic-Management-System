@@ -13,12 +13,15 @@ import com.example.backend.entity.ecommers.Cart;
 import com.example.backend.entity.ecommers.CartItem;
 import com.example.backend.entity.ecommers.OrderDetails;
 import com.example.backend.entity.ecommers.OrderItem;
+import com.example.backend.entity.ecommers.PaymentDetails;
 import com.example.backend.entity.ecommers.ProductsSkus;
+import com.example.backend.entity.ecommers.enums.PaymentStatus;
 import com.example.backend.helper.ProfileHelper;
 import com.example.backend.repository.ecommers.CartItemRepository;
 import com.example.backend.repository.ecommers.CartRepository;
 import com.example.backend.repository.ecommers.OrderDetailsRepository;
 import com.example.backend.repository.ecommers.OrderItemRepository;
+import com.example.backend.repository.ecommers.PaymentRepository;
 import com.example.backend.response.Response;
 import com.example.backend.security.entity.User;
 import com.example.backend.security.repository.UserRepository;
@@ -35,6 +38,7 @@ public class OrderServices {
     private final UserRepository userRepo;
     private final CartItemRepository cartItemRepo;
     private final CartRepository cartRepo;
+    private final PaymentRepository paymentRepo;
 
     @Transactional
     public ResponseEntity<?> postAllItemsToOrderItems(UserDetails userDetails){
@@ -67,6 +71,7 @@ public class OrderServices {
                 .sum();
 
             LocalDateTime now = LocalDateTime.now();    
+
             
             OrderDetails orderDetails = new OrderDetails();
             orderDetails.setCreatedAt(now);
@@ -74,6 +79,13 @@ public class OrderServices {
             orderDetails.setTotal(total);
             orderDetailsRepo.save(orderDetails);
 
+            PaymentDetails paymentDetails = new PaymentDetails();
+            paymentDetails.setStatus(PaymentStatus.INITIATED);
+            paymentDetails.setCreatedAt(now);
+            paymentDetails.setOrderDetails(orderDetails);
+            paymentDetails.setAmount(total);
+            paymentRepo.save(paymentDetails);
+            
             List<OrderItem> orderItems = cartItems.stream().map(item->{
 
                 ProductsSkus productsSkus = item.getProductsskus();

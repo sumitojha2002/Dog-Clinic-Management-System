@@ -14,6 +14,7 @@ import com.example.backend.entity.ecommers.CartItem;
 import com.example.backend.entity.ecommers.Category;
 import com.example.backend.entity.ecommers.OrderDetails;
 import com.example.backend.entity.ecommers.OrderItem;
+import com.example.backend.entity.ecommers.PaymentDetails;
 import com.example.backend.entity.ecommers.Product;
 import com.example.backend.entity.ecommers.ProductAttributes;
 import com.example.backend.entity.ecommers.ProductsSkus;
@@ -443,10 +444,9 @@ public class ProfileHelper {
             .stream()
             .map(ProfileHelper::displayOrderItems)
             .toList();
-        
+
         return new OrderDetails.orderDetailsByUserId(
             orderDetails.getId(),
-            orderDetails.getPaymentId(), 
             orderDetails.getTotal(), 
             orderItems,
             orderDetails.getCreatedAt(),
@@ -458,12 +458,32 @@ public class ProfileHelper {
             return null;
         }
 
+
+
         return new OrderDetails.orderDetailsListInfo(
             orderDetails.getId(),
-            orderDetails.getPaymentId(), 
             orderDetails.getTotal(),
             orderDetails.getCreatedAt(), 
             orderDetails.getUpdatedAt());
     }
 
+    public static PaymentDetails.paymentDetails getAllPaymentDetails(PaymentDetails paymentDetails){
+
+        if(paymentDetails == null){
+            return null;
+        }
+
+        Long orderDetailsId = Optional.ofNullable(paymentDetails.getOrderDetails())
+            .map(p-> p.getId())
+            .orElse(null);
+
+        return new PaymentDetails.paymentDetails(
+            paymentDetails.getId(),
+            orderDetailsId,
+            paymentDetails.getAmount(),
+            paymentDetails.getStatus(),
+            paymentDetails.getCreatedAt(),
+            paymentDetails.getUpdatedAt()
+        );
+    }
 }
