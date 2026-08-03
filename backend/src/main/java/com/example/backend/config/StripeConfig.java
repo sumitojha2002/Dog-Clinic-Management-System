@@ -10,7 +10,8 @@ import jakarta.annotation.PostConstruct;
 
 @Configuration
 public class StripeConfig {
-    @Value("${stripe.secreat-key}")
+    
+    @Value("${stripe.secret-key}")
     private String secreatKey;
 
     // it run after the required dependencies are fully populated

@@ -47,7 +47,7 @@ public class SecurityConfig {
                                                 "/subcategories/**",
                                                 "/product-attributes/**",
                                                 "/skus/**",
-                                                "/payments/webhook").permitAll()
+                                                "/payments/webhook/**").permitAll()
                                                         .requestMatchers("/admin/**").hasRole("ADMIN")
                                                         .requestMatchers("/owner/**","/payments/create-intent").hasRole("OWNER")
                                                         .requestMatchers("/receptionist/**").hasRole("RECEP")

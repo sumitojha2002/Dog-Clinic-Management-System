@@ -2,7 +2,6 @@ package com.example.backend.controller.payment;
 
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +14,7 @@ import com.example.backend.services.ecommers.StripePaymentServices;
 
 import lombok.RequiredArgsConstructor;
 
+// /payments/create-intent
 @RestController
 @RequestMapping("/payments")
 @RequiredArgsConstructor
@@ -22,7 +22,6 @@ public class PaymentController {
     private final StripePaymentServices paymentServices;
 
     @PostMapping("/create-intent")
-    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<?> createPaymentIntent(
         @RequestBody PaymentRequestDTO request,
         @AuthenticationPrincipal UserDetails userDetails
