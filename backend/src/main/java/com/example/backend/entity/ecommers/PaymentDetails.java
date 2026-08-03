@@ -35,6 +35,7 @@ public class PaymentDetails {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime paidAt;
 
     public record paymentDetails(
         Long id,

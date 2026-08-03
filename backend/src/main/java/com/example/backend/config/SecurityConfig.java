@@ -46,9 +46,10 @@ public class SecurityConfig {
                                                 "/categories/**",
                                                 "/subcategories/**",
                                                 "/product-attributes/**",
-                                                "/skus/**").permitAll()
+                                                "/skus/**",
+                                                "/payments/webhook").permitAll()
                                                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                                                        .requestMatchers("/owner/**").hasRole("OWNER")
+                                                        .requestMatchers("/owner/**","/payments/create-intent").hasRole("OWNER")
                                                         .requestMatchers("/receptionist/**").hasRole("RECEP")
                                                         .anyRequest().authenticated())
                     .addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);

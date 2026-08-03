@@ -28,4 +28,11 @@ public interface OrderDetailsRepository extends JpaRepository<OrderDetails,Long>
             WHERE d.user.id = :userId        
             """)
         List<OrderDetails> getOrderDetailsByUserId(@Param("userId") Long userId);
+
+        @Query(
+            """
+            SELECT d FROM OrderDetails d
+            WHERE d.user.id = :userId        
+            """)
+        Optional<OrderDetails> findOrderDetailByUserId(@Param("userId") Long userId);
 }
