@@ -4,6 +4,10 @@ export interface Response<T = void> {
   data?: T;
 }
 
+export interface PaymentEcom {
+  clientSecret: Object;
+}
+
 export interface ResponseForTiming {
   message: string;
   status: string;

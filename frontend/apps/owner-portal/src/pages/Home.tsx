@@ -14,6 +14,8 @@ import VetMedia3 from "../../src/assets/vetMedia3.jpg";
 import VetMedia4 from "../../src/assets/vetMedia4.jpg";
 import VetMedia5 from "../../src/assets/vetMedia5.jpg";
 import DogDrinkArticle from "../../src/assets/dogdrinkarticle.jpg";
+import CheckOutPage from "./CheckOutPage";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   const { data } = useQuery({
@@ -24,6 +26,8 @@ function Home() {
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
   });
+
+  const navigate = useNavigate();
 
   return (
     <div className="mt-20">
@@ -319,6 +323,13 @@ function Home() {
           </div>
         </div>
       </div>
+      <button
+        onClick={() =>
+          navigate("/checkout/4")
+        }
+      >
+        Checkout
+      </button>
     </div>
   );
 }

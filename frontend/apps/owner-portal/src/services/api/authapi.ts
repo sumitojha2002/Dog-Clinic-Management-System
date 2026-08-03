@@ -6,6 +6,7 @@ import type {
   DogsProfile,
   Login,
   OwnerProfile,
+  PaymentEcom,
   Response,
   ResponseForTiming,
   ResponseLogin,
@@ -181,4 +182,15 @@ export const getAllAppointments = async (
   return response.data;
 };
 
+export const createPaymentInstent = async (
+  token: string | undefined,
+  orderId: number,
+): Promise<Response<PaymentEcom>> => {
+  const respone = await axios.post<Response<PaymentEcom>>(
+    baseUrl + `/payments/create-intent`,
+    { orderId },
+    { headers: { Authorization: `Bearer ` + token } },
+  );
 
+  return respone.data;
+};

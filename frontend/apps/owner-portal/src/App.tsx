@@ -12,9 +12,9 @@ import DogsProfilesListUI from "./pages/DogsProfilesListUI";
 import DogsProfile from "./pages/DogsProfile";
 import DogsProfileAdd from "./pages/DogsProfileAdd";
 import ProtectedRouteNavbarNoSwitch from "./components/routes/protectedRoutes/ProtectedRouteNavbarNoSwitchProfile";
-import Appointment from "./pages/NewAppointment";
 import NewAppointment from "./pages/NewAppointment";
 import ViewAppointment from "./pages/ViewAppointment";
+import CheckOutPage from "./pages/CheckOutPage";
 
 function App() {
   const { loading } = useAuth();
@@ -27,6 +27,7 @@ function App() {
       // main layout
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/checkout/:id" element={<CheckOutPage />} />
       </Route>
       // auth layout
       <Route element={<AuthLayout />}>
