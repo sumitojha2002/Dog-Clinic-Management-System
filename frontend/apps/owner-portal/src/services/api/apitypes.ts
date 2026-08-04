@@ -5,7 +5,7 @@ export interface Response<T = void> {
 }
 
 export interface PaymentEcom {
-  clientSecret: Object;
+  clientSecret: string;
 }
 
 export interface ResponseForTiming {

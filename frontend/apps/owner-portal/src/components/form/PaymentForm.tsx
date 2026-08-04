@@ -1,4 +1,3 @@
-// src/pages/PaymentForm.tsx
 import { useState } from "react";
 import {
   PaymentElement,
@@ -10,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 export function PaymentForm({ orderId }: { orderId: number }) {
   const stripe = useStripe();
   const elements = useElements();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 

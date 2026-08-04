@@ -325,7 +325,7 @@ function Home() {
       </div>
       <button
         onClick={() =>
-          navigate("/checkout/4")
+          navigate("/checkout/8")
         }
       >
         Checkout
