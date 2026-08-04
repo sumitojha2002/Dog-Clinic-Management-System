@@ -23,7 +23,7 @@ public class WebhookController {
     private String webhookSecret;
 
     @PostMapping("/webhook")
-    public ResponseEntity<?> handleWebHook(@RequestBody String payload, @RequestHeader("Strip-Signature") String sigHeader){
+    public ResponseEntity<?> handleWebHook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader){
         return stripePaymentServices.handleWebHook(payload,sigHeader);
     } 
 

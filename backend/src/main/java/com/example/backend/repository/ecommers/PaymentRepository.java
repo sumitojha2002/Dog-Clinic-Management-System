@@ -16,4 +16,10 @@ public interface PaymentRepository extends JpaRepository<PaymentDetails,Long> {
             """)
     Optional<PaymentDetails> findPaymentDetFromOrderDetId(@Param("id") Long id);
 
+    @Query("""
+            SELECT s FROM PaymentDetails s
+            WHERE s.intentId =:id
+            """)
+    Optional<PaymentDetails> findPaymentDetFromIntentId(@Param("id") String id);
+
 }

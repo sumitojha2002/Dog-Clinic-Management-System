@@ -2,6 +2,8 @@ package com.example.backend.entity.ecommers;
 
 import java.time.LocalDateTime;
 import com.example.backend.entity.ecommers.enums.PaymentStatus;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -32,6 +34,11 @@ public class PaymentDetails {
     // Added: Ensures the enum text value is explicitly saved in your database
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
+
+    @Column(unique = true)
+    private String intentId;
+
+    private String clientSecret;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

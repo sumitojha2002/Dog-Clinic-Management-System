@@ -65,6 +65,18 @@ public class StripePaymentServices {
 
             PaymentDetails paymentDetails = optPaymentDet.get();
 
+            if(PaymentStatus.INITIATED.equals(paymentDetails.getStatus()) && paymentDetails.getClientSecret() != null){
+                return Response.ResponseHandler("Initiated", HttpStatus.OK,Map.of("clientSecret",paymentDetails.getClientSecret())); 
+            }
+
+            if(PaymentStatus.PAID.equals(paymentDetails.getStatus())){
+                return Response.ResponseHandler("Already paid.", HttpStatus.OK);
+            }
+
+            if(PaymentStatus.CANCELLED.equals(paymentDetails.getStatus())){
+                return Response.ResponseHandler("Payment has been cancelled", HttpStatus.OK);
+            }
+
             Long amount = optOrderDet.get().getTotal().longValue();
 
             PaymentIntentCreateParams param = PaymentIntentCreateParams.builder()
@@ -72,8 +84,12 @@ public class StripePaymentServices {
                 .setCurrency("usd")
                 .putAllMetadata(Map.of("orderId",orderDet.getId().toString(),"paymentDetailId",paymentDetails.getId().toString()))
                 .build();
+                PaymentIntent intent = PaymentIntent.create(param);    
 
-            PaymentIntent intent = PaymentIntent.create(param);     
+                paymentDetails.setIntentId(intent.getId());
+                paymentDetails.setClientSecret(intent.getClientSecret());
+                paymentRepo.save(paymentDetails);
+                
             return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, Map.of("clientSecret",intent.getClientSecret()));
         }catch(StripeException e){
             e.printStackTrace();
@@ -86,12 +102,13 @@ public class StripePaymentServices {
 
     public ResponseEntity<?> handleWebHook(String payload,String sigHeader){
         Event event;
-
         try{
             event = Webhook.constructEvent(payload, sigHeader, webhookSecret);
         }catch(SignatureVerificationException e){
             return Response.ResponseHandler("Invalid signature", HttpStatus.BAD_REQUEST);
         }
+        
+        System.out.println(event.getType());
 
         switch (event.getType()) {
             case "payment_intent.succeeded" -> handlePaymentSucceeded(event); 
@@ -106,7 +123,7 @@ public class StripePaymentServices {
     private void handlePaymentSucceeded(Event event){
         PaymentIntent intent = extractIntent(event);
         PaymentDetails paymentDetails = paymentRepo.findById(getPaymentId(intent)).orElseThrow();
-    
+        
         if(paymentDetails.getStatus() == PaymentStatus.PAID){
             return;
         }

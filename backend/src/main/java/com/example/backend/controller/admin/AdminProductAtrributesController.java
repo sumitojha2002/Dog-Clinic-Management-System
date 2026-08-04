@@ -27,7 +27,6 @@ public class AdminProductAtrributesController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProductAttributeById(@PathVariable Long id){
-        System.out.println("\n\n\n\n\nid \n\n\n\n\n\n");
         return productAttrService.deleteProductAttributeById(id);
     }
 }
