@@ -8,6 +8,16 @@ export interface PaymentEcom {
   clientSecret: string;
 }
 
+export interface productsInfo {
+  id: number;
+  subCategoryId?: number;
+  name: string;
+  description?: string;
+  cover: string;
+  createdAt?: string;
+  deltedAt?: string;
+}
+
 export interface ResponseForTiming {
   message: string;
   status: string;

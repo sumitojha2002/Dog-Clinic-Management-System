@@ -7,6 +7,7 @@ import type {
   Login,
   OwnerProfile,
   PaymentEcom,
+  productsInfo,
   Response,
   ResponseForTiming,
   ResponseLogin,
@@ -193,4 +194,13 @@ export const createPaymentInstent = async (
   );
 
   return respone.data;
+};
+
+export const getAllProductsForLandingPage = async (): Promise<
+  Response<productsInfo[]>
+> => {
+  const response = await axios.get<Response<productsInfo[]>>(
+    baseUrl + `/products`,
+  );
+  return response.data;
 };

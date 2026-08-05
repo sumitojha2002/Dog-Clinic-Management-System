@@ -7,7 +7,10 @@ import VetCard from "../components/cards/VetCard";
 import { useQuery } from "@tanstack/react-query";
 import AboutDog from "../../src/assets/AboutImageDog.jpg";
 import BirthdayBoi from "../../src/assets/birthdayboi.jpg";
-import { getVetsCardForHome } from "../services/api/authapi";
+import {
+  getAllProductsForLandingPage,
+  getVetsCardForHome,
+} from "../services/api/authapi";
 import VetMedia from "../../src/assets/vetMedia.jpg";
 import VetMedia2 from "../../src/assets/vetMedia2.jpg";
 import VetMedia3 from "../../src/assets/vetMedia3.jpg";
@@ -28,6 +31,15 @@ function Home() {
   });
 
   const navigate = useNavigate();
+
+  const { data: product } = useQuery({
+    queryKey: ["productCardInfo"],
+    queryFn: () => getAllProductsForLandingPage(),
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
 
   return (
     <div className="mt-20">
@@ -165,9 +177,15 @@ function Home() {
             </p>
           </div>
           <div className="grid grid-cols-3 gap-20  m-10">
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
+            {product?.data &&
+              product.data.map((data) => (
+                <ProductCard
+                  key={data.id}
+                  id={data.id}
+                  cover={data.cover}
+                  name={data.name}
+                />
+              ))}
           </div>
         </div>
       </div>
@@ -323,13 +341,13 @@ function Home() {
           </div>
         </div>
       </div>
-      <button
+      {/* <button
         onClick={() =>
           navigate("/checkout/8")
         }
       >
         Checkout
-      </button>
+      </button> */}
     </div>
   );
 }
