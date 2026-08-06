@@ -40,6 +40,11 @@ public class ProductController {
         return productsSkusServices.getAllProductSkus(productId);
     }
 
+    @GetMapping("/{productId}")
+    public ResponseEntity<?> getProductsById(@PathVariable Long productId){
+        return productService.getProductById(productId);
+    }
+
     
 }
 

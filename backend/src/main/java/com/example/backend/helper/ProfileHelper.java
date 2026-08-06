@@ -246,6 +246,7 @@ public class ProfileHelper {
         }
 
         Long subCategoryId = (product.getSubCategory() != null) ? product.getSubCategory().getId() : null;
+
         return new Product.productsRecord(
             product.getId(),
             subCategoryId,
@@ -253,6 +254,7 @@ public class ProfileHelper {
             product.getDescription(),
             product.getSummery(),
             product.getCover(),
+            
             product.getCreatedAt(),
             product.getDeletedAt()
         );

@@ -1,6 +1,7 @@
 package com.example.backend.entity.ecommers;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -37,8 +38,8 @@ public class Product {
     private List<CartItem> cartItems;
 
 
-    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductsSkus> productsSkus; 
+    @OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = "productId")
+    private List<ProductsSkus> productsSkus = new ArrayList<>(); 
 
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;

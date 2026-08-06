@@ -56,9 +56,10 @@ public class ProductService {
         }
     }
 
-    public ResponseEntity<?> getAllProducts(Long id){
+    public ResponseEntity<?> getProductById(Long id){
         try{
             Product product = productRepo.findAllProductSkus(id);
+            
 
             if(product == null){
                 return Response.ResponseHandler("There is no such product.", HttpStatus.NOT_FOUND);
