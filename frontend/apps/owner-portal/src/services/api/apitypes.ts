@@ -8,6 +8,38 @@ export interface PaymentEcom {
   clientSecret: string;
 }
 
+export interface productsDetailInfo {
+  id: number;
+  subCategoryId?: number;
+  name: string;
+  description: string;
+  summery: string;
+  cover: string;
+  createdAt?: string;
+  deletedAt?: string;
+  productsSkus: productSkusInfo[];
+}
+
+export interface productSkusInfo {
+  id: number;
+  productId?: number;
+  sku: string;
+  price: number;
+  quantity: number;
+  sizeAttributes: attributesInfo;
+  colorAttributes: attributesInfo;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface attributesInfo {
+  id: number;
+  productAttributesType: string;
+  value: string;
+  createdAt?: string;
+  deletedAt?: string | null;
+}
+
 export interface productsInfo {
   id: number;
   subCategoryId?: number;

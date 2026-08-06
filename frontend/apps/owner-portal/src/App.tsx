@@ -15,6 +15,8 @@ import ProtectedRouteNavbarNoSwitch from "./components/routes/protectedRoutes/Pr
 import NewAppointment from "./pages/NewAppointment";
 import ViewAppointment from "./pages/ViewAppointment";
 import CheckOutPage from "./pages/CheckOutPage";
+import ProductLayout from "./components/layouts/ProductLayout";
+import ProductDetailPage from "./pages/ProductDetailPage";
 
 function App() {
   const { loading } = useAuth();
@@ -24,17 +26,17 @@ function App() {
   }
   return (
     <Routes>
-      // main layout
+      {/*  main layout */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/checkout/:id" element={<CheckOutPage />} />
       </Route>
-      // auth layout
+      {/*  auth layout */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
       </Route>
-      // protected route
+      {/*  protected route */}
       <Route element={<ProtectedRoute allowedRole="ROLE_OWNER" />}>
         <Route path="/owner/profile" element={<Profile />} />
         <Route path="/dogs/profile" element={<DogsProfilesListUI />} />
@@ -46,6 +48,14 @@ function App() {
         <Route path="/dogs/:id/appointment/new" element={<NewAppointment />} />
         <Route path="/dogs" element={<DogsProfileAdd />} />
         <Route path="/dogs/:id/appointment" element={<ViewAppointment />} />
+      </Route>
+
+      {/* Product Layout */}
+      <Route element={<ProductLayout />}>
+        <Route
+          path="/products/:id/details"
+          element={<ProductDetailPage />}
+        ></Route>
       </Route>
     </Routes>
   );

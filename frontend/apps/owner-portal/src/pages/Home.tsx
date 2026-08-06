@@ -1,7 +1,7 @@
 import { Button } from "../components/ui/button";
 import vetone from "../assets/vet1-removebg-preview.png";
 import vettwo from "../assets/vet2-removebg-preview.png";
-import { ArrowUpRight, FlaskConical } from "lucide-react";
+import { ArrowUpRight, Divide, FlaskConical } from "lucide-react";
 import ProductCard from "../components/cards/ProductCard";
 import VetCard from "../components/cards/VetCard";
 import { useQuery } from "@tanstack/react-query";
@@ -176,16 +176,19 @@ function Home() {
               </span>
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-20  m-10">
-            {product?.data &&
-              product.data.map((data) => (
-                <ProductCard
-                  key={data.id}
-                  id={data.id}
-                  cover={data.cover}
-                  name={data.name}
-                />
-              ))}
+          <div>
+            {product?.data && product.data.length > 0 ?
+              <div className="grid grid-cols-3 gap-20  m-10">
+                {product.data.slice(0, 3).map((data) => (
+                  <ProductCard
+                    key={data.id}
+                    id={data.id}
+                    cover={data.cover}
+                    name={data.name}
+                  />
+                ))}
+              </div>
+            : <div className="text-center mt-10">Product not found</div>}
           </div>
         </div>
       </div>

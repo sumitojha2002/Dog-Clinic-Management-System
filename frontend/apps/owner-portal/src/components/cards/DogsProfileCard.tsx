@@ -1,7 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "../ui/button";
-import { useAuth } from "../provider/AuthProvider";
-import { getDogProfileById } from "../../services/api/authapi";
 import { useNavigate } from "react-router-dom";
 import DogDefaultImg from "../../assets/dogpfp.png";
 interface DogsInfo {
