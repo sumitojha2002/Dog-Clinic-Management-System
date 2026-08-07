@@ -15,6 +15,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SubCategoriesController {
     private final SubCategoryService subCategoryService;
+
+    @GetMapping
+    public ResponseEntity<?> getAllSubCategory(){
+        return subCategoryService.getAllSubCategoryList();
+    }
     
     @GetMapping("/{id}")
     public ResponseEntity<?> getSubCategory(@PathVariable Long id){

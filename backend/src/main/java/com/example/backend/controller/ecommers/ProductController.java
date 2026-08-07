@@ -24,9 +24,10 @@ public class ProductController {
         @RequestParam(name ="subCategoryId", defaultValue="") Long subCategoryId,
         @RequestParam(name = "page",defaultValue = "0") int page,
         @RequestParam(name = "limit",defaultValue = "10") int limit,
-        @RequestParam(name = "sortBy",defaultValue = "id") String sortBy
+        @RequestParam(name = "sortBy",defaultValue = "id") String sortBy,
+        @RequestParam(name = "q", defaultValue = "") String name
     ){
-        return productService.getAllProducts(subCategoryId,page,limit,sortBy);
+        return productService.getAllProducts(subCategoryId,page,limit,sortBy,name);
     }
 
     @GetMapping("/search")

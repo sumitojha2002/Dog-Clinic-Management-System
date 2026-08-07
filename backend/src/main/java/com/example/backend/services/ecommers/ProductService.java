@@ -37,16 +37,16 @@ public class ProductService {
     
     private final SubCategoryRepositroy subCatRepo;
 
-    public  ResponseEntity<?>  getAllProducts(Long subCategoryId,int page,int limit,String sortBy){
+    public  ResponseEntity<?>  getAllProducts(Long subCategoryId,int page,int limit,String sortBy,String name){
         try{
             Pageable pageable = PageRequest.of(page,limit,Sort.by(sortBy).ascending());
 
-            Page<Product> productPage = productRepo.findAllProducts(subCategoryId,pageable);
+            Page<Product> productPage = productRepo.findAllProducts(subCategoryId,pageable,name);
             
             Page<Product.productsRecord> productList = productPage.map(ProfileHelper::productDisplayRecord);
 
         if(productList.isEmpty()){
-            return Response.ResponseHandler("There are no products to be found.", HttpStatus.NOT_FOUND,productList.getContent());
+            return Response.ResponseHandler("There are no products to be found.", HttpStatus.OK,productList.getContent());
         }        
 
         return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, productList.getContent());   

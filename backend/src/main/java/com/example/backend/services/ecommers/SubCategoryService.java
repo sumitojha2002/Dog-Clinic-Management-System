@@ -129,4 +129,21 @@ public class SubCategoryService {
         }
     }
 
+    public ResponseEntity<?> getAllSubCategoryList(){
+        try{
+            List<SubCategory.subCategoryList> listOfSubCategory = subCategoryRepo.findAll()
+            .stream()
+            .map(p->new SubCategory.subCategoryList(p.getId(), p.getName())).toList();
+
+            if(listOfSubCategory.isEmpty()){
+                return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, listOfSubCategory);
+            }
+
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK,listOfSubCategory);
+
+        }catch(Exception e){
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

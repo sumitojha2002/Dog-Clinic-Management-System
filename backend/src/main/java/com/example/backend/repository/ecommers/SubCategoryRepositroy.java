@@ -22,4 +22,5 @@ public interface SubCategoryRepositroy extends JpaRepository<SubCategory,Long> {
             WHERE s.id =:id
             """)
     Optional<SubCategory> getSubCategoryById(@Param("id") Long id);
+
 }

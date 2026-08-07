@@ -29,4 +29,5 @@ public class SubCategory {
     private LocalDateTime deletedAt;
 
     public record subCategoryDisplay(Long id,Long categoryId,String name,String description){}
+    public record subCategoryList(Long id,String name){}
 }
