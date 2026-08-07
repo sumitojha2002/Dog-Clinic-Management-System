@@ -1,4 +1,4 @@
-import React, { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 
 import { Button } from "../components/ui/button";
 import { ChevronLeft } from "lucide-react";
@@ -13,6 +13,7 @@ function Login() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errMsg, setErrMsg] = useState<string | undefined>("");
+
   const auth = useAuth();
   const navigate = useNavigate();
 
@@ -43,6 +44,10 @@ function Login() {
     setUsername("");
     setPassword("");
   };
+
+  if (auth.accessToken) {
+    navigate("/");
+  }
   return (
     <div className=" border w-100 p-3">
       <ChevronLeft

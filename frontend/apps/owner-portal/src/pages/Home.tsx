@@ -1,7 +1,7 @@
 import { Button } from "../components/ui/button";
 import vetone from "../assets/vet1-removebg-preview.png";
 import vettwo from "../assets/vet2-removebg-preview.png";
-import { ArrowUpRight, Divide, FlaskConical } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Divide, FlaskConical } from "lucide-react";
 import ProductCard from "../components/cards/ProductCard";
 import VetCard from "../components/cards/VetCard";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +18,7 @@ import VetMedia4 from "../../src/assets/vetMedia4.jpg";
 import VetMedia5 from "../../src/assets/vetMedia5.jpg";
 import DogDrinkArticle from "../../src/assets/dogdrinkarticle.jpg";
 import CheckOutPage from "./CheckOutPage";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Home() {
   const { data } = useQuery({
@@ -162,12 +162,19 @@ function Home() {
           </div>
         </div>
 
-        {/* hello */}
         <div className=" mt-60 mb-20">
           <div>
-            <h1 className="text-4xl mt-10 mb-10 font-semibold">
-              Our featured products
-            </h1>
+            <div className="flex justify-center items-center relative">
+              <h1 className="text-4xl mt-10 mb-10 font-semibold">
+                Our featured products
+              </h1>
+              <div className="self-baseline  absolute top-12 right-2 ">
+                <Link to={`/products`} className="flex gap-1 items-center">
+                  <p>browse</p>
+                  <ArrowRight size={15} />
+                </Link>
+              </div>
+            </div>
             <p className="text-[16px] flex flex-col">
               <span>Lorem ipsum dolor sit amet consectetur adipisicing</span>
               <span>
@@ -192,7 +199,6 @@ function Home() {
           </div>
         </div>
       </div>
-
       <div className=" mt-30 mb-20 grid grid-cols-2 gap-2  ">
         <div className="flex flex-col justify-between">
           <img

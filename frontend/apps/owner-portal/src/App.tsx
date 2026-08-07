@@ -17,6 +17,8 @@ import ViewAppointment from "./pages/ViewAppointment";
 import CheckOutPage from "./pages/CheckOutPage";
 import ProductLayout from "./components/layouts/ProductLayout";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import BrowserLayout from "./components/layouts/BrowserLayout";
+import BrowserProductPage from "./pages/BrowserProductPage";
 
 function App() {
   const { loading } = useAuth();
@@ -52,10 +54,11 @@ function App() {
 
       {/* Product Layout */}
       <Route element={<ProductLayout />}>
-        <Route
-          path="/products/:id/details"
-          element={<ProductDetailPage />}
-        ></Route>
+        <Route path="/products/:id" element={<ProductDetailPage />} />
+      </Route>
+
+      <Route element={<BrowserLayout />}>
+        <Route path="/products" element={<BrowserProductPage />} />
       </Route>
     </Routes>
   );

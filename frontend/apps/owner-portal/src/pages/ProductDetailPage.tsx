@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { getProductDetail } from "../services/api/authapi";
-import { ArrowLeft, Divide, Ghost } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useState } from "react";
 
@@ -9,6 +9,10 @@ export default function ProductDetailPage() {
   const { id } = useParams();
   const [num, setNum] = useState<number>(0);
   const navigate = useNavigate();
+
+  const [selectedSize, setSelectedSize] = useState<string>("");
+  const [error, setError] = useState<boolean>(false);
+
   const { data: product } = useQuery({
     queryKey: ["prodct", id],
     queryFn: () => getProductDetail(id),
@@ -18,8 +22,18 @@ export default function ProductDetailPage() {
     gcTime: 1000 * 60 * 15, // Keep unused data in cache for 15 minutes before deleting
   });
 
+  const addItem = () => {
+    let data = { number: num, size: selectedSize };
+
+    if (selectedSize == "") {
+      setError(true);
+      return;
+    }
+    setError(false);
+    console.log(data);
+  };
   return (
-    <div className="mt-10">
+    <div className="mt-10 mb-10">
       <div className="ml-5 mb-5">
         <ArrowLeft
           size={20}
@@ -35,18 +49,18 @@ export default function ProductDetailPage() {
               className="h-150 border p-2 object-fill"
             />
           </div>
-          <div className=" flex-1 p-10 text-start">
+          <div className=" flex-1 pl-10 pr-10 text-start">
             <h1 className="text-4xl font-bold">{product.data.name}</h1>
-            <div className="mt-4 flex-1">
-              <h1 className="text-[20px] mb-2 font-semibold">Description</h1>
+            <div className="mt-6 flex-1">
+              <h1 className="text-[20px] mb-3 font-semibold">Description</h1>
               <p className="font-light">{product.data.description}</p>
             </div>
-            <div className="mt-4 flex-1">
-              <h1 className="text-[20px] mb-2 font-semibold">Summary</h1>
+            <div className="mt-6 flex-1">
+              <h1 className="text-[20px] mb-3 font-semibold">Summary</h1>
               <p className="font-light">{product.data.summery}</p>
             </div>
-            <div className="mt-4 flex-1">
-              <h1 className="text-[20px] mb-2 font-semibold">
+            <div className="mt-6 flex-1">
+              <h1 className="text-[20px] mb-3 font-semibold">
                 Additional Information
               </h1>
               {(
@@ -55,7 +69,7 @@ export default function ProductDetailPage() {
               ) ?
                 <div className="grid grid-cols-2 gap-2">
                   {product.data.productsSkus.map((p) => (
-                    <div className="flex-1 gap-2 border p-3">
+                    <div className="flex-1 gap-2 border p-3" key={p.id}>
                       <div className="font-semibold mb-2">{p.sku}</div>
                       <div className="grid grid-cols-2">
                         <div className="font-semibold">Color</div>
@@ -80,33 +94,49 @@ export default function ProductDetailPage() {
                 </div>
               }
             </div>
-            <div className="grid grid-cols-2">
+            <div className="grid grid-cols-2 mt-6">
               <div>
                 {product.data.productsSkus &&
                   product.data.productsSkus.length > 0 && (
-                    <h1 className="text-[20px] mb-2 font-semibold mt-5">
-                      Size
-                    </h1>
+                    <h1 className="text-[20px] mb-2 font-semibold ">Size</h1>
                   )}
                 {(
                   product.data.productsSkus &&
                   product.data.productsSkus.length > 0
                 ) ?
-                  <div className="flex justify-center">
-                    <select name="size" id="" className="border text-center">
-                      {product.data.productsSkus.map((p) => (
-                        <option value={p.sizeAttributes.value}>
-                          {p.sizeAttributes.value}
-                        </option>
-                      ))}
-                    </select>
+                  <div>
+                    <div className="flex justify-center">
+                      <select
+                        name="size"
+                        id=""
+                        className="border text-center"
+                        value={selectedSize}
+                        onChange={(e) => {
+                          setSelectedSize(e.target.value);
+                          setError(false);
+                        }}
+                      >
+                        {product.data.productsSkus.map((p) => (
+                          <option value={p.sizeAttributes.value} key={p.id}>
+                            {p.sizeAttributes.value}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      {error && (
+                        <p className="text-red-500 text-center">
+                          *please select size
+                        </p>
+                      )}
+                    </div>
                   </div>
                 : <></>}
               </div>
               <div>
                 {product.data.productsSkus &&
                   product.data.productsSkus.length > 0 && (
-                    <h1 className="text-[20px] mb-2 font-semibold mt-5">
+                    <h1 className="text-[20px] mb-2 font-semibold ">
                       Quantity
                     </h1>
                   )}
@@ -123,6 +153,7 @@ export default function ProductDetailPage() {
                         type="text"
                         className="border text-center"
                         value={num}
+                        readOnly
                       />
                       <Button
                         className="rounded-none"
@@ -136,7 +167,11 @@ export default function ProductDetailPage() {
               </div>
             </div>
             <div className="mt-10 w-full grid grid-cols-2 gap-2">
-              <Button className="rounded-none" disabled={num == 0} onClick={()=>}>
+              <Button
+                className="rounded-none"
+                disabled={num == 0}
+                onClick={() => addItem()}
+              >
                 Add to Cart
               </Button>
               <Button className="rounded-none border-2" variant={"ghost"}>

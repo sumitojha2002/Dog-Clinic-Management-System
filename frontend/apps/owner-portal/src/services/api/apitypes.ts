@@ -174,6 +174,11 @@ export interface AppVet {
   name: string;
 }
 
+export interface subCategoryList {
+  id: number;
+  name: string;
+}
+
 export interface AppDog {
   dogId: number;
   name: string;

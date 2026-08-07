@@ -12,6 +12,7 @@ import type {
   Response,
   ResponseForTiming,
   ResponseLogin,
+  subCategoryList,
   UserUpdateProfileInfo,
   VetListInfo,
   VetsCard,
@@ -201,7 +202,7 @@ export const getAllProductsForLandingPage = async (): Promise<
   Response<productsInfo[]>
 > => {
   const response = await axios.get<Response<productsInfo[]>>(
-    baseUrl + `/products`,
+    baseUrl + `/products?limit=3`,
   );
   return response.data;
 };
@@ -211,6 +212,25 @@ export const getProductDetail = async (
 ): Promise<Response<productsDetailInfo>> => {
   const response = await axios.get<Response<productsDetailInfo>>(
     baseUrl + `/products/${id}`,
+  );
+  return response.data;
+};
+
+export const getAllProducts = async (
+  name: string,
+  category: string,
+): Promise<Response<productsInfo[]>> => {
+  const response = await axios.get<Response<productsInfo[]>>(
+    baseUrl + `/products?q=${name}&subCategoryId=${category}`,
+  );
+  return response.data;
+};
+
+export const getAllProductSubCategoryList = async (): Promise<
+  Response<subCategoryList[]>
+> => {
+  const response = await axios.get<Response<subCategoryList[]>>(
+    baseUrl + `/subcategories`,
   );
   return response.data;
 };
