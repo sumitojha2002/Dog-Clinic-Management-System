@@ -6,7 +6,7 @@ function MainLayout() {
   return (
     <div>
       <div className="flex border min-h-screen">
-        <div className="w-1/5 border md:block">
+        <div className="w-1/5 border md:block sticky top-0 z-50 h-screen self-start">
           <SideMenuBar />
         </div>
         <div className="w-full md:w-4/5 border">
