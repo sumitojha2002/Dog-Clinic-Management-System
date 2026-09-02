@@ -1,4 +1,4 @@
-package com.example.backend.controller.owner.auth;
+package com.example.backend.controller.receptionist.auth;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -36,19 +36,18 @@ import io.jsonwebtoken.JwtException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-@RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth/owners")
-public class OwnerAuthController {
+@RestController
+@RequestMapping("/auth/receptionist")
+public class ReceptAuthController {
     private final AuthService authService;
     private final JwtService jwtService;
     private final AuthenticationManager authManager;
     private final RefreshRepository refreshRepo;
     private final CustomUserDetialsServices cusUserDelSer;
-    private final UserRepository userRepo;
-
-
-    @PostMapping("/login")
+    private final UserRepository userRepo;   
+    
+@PostMapping("/login")
     @Transactional
     public ResponseEntity<?> ownerLogin(@RequestBody LoginDTO logindto){
         try{
@@ -64,9 +63,9 @@ public class OwnerAuthController {
             refreshTokendb.setRefreshToken(refreshToken);
             refreshTokendb.setExpiryTime(now.plus(7, ChronoUnit.DAYS));
             refreshTokendb.setUser(user);
-            ResponseCookie cookie = ResponseCookie.from("owner_refresh_token",refreshToken)
+            ResponseCookie cookie = ResponseCookie.from("receptionist_refresh_token",refreshToken)
                                                   .httpOnly(true)
-                                                  .path("/auth/owners")
+                                                  .path("/auth/receptionist")
                                                   .maxAge(1000L*7*24*60*60)
                                                   .secure(false)
                                                   .sameSite("Lax")
@@ -88,7 +87,7 @@ public class OwnerAuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@CookieValue("owner_refresh_token") String refreshToken){
+    public ResponseEntity<?> refresh(@CookieValue("receptionist_refresh_token") String refreshToken){
         try{
             if(jwtService.validToken(refreshToken) && jwtService.validRefreshToken(refreshToken)){
                 RefreshToken refreshTokendb = refreshRepo.findByRefreshToken(refreshToken).orElseThrow(()-> new UserNotFoundException("Refresh token not found."));
@@ -101,8 +100,8 @@ public class OwnerAuthController {
                 refreshTokendb.setRefreshToken(newRefreshToken);
                 refreshTokendb.setExpiryTime(now.plus(7,ChronoUnit.DAYS));
 
-                ResponseCookie cookie = ResponseCookie.from("owner_refresh_token", newRefreshToken)
-                                                      .path("/auth/owners")
+                ResponseCookie cookie = ResponseCookie.from("receptionist_refresh_token", newRefreshToken)
+                                                      .path("/auth/receptionist")
                                                       .maxAge(1000L*60*60*24*7)
                                                       .httpOnly(true)
                                                       .sameSite("Lax")
@@ -124,9 +123,9 @@ public class OwnerAuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@CookieValue("owner_refresh_token") String refreshToken){
-        ResponseCookie cookie = ResponseCookie.from("owner_refresh_token", null)
-                                              .path("/auth/owners")
+    public ResponseEntity<?> logout(@CookieValue("receptionist_refresh_token") String refreshToken){
+        ResponseCookie cookie = ResponseCookie.from("receptionist_refresh_token", null)
+                                              .path("/auth/receptionist")
                                               .httpOnly(true)
                                               .secure(false)
                                               .maxAge(0)
