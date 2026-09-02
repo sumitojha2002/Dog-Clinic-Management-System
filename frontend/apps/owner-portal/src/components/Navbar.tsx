@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { Button } from "./ui/button";
 import { useAuth } from "./provider/AuthProvider";
+import { Bell, ScrollText, ShoppingCart } from "lucide-react";
 
 export default function Navbar() {
   const auth = useAuth();
@@ -20,14 +21,25 @@ export default function Navbar() {
       <div className="w-full flex justify-end items-center">
         <div className="gap-3 flex justify-between">
           {auth.isAuthenticated ?
-            <>
+            <div className="flex gap-5 justify-center items-center">
+              <Bell size={20} onClick={() => {}} className="cursor-pointer" />
+              <ScrollText
+                size={20}
+                onClick={() => {}}
+                className="cursor-pointer"
+              />
+              <ShoppingCart
+                size={20}
+                onClick={() => {}}
+                className="cursor-pointer"
+              />
               <Button onClick={() => navigate("/owner/profile")}>
                 Profile
               </Button>
               <Button variant={"outline"} onClick={() => auth.logout()}>
                 Log Out
               </Button>
-            </>
+            </div>
           : <>
               <Button onClick={() => navigate("/signup")}>Sign up</Button>
               <Button variant={"outline"} onClick={() => navigate("/login")}>

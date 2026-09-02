@@ -8,6 +8,8 @@ import { login } from "../services/api/authapi";
 import { useAuth } from "../components/provider/AuthProvider";
 import type { AxiosError } from "axios";
 import type { BackendError } from "../services/api/apitypes";
+import { decodeToken } from "../utils/helpers";
+import type { TokenPayload } from "../types/User";
 
 function Login() {
   const [username, setUsername] = useState<string>("");
@@ -22,9 +24,16 @@ function Login() {
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      auth.setAccessToken(data.data?.accessToken);
-      alert(data.message);
-      navigate("/");
+      const token = data.data?.accessToken;
+      const payload = decodeToken<TokenPayload>(data.data?.accessToken);
+
+      if (payload?.role === "ROLE_OWNER") {
+        alert(data.message);
+        auth.setAccessToken(data.data?.accessToken);
+        navigate("/");
+      } else {
+        alert("INVALID USER");
+      }
     },
     onError: (error: AxiosError<BackendError>) => {
       setErrMsg(error.response?.data?.message);
