@@ -27,23 +27,6 @@ export const dogInfoSchema = z.object({
     ),
 });
 
-export const signupSchema = z.object({
-  username: z
-    .string()
-    .max(50, "Name is to long")
-    .min(1, "Name is required")
-    .refine((name) => !name.includes(" "), {
-      message: "Name should not contain space",
-    }),
-
-  password: z
-    .string()
-    .min(5, "Password must be at least 5 characters")
-    .max(20, "Password is long"),
-
-  email: z.string().email("Enter a valid email"),
-});
-
 export const AppointmentSchema = z.object({
   reason: z
     .string()
@@ -72,3 +55,15 @@ export const tagsBasedColor = (status: string) => {
   };
   return appoitmenstatus[status] ?? "text-gray-500";
 };
+
+export const loginSchema = z.object({
+  username: z
+    .string()
+    .max(50, "Username is too long")
+    .min(1, "Username is required.")
+    .refine((name) => !name.includes(" "), {
+      message: "Username should not contain space",
+    }),
+
+  password: z.string(),
+});

@@ -6,6 +6,8 @@ import Veterinarian from "./pages/Veterinarian";
 import Dogs from "./pages/Dogs";
 import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashborad";
+import AuthLayout from "./components/layouts/AuthLayout";
+import Login from "./pages/Login";
 
 function App() {
   return (
@@ -16,6 +18,9 @@ function App() {
         <Route path="/veterinarian" element={<Veterinarian />} />
         <Route path="/dogs" element={<Dogs />} />
         <Route path="/profile" element={<Profile />} />
+      </Route>
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<Login />} />
       </Route>
     </Routes>
   );

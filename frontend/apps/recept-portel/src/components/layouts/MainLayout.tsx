@@ -1,8 +1,18 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import SideMenuBar from "../SideMenuBar";
+import { useAuth } from "../providers/AuthProvider";
 
 function MainLayout() {
+  const { isAuthenticated, role, loading } = useAuth();
+  console.log(role);
+  if (loading) {
+    return <div>Checking authentication....</div>;
+  }
+
+  if (!isAuthenticated && role != "ROLE_RECEP") {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <div>
       <div className="flex border min-h-screen">

@@ -4,16 +4,18 @@ import {
   BriefcaseMedical,
   ClipboardList,
   Home,
+  LogOut,
   PawPrint,
   UserPen,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { Button } from "./ui/button";
 
 function SideMenuBar() {
   const auth = useAuth();
 
   return (
-    <div className="pl-5 pt-5 ">
+    <div className="pl-5 pt-5  pr-5">
       <div className="flex items-center">
         <img src={Logo} alt="" className="w-15" />
         <div className="pl-5">
@@ -56,6 +58,11 @@ function SideMenuBar() {
             <h1 className="hidden md:block">Profile</h1>
           </div>
         </NavLink>
+
+        <Button className="w-full" onClick={() => auth.logout()}>
+          <LogOut />
+          <span className="hidden md:flex">LogOut</span>
+        </Button>
       </div>
     </div>
   );
