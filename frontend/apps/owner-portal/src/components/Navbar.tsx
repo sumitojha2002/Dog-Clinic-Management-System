@@ -20,7 +20,7 @@ export default function Navbar() {
       </div>
       <div className="w-full flex justify-end items-center">
         <div className="gap-3 flex justify-between">
-          {auth.isAuthenticated ?
+          {auth.isAuthenticated && auth.role === "ROLE_OWNER" ?
             <div className="flex gap-5 justify-center items-center">
               <Bell size={20} onClick={() => {}} className="cursor-pointer" />
               <ScrollText

@@ -25,11 +25,17 @@ function Login() {
     mutationFn: login,
     onSuccess: (data) => {
       const token = data.data?.accessToken;
-      const payload = decodeToken<TokenPayload>(data.data?.accessToken);
+
+      if (!token) {
+        setErrMsg("Access Token not received");
+        return;
+      }
+
+      const payload = decodeToken<TokenPayload>(token);
 
       if (payload?.role === "ROLE_OWNER") {
         alert(data.message);
-        auth.setAccessToken(data.data?.accessToken);
+        auth.setAccessToken(token);
         navigate("/");
       } else {
         alert("INVALID USER");
@@ -54,9 +60,6 @@ function Login() {
     setPassword("");
   };
 
-  if (auth.accessToken) {
-    navigate("/");
-  }
   return (
     <div className=" border w-100 p-3">
       <ChevronLeft

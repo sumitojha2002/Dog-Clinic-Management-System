@@ -24,7 +24,7 @@ export const login = async (
   loginInfo: Login,
 ): Promise<Response<ResponseLogin>> => {
   const response = await axios.post<Response<ResponseLogin>>(
-    baseUrl + `/auth/login`,
+    baseUrl + `/auth/owners/login`,
     loginInfo,
     { withCredentials: true },
   );

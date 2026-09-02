@@ -47,7 +47,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = async () => {
     const res = await axios.post(
-      "http://localhost:9090/auth/logout",
+      "http://localhost:9090/auth/owners/logout",
       {},
       { withCredentials: true },
     );
@@ -58,7 +58,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const refreshAccessToken = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:9090/auth/refresh",
+        "http://localhost:9090/auth/owners/refresh",
         {},
         { withCredentials: true },
       );

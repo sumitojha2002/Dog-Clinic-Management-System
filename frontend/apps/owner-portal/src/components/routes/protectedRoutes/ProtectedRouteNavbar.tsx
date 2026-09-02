@@ -14,7 +14,7 @@ function ProtectedRoute({ allowedRole }: Props) {
     return <div>Checking authentication...</div>;
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && role !== "ROLE_OWNER") {
     return <Navigate to="/login" replace />;
   }
 
