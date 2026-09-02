@@ -7,7 +7,7 @@ export const login = async (
   LoginInfo: Login,
 ): Promise<Response<accessToken>> => {
   const response = await axios.post<Response<accessToken>>(
-    baseUrl + `/auth/login`,
+    baseUrl + `/auth/receptionist/login`,
     LoginInfo,
     {
       withCredentials: true,
