@@ -5,6 +5,14 @@ import { Input } from "../components/ui/input";
 import { Badge } from "../components/ui/badge";
 
 function Dashboard() {
+  const timestamp = Date.now();
+  const date = new Date(timestamp);
+
+  const formatted = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+  }).format(date);
+
   const list = [
     {
       id: 1,
@@ -71,7 +79,7 @@ function Dashboard() {
       <div className="flex flex-col">
         <div className="text-5xl">Dashboard</div>
         <span className="text-[15px] text-gray-600 ">
-          Front desk · today, Aug 24
+          Front desk · today, {formatted}
         </span>
       </div>
       <div className="grid grid-cols-5 gap-10 mt-10  pl-10 pr-10">

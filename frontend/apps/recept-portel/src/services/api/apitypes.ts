@@ -19,3 +19,10 @@ export interface BackendError<T = void> {
   throwable: string | null;
   errors?: T;
 }
+
+export interface VetsData {
+  vetId: number;
+  name: string;
+  imageURL: string;
+  specialization: string[];
+}

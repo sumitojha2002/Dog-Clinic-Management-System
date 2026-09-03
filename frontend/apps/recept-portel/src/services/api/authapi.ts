@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { accessToken, Login, Response } from "./apitypes";
+import type { accessToken, Login, Response, VetsData } from "./apitypes";
 
 const baseUrl = "http://localhost:9090";
 
@@ -14,4 +14,9 @@ export const login = async (
     },
   );
   return response.data;
+};
+
+export const getAllVets = async (): Promise<Response<VetsData[]>> => {
+  const res = await axios.get<Response<VetsData[]>>(baseUrl + `/auth/mainVets`);
+  return res.data;
 };

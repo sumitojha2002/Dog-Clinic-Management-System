@@ -20,7 +20,7 @@ function SideMenuBar() {
         <img src={Logo} alt="" className="w-15" />
         <div className="pl-5">
           <h1 className="text-2xl hidden md:block  md:text-[15px] lg:text-2xl">
-            Nirbhay Sunwar
+            {auth.user?.sub}
           </h1>
           <p className="text-gray-600 hidden md:block  md:text-[10px] lg:text-[14px]">
             Receptionist

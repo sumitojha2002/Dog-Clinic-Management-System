@@ -14,6 +14,13 @@ import {
 import { Badge } from "../components/ui/badge";
 
 function Appointment() {
+  const timestamp = Date.now();
+  const date = new Date(timestamp);
+
+  const formatted = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+  }).format(date);
   const list = [
     {
       id: 1,
@@ -48,7 +55,7 @@ function Appointment() {
         <div className="flex flex-col">
           <div className="text-5xl">Appointment</div>
           <span className="text-[15px] text-gray-600 ">
-            Front desk · today, Aug 24
+            Front desk · today, {formatted}
           </span>
         </div>
         <div className="flex gap-2">
