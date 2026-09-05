@@ -35,6 +35,9 @@ public class Owners {
     @JoinColumn(name="user_id",referencedColumnName = "id")
     private User user;
 
+    @Column(name="name")
+    private String name;
+
     @Column(name="phone_number",unique = true)
     private String phoneNumber;
 
@@ -59,6 +62,7 @@ public class Owners {
 
     public record OwnersProfile(User.userInfo user,
                                 Long ownerId,
+                                String name,
                                 String phoneNumber,
                                 String alternatePhoneNumber,
                                 String address,

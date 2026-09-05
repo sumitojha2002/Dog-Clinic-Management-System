@@ -61,7 +61,7 @@ public class Veterinarians {
     public record vetListInfo(Long vetId, String name) {
     }
 
-    public record vetProfile(User.userInfo user, Long vetId, String licenseNumber, Set<String> specialization,
+    public record vetProfile(User.userInfo user, Long vetId,String name, String licenseNumber, Set<String> specialization,
             Long yearsOfExperience) {
     }
 

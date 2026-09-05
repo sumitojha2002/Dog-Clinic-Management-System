@@ -251,6 +251,7 @@ public class OwnerService {
                     .stream()
                     .map(u -> new Owners.OwnersProfile(new User.userInfo(user.getUsername(), user.getEmail()),
                             u.getId(),
+                            u.getName(),
                             u.getPhoneNumber(),
                             u.getAlternatePhoneNumber(),
                             u.getAddress(),

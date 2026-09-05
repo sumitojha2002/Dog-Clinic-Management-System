@@ -68,4 +68,9 @@ public class ReceptionistController {
     public ResponseEntity<?> changeAppConfirmend(@PathVariable Long id){
         return receService.changeAppConfirm(id);
     }
+
+    @GetMapping("/vet-list")
+    public ResponseEntity<?> getVetsList() {
+        return receService.getVetsList();
+    }
 }

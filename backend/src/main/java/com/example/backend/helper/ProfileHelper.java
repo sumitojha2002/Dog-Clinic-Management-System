@@ -68,6 +68,7 @@ public class ProfileHelper {
         return new Owners.OwnersProfile(
             userProfile, 
             owner.getId(), 
+            owner.getName(),
             owner.getPhoneNumber(),
             owner.getAlternatePhoneNumber() ,
             owner.getAddress(), 
@@ -102,6 +103,7 @@ public class ProfileHelper {
                 .map(owner -> new Owners.OwnersProfile(
                     new User.userInfo(owner.getUser().getUsername(),owner.getUser().getEmail()), 
                     owner.getId(), 
+                    owner.getName(),
                     owner.getPhoneNumber(), 
                     owner.getAlternatePhoneNumber(), 
                     owner.getAddress(), 
@@ -113,7 +115,8 @@ public class ProfileHelper {
             .map(vet-> new Veterinarians.vetProfile(new User.userInfo(
                 vet.getUser().getUsername(), 
                 vet.getUser().getEmail()), 
-                vet.getId(), 
+                vet.getId(),
+                vet.getName(), 
                 vet.getLicenseNumber(), 
                 vet.getSpecialization(), 
                 vet.getYearsOfExperience()))
@@ -144,6 +147,7 @@ public class ProfileHelper {
 
         return new Veterinarians.vetProfile(userInfo,
             veterinarians.getId(),
+            veterinarians.getName(),
             veterinarians.getLicenseNumber(), 
             veterinarians.getSpecialization(),
             veterinarians.getYearsOfExperience());

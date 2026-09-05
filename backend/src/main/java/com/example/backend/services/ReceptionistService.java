@@ -16,6 +16,7 @@ import com.example.backend.entity.Dogs;
 import com.example.backend.entity.Employee;
 import com.example.backend.entity.Owners;
 import com.example.backend.entity.Receptionist;
+import com.example.backend.entity.Veterinarians;
 import com.example.backend.entity.dto.ReceDTO;
 import com.example.backend.entity.enums.AppointmentStatus;
 import com.example.backend.entity.enums.EmpStatus;
@@ -25,6 +26,7 @@ import com.example.backend.repository.AppointmentRepository;
 import com.example.backend.repository.DogsRepository;
 import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.repository.OwnerRepository;
+import com.example.backend.repository.VeterinarianRepository;
 import com.example.backend.response.Response;
 import com.example.backend.security.entity.User;
 import jakarta.transaction.Transactional;
@@ -38,6 +40,7 @@ public class ReceptionistService {
     private final OwnerRepository ownerRepo;
     private final AppointmentRepository appRepo;
     private final DogsRepository dogRepo;
+    private final VeterinarianRepository vetRepo;
     // Receptionist
 
     public ResponseEntity<?> getReceProfile(Long id){
@@ -142,7 +145,7 @@ public class ReceptionistService {
             if(appo.isEmpty()){
                 return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
             }
-            return Response.ResponseHandler(HttpStatus.FOUND.getReasonPhrase(), HttpStatus.FOUND, appo);
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, appo);
         }catch(Exception e){
             e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -202,6 +205,23 @@ public class ReceptionistService {
         }catch(Exception e){
             e.printStackTrace();
             return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+        public ResponseEntity<?> getVetsList() {
+        try {
+            List<Veterinarians.vetListInfo> vetList = vetRepo.findAllVets().stream()
+                    .map(vet -> new Veterinarians.vetListInfo(vet.getId(),vet.getName()))
+                    .toList();
+            if (vetList.isEmpty())
+                return Response.ResponseHandler(HttpStatus.NOT_FOUND.getReasonPhrase(), HttpStatus.NOT_FOUND);
+
+            return Response.ResponseHandler(HttpStatus.OK.getReasonPhrase(), HttpStatus.OK, vetList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.ResponseHandler(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

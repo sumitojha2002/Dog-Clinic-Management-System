@@ -172,6 +172,7 @@ public class AdminServices {
         
         Owners.OwnersProfile ownersProfile = new Owners.OwnersProfile(userInfo, 
             owner.getId(),
+            owner.getName(),
             owner.getPhoneNumber() , 
             owner.getAlternatePhoneNumber(), 
             owner.getAddress(), 
