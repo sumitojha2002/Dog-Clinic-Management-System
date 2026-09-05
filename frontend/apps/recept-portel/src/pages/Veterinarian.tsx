@@ -1,4 +1,3 @@
-import React from "react";
 import VetCard from "../components/cards/VetCard";
 import { useQuery } from "@tanstack/react-query";
 import { getAllVets } from "../services/api/authapi";
@@ -9,6 +8,16 @@ export default function Veterinarian() {
   const { data: vetInfo } = useQuery({
     queryKey: ["vetsInfo"],
     queryFn: getAllVets,
+    // 1. Keep data fresh forever so it NEVER automatically refetches
+    staleTime: Infinity,
+
+    // 2. Keep the data in the cache forever (do not garbage collect it)
+    gcTime: Infinity,
+
+    // 3. Optional: Disable specific triggers for extra safety
+    refetchOnWindowFocus: false, // Don't refetch when clicking back onto the browser tab
+    refetchOnMount: false, // Don't refetch when the component loads again
+    refetchOnReconnect: false, // Don't refetch if network goes down and comes back
   });
   const formatted = new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -24,7 +33,7 @@ export default function Veterinarian() {
         <div className="mt-10 text-center">
           <h1 className="text-2xl">No Vets Found</h1>
         </div>
-      : <div className="mt-10 grid grid-cols-5 gap-5">
+      : <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 sm:grid-cols-1 gap-6">
           {vetInfo?.data?.map((vetinfo, index) => (
             <VetCard
               name={vetinfo.name}

@@ -3,6 +3,8 @@ import { Button } from "../components/ui/button";
 import { Ghost, UserPlus } from "lucide-react";
 import { Input } from "../components/ui/input";
 import { Badge } from "../components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import { getAllAppointments } from "../services/api/authapi";
 
 function Dashboard() {
   const timestamp = Date.now();
@@ -74,6 +76,9 @@ function Dashboard() {
       checkedin: "Scheduled",
     },
   ];
+
+
+
   return (
     <div className="p-5 pl-15 pr-10">
       <div className="flex flex-col">
